@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matematika 7 – korak po korak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+    --blue:#2563eb; --blue-bg:#e8f0ff; --red:#dc2626; --red-bg:#fde8e8;
+    --green:#15803d; --green-bg:#e3f6e9; --orange:#c2410c; --orange-bg:#fff1e6;
+    --purple:#7c3aed; --purple-bg:#f1eaff; --yellow-bg:#fff7d1;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:19px;line-height:1.55}
+  header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  header h1{font-size:20px;margin:0;flex:1;min-width:180px}
+  .btn{font:inherit;font-weight:700;border:2px solid transparent;border-radius:12px;padding:9px 16px;cursor:pointer;background:var(--blue);color:#fff;transition:transform .1s}
+  .btn:active{transform:scale(.97)}
+  .btn.light{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn.green{background:var(--green)}
+  .btn.small{padding:6px 12px;font-size:16px}
+  .btn[aria-pressed="true"]{background:var(--ink);color:#fff}
+  main{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+  section[hidden]{display:none}
+  h2{font-size:30px;margin:6px 0 4px}
+  h3{font-size:21px;margin:0 0 8px}
+  .goal{color:var(--muted);margin:0 0 18px}
+  .card{background:var(--card);border-radius:var(--radius);padding:20px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .box{border-radius:var(--radius);padding:16px 18px;margin:16px 0}
+  .life{background:var(--yellow-bg)}
+  .rule{background:var(--blue-bg);border-left:6px solid var(--blue)}
+  .warn{background:var(--red-bg);border-left:6px solid var(--red)}
+  .tip{background:var(--green-bg);border-left:6px solid var(--green)}
+  .big{font-size:26px;font-weight:800}
+  .muted{color:var(--muted)}
+  .center{text-align:center}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  /* home */
+  .group-title{margin:26px 0 8px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .tile{background:#fff;border:2px solid var(--line);border-radius:var(--radius);padding:16px;cursor:pointer;text-align:left;font:inherit;color:inherit;position:relative}
+  .tile:hover{border-color:var(--blue)}
+  .tile .ico{font-size:34px;display:block}
+  .tile b{display:block;font-size:19px}
+  .tile small{color:var(--muted);font-size:15px}
+  .tile.done::after{content:"✓";position:absolute;top:10px;right:12px;background:var(--green);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:800}
+  .tile.test{background:var(--purple-bg);border-color:#d8c8ff}
+  ol.steps{padding-left:24px;margin:8px 0} ol.steps li{margin:4px 0}
+  /* tasks */
+  .task{border:2px dashed var(--line);border-radius:var(--radius);padding:14px 16px;margin:12px 0;background:#fff}
+  .task .q{margin:0 0 10px;font-weight:600}
+  .task input,.inp{font:inherit;font-size:20px;width:120px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;text-align:center}
+  .task input:focus,.inp:focus{outline:none;border-color:var(--blue)}
+  .task.ok{border-color:var(--green);border-style:solid;background:var(--green-bg)}
+  .fb{margin:8px 0 0;font-weight:700;min-height:1px}
+  .fb.ok{color:var(--green)} .fb.no{color:var(--orange)}
+  .hint{background:var(--yellow-bg);border-radius:10px;padding:8px 12px;margin:10px 0 0}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px;flex-wrap:wrap}
+  /* percent */
+  .hundred{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:260px;margin:0 auto}
+  .hundred span{aspect-ratio:1;background:#e5e7eb;border-radius:3px;transition:background .25s}
+  .hundred span.on{background:var(--orange)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+  @media (max-width:640px){.two-col{grid-template-columns:1fr}}
+  .calc-line{font-size:21px;margin:6px 0}
+  .tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--orange-bg);color:var(--orange);font-weight:800}
+  /* tables */
+  table{border-collapse:collapse;margin:8px auto;font-size:19px}
+  td,th{border:2px solid var(--line);padding:6px 14px;text-align:center}
+  th{background:#f8fafc}
+  tr.hl td{background:var(--yellow-bg);font-weight:800}
+  .zeros{color:var(--red);font-weight:800}
+  .bignum{font-size:30px;font-weight:800;letter-spacing:.04em;text-align:center;margin:10px 0}
+  .ptable input{width:80px}
+  /* equation */
+  .eq-line{font-size:22px;padding:8px 12px;border-radius:10px;margin:6px 0;background:#f8fafc;display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
+  .eq-line .why{font-size:16px;color:var(--muted)}
+  .eq-line b{min-width:170px}
+  .scheme{counter-reset:s;list-style:none;padding:0;margin:0}
+  .scheme li{counter-increment:s;padding:8px 10px 8px 52px;position:relative;margin:6px 0;background:#fff;border-radius:10px}
+  .scheme li::before{content:counter(s);position:absolute;left:10px;top:7px;width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800}
+  /* svg */
+  svg.grid-svg{width:100%;max-width:520px;display:block;margin:0 auto;background:#fff}
+  svg .gl{stroke:#dbe3ef;stroke-width:1}
+  svg text{font-family:inherit;font-weight:800}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:16px;margin-top:8px}
+  .legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .pie{width:190px;height:190px;border-radius:50%;margin:0 auto}
+  select{font:inherit;padding:7px 10px;border-radius:10px;border:2px solid var(--line);background:#fff}
+  /* test */
+  .progress{height:12px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:8px 0 18px}
+  .progress > div{height:100%;background:var(--purple);transition:width .3s}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media (max-width:520px){.opts{grid-template-columns:1fr}}
+  .opt{font:inherit;font-size:21px;font-weight:700;padding:14px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .opt:hover:not(:disabled){border-color:var(--purple)}
+  .opt.right{background:var(--green-bg);border-color:var(--green)}
+  .opt.wrong{background:var(--red-bg);border-color:var(--red)}
+  .opt:disabled{cursor:default}
+  .stars{font-size:46px;letter-spacing:6px}
+  .res-list{list-style:none;padding:0} .res-list li{padding:8px 0;border-bottom:1px solid var(--line)}
+  /* pause */
+  #pause{position:fixed;inset:0;background:rgba(15,23,42,.88);color:#fff;display:none;place-items:center;z-index:50;text-align:center}
+  #pause.open{display:grid}
+  .breath{width:160px;height:160px;border-radius:50%;background:#60a5fa;margin:24px auto;transition:transform 4s ease-in-out}
+  .breath.in{transform:scale(1.45)}
+  .focus-strip{background:var(--purple-bg);border-radius:12px;padding:10px 14px;font-size:16px;margin-top:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧮 Matematika 7 – učim korak po korak</h1>
+  <button class="btn light small" onclick="go('home')">🏠 Početna</button>
+  <button class="btn light small" onclick="openPause()">🌿 Mini pauza</button>
+</header>
+
+<main>
+
+<!-- ===================== POČETNA ===================== -->
+<section id="home">
+  <h2>Bok! 👋</h2>
+  <p class="goal">Ovdje se pripremaš za test. Svaka lekcija je kratka – oko 10 minuta.</p>
+  <div class="box tip">
+    <h3>Kako učiti da bude lakše</h3>
+    <ol class="steps">
+      <li>Otvori <b>jednu</b> lekciju. Samo jednu.</li>
+      <li>Pročitaj primjer iz života i pogledaj sliku.</li>
+      <li>Riješi <b>2 zadatka</b>. Ako zapneš, klikni 💡.</li>
+      <li>Nakon 2 lekcije klikni <b>🌿 Mini pauza</b> (1 minuta).</li>
+    </ol>
+  </div>
+
+  <div class="group-title">Brojevi i algebra</div>
+  <div class="tiles">
+    <button class="tile" data-l="potencije"><span class="ico">🔟</span><b>Potencije</b><small>Znanstveni zapis</small></button>
+    <button class="tile" data-l="postotak"><span class="ico">🏷️</span><b>Postotak</b><small>Popusti u trgovini</small></button>
+    <button class="tile" data-l="proporcionalnost"><span class="ico">🍦</span><b>Proporcionalnost</b><small>Koeficijent k</small></button>
+    <button class="tile" data-l="jednadzbe"><span class="ico">⚖️</span><b>Jednadžbe</b><small>Shema u 4 koraka</small></button>
+  </div>
+  <div class="group-title">Geometrija i mjerenje</div>
+  <div class="tiles">
+    <button class="tile" data-l="vektori"><span class="ico">➡️</span><b>Vektori</b><small>Zbrajanje i oduzimanje</small></button>
+    <button class="tile" data-l="translacija"><span class="ico">🔺</span><b>Translacija</b><small>Pomicanje lika</small></button>
+    <button class="tile" data-l="jedinice"><span class="ico">📏</span><b>Mjerne jedinice</b><small>Stepenice</small></button>
+  </div>
+  <div class="group-title">Podaci i statistika</div>
+  <div class="tiles">
+    <button class="tile" data-l="dijagrami"><span class="ico">📊</span><b>Dijagrami</b><small>Čitanje grafa</small></button>
+    <button class="tile test" onclick="go('test');startTest()"><span class="ico">📝</span><b>Probni test</b><small>10 pitanja</small></button>
+  </div>
+</section>
+
+<!-- ===================== POTENCIJE ===================== -->
+<section id="potencije" class="lesson" hidden>
+  <h2>🔟 Potencije – znanstveni zapis</h2>
+  <p class="goal">Cilj: velike brojeve zapisati kratko, npr. 4 000 000 = 4 · 10<sup>6</sup>.</p>
+
+  <div class="box life">
+    <h3>🌍 Iz života</h3>
+    Na Zemlji živi oko <b>8 000 000 000</b> ljudi. To je dugo pisati i lako se zabuniti u nulama!<br>
+    Matematičari to pišu kratko: <b>8 · 10<sup>9</sup></b>.
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>📋 Tablica – tvoj podsjetnik</h3>
+      <table id="powTable">
+        <tr><th>Potencija</th><th>Broj</th><th>Nula</th></tr>
+      </table>
+      <p class="muted center" style="font-size:16px">Eksponent = broj nula 😉</p>
+    </div>
+    <div class="card">
+      <h3>👆 Klikni primjer</h3>
+      <div class="row" id="sciBtns" style="gap:8px"></div>
+      <div id="sciOut" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Pravilo u 3 koraka</h3>
+    <ol class="steps">
+      <li>Napiši <b>prvu znamenku</b> (npr. 4).</li>
+      <li>Prebroji <b>koliko nula</b> ide iza nje (npr. 6).</li>
+      <li>Zapiši: <b>4 · 10<sup>6</sup></b>.</li>
+    </ol>
+    <b>Obrnuto:</b> 5 · 10<sup>3</sup> → iza 5 napiši 3 nule → <b>5 000</b>.
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="3" data-solution="Iza 7 su 3 nule → 7 · 10³">
+      <p class="q">7 000 = 7 · 10<sup>?</sup> &nbsp; Koliki je eksponent?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"><button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Prebroji nule iza broja 7.</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="50000" data-solution="10⁴ = 10 000, pa 5 · 10 000 = 50 000">
+      <p class="q">Napiši bez potencije: 5 · 10<sup>4</sup> = ?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"><button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Iza broja 5 napiši 4 nule.</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== POSTOTAK ===================== -->
+<section id="postotak" class="lesson" hidden>
+  <h2>🏷️ Postotak – popusti</h2>
+  <p class="goal">Cilj: izračunati 10 %, 20 % i 50 % od cijene.</p>
+
+  <div class="box life">
+    <h3>🛍️ Iz života</h3>
+    Na izlogu piše <span class="tag">−20 %</span>. Koliko ćeš uštedjeti? <br>
+    <b>Posto</b> znači <b>„od sto”</b>. 20 % = 20 od 100 dijelova.
+  </div>
+
+  <div class="card">
+    <h3>👆 Izaberi artikl i popust</h3>
+    <div class="row" id="pctItems" style="margin-bottom:8px"></div>
+    <div class="row" id="pctBtns"></div>
+    <div class="two-col" style="margin-top:14px">
+      <div><div class="hundred" id="hundred"></div><p class="center muted" style="font-size:15px;margin:6px 0 0">100 kvadratića = cijela cijena</p></div>
+      <div id="pctOut"></div>
+    </div>
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Trikovi koje pamtiš</h3>
+    <table>
+      <tr><th>Popust</th><th>Što radim?</th><th>Primjer: 60 €</th></tr>
+      <tr><td><b>10 %</b></td><td>podijeli s 10</td><td>60 : 10 = 6 €</td></tr>
+      <tr><td><b>20 %</b></td><td>10 % pa puta 2</td><td>6 · 2 = 12 €</td></tr>
+      <tr><td><b>50 %</b></td><td>pola (podijeli s 2)</td><td>60 : 2 = 30 €</td></tr>
+    </table>
+    <p style="margin:8px 0 0"><b>Nova cijena</b> = stara cijena − popust</p>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="4" data-solution="40 : 10 = 4 €">
+      <p class="q">Majica košta 40 €. Popust je 10 %. Koliko eura je popust?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> € <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>10 % → podijeli cijenu s 10.</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="10" data-solution="Pola od 20 € je 10 €. Nova cijena: 20 − 10 = 10 €">
+      <p class="q">Lopta košta 20 €. Popust je 50 %. Kolika je <b>nova cijena</b>?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> € <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>50 % = pola. Izračunaj popust pa ga oduzmi od 20 €.</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== PROPORCIONALNOST ===================== -->
+<section id="proporcionalnost" class="lesson" hidden>
+  <h2>🍦 Proporcionalnost</h2>
+  <p class="goal">Cilj: pronaći koeficijent <b>k</b> i pomoću njega izračunati ostale vrijednosti.</p>
+
+  <div class="box life">
+    <h3>🍦 Iz života</h3>
+    Jedna kugla sladoleda košta 2 €. Dvije kugle 4 €. Tri kugle 6 €…<br>
+    Koliko kugli – toliko puta po 2 €. Kažemo da su broj kugli i cijena <b>proporcionalne</b> veličine.
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Pravilo</h3>
+    <p class="big center" style="margin:4px 0">k = y : x</p>
+    <p class="center" style="margin:0">(cijena : broj komada) → <b>k</b> je cijena <b>jednog</b> komada</p>
+    <p class="center" style="margin:6px 0 0">Kad znaš k: &nbsp;<b>y = k · x</b></p>
+  </div>
+
+  <div class="card">
+    <h3>✍️ Pomoćni primjer – popuni tablicu</h3>
+    <p>Za <b>2 kugle</b> platiš <b>4 €</b>. &nbsp;k = 4 : 2 = <b>2</b></p>
+    <table class="ptable" id="pTable">
+      <tr><th>Broj kugli (x)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+      <tr><th>Cijena € (y)</th><td>2</td><td>4</td>
+        <td><input class="inp" data-v="6" inputmode="numeric" aria-label="cijena za 3"></td>
+        <td><input class="inp" data-v="8" inputmode="numeric" aria-label="cijena za 4"></td>
+        <td><input class="inp" data-v="10" inputmode="numeric" aria-label="cijena za 5"></td></tr>
+    </table>
+    <div class="center"><button class="btn" id="pCheck">Provjeri tablicu</button></div>
+    <p class="fb center" id="pFb"></p>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="2" data-solution="k = 6 : 3 = 2 € (jedna bilježnica)">
+      <p class="q">3 bilježnice koštaju 6 €. Koliki je k (cijena jedne bilježnice)?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>k = cijena : broj komada = 6 : 3</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="14" data-solution="y = k · x = 2 · 7 = 14 €">
+      <p class="q">Koliko košta 7 bilježnica?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> € <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Pomnoži k (iz prošlog zadatka) sa 7.</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== JEDNADŽBE ===================== -->
+<section id="jednadzbe" class="lesson" hidden>
+  <h2>⚖️ Linearne jednadžbe</h2>
+  <p class="goal">Cilj: riješiti jednadžbu po shemi i <b>paziti na predznake</b>.</p>
+
+  <div class="box life">
+    <h3>⚖️ Jednadžba je kao vaga</h3>
+    Lijeva i desna strana moraju biti u ravnoteži. Što napraviš na jednoj strani, napravi i na drugoj.
+  </div>
+
+  <div class="two-col">
+    <div class="box rule" style="margin:0">
+      <h3>📌 Shema u 4 koraka</h3>
+      <ol class="scheme">
+        <li>Oslobodi se zagrada</li>
+        <li><b>x</b> lijevo, brojevi desno</li>
+        <li>Izračunaj (sredi)</li>
+        <li>Podijeli s brojem uz x</li>
+      </ol>
+    </div>
+    <div class="box warn" style="margin:0">
+      <h3>⚠️ Pazi na predznak!</h3>
+      <p style="margin:4px 0"><b>+( )</b> → ništa ne mijenjaš</p>
+      <p style="margin:4px 0"><b>−( )</b> → <b>svi</b> predznaci u zagradi se mijenjaju<br><span class="muted">−(x + 1) = −x − 1</span></p>
+      <p style="margin:4px 0"><b>2( )</b> → 2 množi <b>svaki</b> član<br><span class="muted">2(x + 3) = 2x + 6</span></p>
+      <p style="margin:4px 0">Broj prelazi na drugu stranu → <b>mijenja predznak</b></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔍 Riješimo zajedno: &nbsp;5 − (x + 1) = 2</h3>
+    <div id="eqSteps"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="eqNext">Sljedeći korak ▶</button>
+      <button class="btn light" id="eqReset">Ispočetka</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="4" data-solution="2x + 2 = 10 → 2x = 8 → x = 4">
+      <p class="q">2(x + 1) = 10 &nbsp;&nbsp; x = ?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Korak 1: 2 množi oba člana → 2x + 2 = 10</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="3" data-solution="7 − x + 2 = 6 → 9 − x = 6 → −x = −3 → x = 3">
+      <p class="q">7 − (x − 2) = 6 &nbsp;&nbsp; x = ?</p>
+      <div class="row"><input inputmode="decimal" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Minus ispred zagrade: −(x − 2) = −x <b>+ 2</b>. Zatim 9 − x = 6.</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== VEKTORI ===================== -->
+<section id="vektori" class="lesson" hidden>
+  <h2>➡️ Vektori – zbrajanje i oduzimanje</h2>
+  <p class="goal">Cilj: grafički zbrojiti i oduzeti dva vektora.</p>
+
+  <div class="box life">
+    <h3>🚶 Iz života</h3>
+    Od kuće hodaš <b>3 ulice desno i 1 gore</b> (vektor <b style="color:var(--blue)">a</b>), zatim <b>1 desno i 2 gore</b> (vektor <b style="color:var(--red)">b</b>).<br>
+    Gdje si na kraju? Strelica od kuće do cilja je <b style="color:var(--green)">a + b</b>.
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:center;margin-bottom:10px">
+      <button class="btn small" id="vSum" aria-pressed="true">a + b</button>
+      <button class="btn small light" id="vDiff" aria-pressed="false">a − b</button>
+    </div>
+    <div id="vecSvg"></div>
+    <div id="vecText" style="margin-top:12px"></div>
+  </div>
+
+  <div class="box tip">
+    <h3>📏 Kako to nacrtati na papiru (ravnalo)</h3>
+    <ol class="steps">
+      <li><b>Na kariranom papiru:</b> ne moraš mjeriti! Samo prebroji kvadratiće: <i>koliko desno, koliko gore</i>.</li>
+      <li><b>S ravnalom:</b> stavi <b>0</b> ravnala na početak vektora b i očitaj duljinu (npr. 3 cm).</li>
+      <li>Pomakni ravnalo tako da <b>0</b> bude na <b>kraju vektora a</b>. Drži ravnalo u <b>istom smjeru</b> kao b.</li>
+      <li>Nacrtaj isto toliko cm (3 cm) i dodaj vrh strelice.</li>
+      <li>Spoji <b>početak a</b> s <b>novim vrhom</b> → to je rezultat. Oboji ga zeleno.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="7" data-solution="4 + 3 = 7 kvadratića udesno">
+      <p class="q">Vektor a ide 4 kvadratića udesno, vektor b ide 3 kvadratića udesno. Koliko kvadratića udesno ide a + b?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Nadoveži b na kraj a – isti smjer, pa samo zbroji.</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="1" data-solution="a − b = a + (−b): 4 desno pa 3 lijevo → 1 desno">
+      <p class="q">Isti vektori: koliko kvadratića udesno ide a − b?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>−b je strelica okrenuta na suprotnu stranu (3 ulijevo).</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== TRANSLACIJA ===================== -->
+<section id="translacija" class="lesson" hidden>
+  <h2>🔺 Translacija – pomicanje lika</h2>
+  <p class="goal">Cilj: pomaknuti trokut za zadani vektor na kariranom papiru.</p>
+
+  <div class="box life">
+    <h3>♟️ Iz života</h3>
+    Kad pomakneš figuru na ploči, ona se <b>ne okreće i ne mijenja veličinu</b> – samo „klizne”. To je translacija.
+  </div>
+
+  <div class="card">
+    <div id="trSvg"></div>
+    <div class="legend"><span><i style="background:var(--blue)"></i>original (plava bojica)</span><span><i style="background:var(--red)"></i>slika (crvena bojica)</span><span><i style="background:var(--green)"></i>vektor v</span></div>
+    <p id="trText" class="center" style="font-weight:700;min-height:30px"></p>
+    <div class="row" style="justify-content:center">
+      <button class="btn" id="trNext">Pomakni sljedeći vrh ▶</button>
+      <button class="btn light" id="trReset">Ispočetka</button>
+    </div>
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Postupak</h3>
+    <ol class="steps">
+      <li>Pročitaj vektor: <b>koliko desno</b> i <b>koliko gore</b> (ovdje 5 desno, 2 gore).</li>
+      <li>Od <b>svakog vrha</b> odbroji kvadratiće i označi novu točku (A', B', C').</li>
+      <li>Spoji nove točke <b>crvenom</b> bojicom.</li>
+      <li>Provjeri: novi lik mora biti <b>jednak</b> originalu.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="6" data-solution="A(2, 3) → 4 desno: x = 2 + 4 = 6">
+      <p class="q">Točka A(2, 3) pomiče se za vektor <b>4 desno, 1 gore</b>. Koja je <b>x</b>-koordinata točke A'?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Desno → dodaj na x: 2 + 4</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="4" data-solution="Gore → dodaj na y: 3 + 1 = 4. A'(6, 4)">
+      <p class="q">A koja je <b>y</b>-koordinata točke A'?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Gore → dodaj na y: 3 + 1</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== MJERNE JEDINICE ===================== -->
+<section id="jedinice" class="lesson" hidden>
+  <h2>📏 Mjerne jedinice – stepenice</h2>
+  <p class="goal">Cilj: pretvoriti veću jedinicu u manju (m → cm, kg → g).</p>
+
+  <div class="box life">
+    <h3>🧁 Iz života</h3>
+    U receptu piše 1 kg brašna, a vaga pokazuje grame. Koliko grama trebaš? <b>1 kg = 1 000 g</b>.
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Pravilo stepenica</h3>
+    <p style="margin:0">⬇️ <b>Silaziš</b> (veća → manja jedinica): <b>množiš</b> – broj postaje veći.<br>
+    ⬆️ <b>Penješ se</b> (manja → veća): dijeliš.</p>
+  </div>
+
+  <div class="card">
+    <h3>Duljina</h3>
+    <div id="stairLen"></div>
+    <h3 style="margin-top:16px">Masa</h3>
+    <div id="stairMass"></div>
+  </div>
+
+  <div class="card">
+    <h3>🧮 Pretvarač – probaj sam</h3>
+    <div class="row">
+      <input class="inp" id="cvNum" value="3" inputmode="decimal" aria-label="broj">
+      <select id="cvFrom" aria-label="iz jedinice"></select> u
+      <select id="cvTo" aria-label="u jedinicu"></select>
+    </div>
+    <div id="cvOut" style="margin-top:12px;font-size:21px"></div>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="300" data-solution="m → cm: 2 stepenice dolje, ×10 ×10 = ×100 → 3 · 100 = 300 cm">
+      <p class="q">3 m = ? cm</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> cm <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Od m do cm su 2 stepenice: ×10 i ×10.</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="2000" data-solution="kg → g: ×1000 → 2 · 1000 = 2 000 g">
+      <p class="q">2 kg = ? g</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> g <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>1 kg = 1 000 g</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== DIJAGRAMI ===================== -->
+<section id="dijagrami" class="lesson" hidden>
+  <h2>📊 Dijagrami</h2>
+  <p class="goal">Cilj: pročitati podatke s dijagrama relativnih frekvencija.</p>
+
+  <div class="box life">
+    <h3>🐶 Iz života</h3>
+    U 7.b razredu pitali smo: <b>„Koji je tvoj omiljeni ljubimac?”</b> Rezultate smo nacrtali na dva načina.
+    <br><b>Relativna frekvencija</b> = koliki <b>dio</b> (postotak) razreda je odabrao taj odgovor. Sve zajedno = 100 %.
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Stupčasti dijagram</h3>
+      <div id="barChart"></div>
+      <p class="muted center" style="font-size:15px">Klikni stupac 👆</p>
+      <p class="center" id="barInfo" style="font-weight:800;min-height:28px"></p>
+    </div>
+    <div class="card">
+      <h3>Kružni dijagram</h3>
+      <div class="pie" id="pie"></div>
+      <div class="legend" id="pieLegend"></div>
+    </div>
+  </div>
+
+  <div class="box rule">
+    <h3>📌 Kako čitam dijagram</h3>
+    <ol class="steps">
+      <li>Pročitaj <b>naslov</b> – o čemu se radi?</li>
+      <li><b>Najviši stupac</b> / najveći dio kruga = najčešći odgovor.</li>
+      <li>Za točan broj pogledaj <b>vrh stupca</b> i prati crtu do brojeva lijevo.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Vježba</h3>
+    <div class="task" data-answer="pas|psa|psi" data-solution="Najviši stupac je pas (40 %)">
+      <p class="q">Koji je ljubimac najomiljeniji u razredu?</p>
+      <div class="row"><input aria-label="odgovor" style="width:150px"> <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Potraži najviši stupac.</p><p class="fb"></p>
+    </div>
+    <div class="task" data-answer="20" data-solution="Stupac za hrčka ide do 20 %">
+      <p class="q">Koliko posto učenika najviše voli hrčka?</p>
+      <div class="row"><input inputmode="numeric" aria-label="odgovor"> % <button class="btn check">Provjeri</button><button class="btn light hintbtn">💡</button></div>
+      <p class="hint" hidden>Pogledaj vrh stupca „hrčak”.</p><p class="fb"></p>
+    </div>
+  </div>
+  <div class="nav"></div>
+</section>
+
+<!-- ===================== TEST ===================== -->
+<section id="test" hidden>
+  <h2>📝 Probni test</h2>
+  <div id="testBox"></div>
+</section>
+
+</main>
+
+<div id="pause" role="dialog" aria-label="Mini pauza">
+  <div>
+    <h2 style="margin:0">🌿 Mini pauza</h2>
+    <div class="breath" id="breath"></div>
+    <p class="big" id="breathTxt">Udahni…</p>
+    <p id="pauseLeft" style="opacity:.8">60 s</p>
+    <button class="btn light" onclick="closePause()">Gotovo, nastavljam</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const ORDER = ['potencije','postotak','proporcionalnost','jednadzbe','vektori','translacija','jedinice','dijagrami'];
+const NAMES = {potencije:'Potencije',postotak:'Postotak',proporcionalnost:'Proporcionalnost',jednadzbe:'Jednadžbe',vektori:'Vektori',translacija:'Translacija',jedinice:'Mjerne jedinice',dijagrami:'Dijagrami'};
+const C = {blue:'#2563eb', red:'#dc2626', green:'#15803d', orange:'#c2410c', purple:'#7c3aed', gray:'#94a3b8'};
+
+/* ---------- navigacija i napredak ---------- */
+function loadDone(){ try{ return JSON.parse(localStorage.getItem('m7done')||'[]'); }catch(e){ return []; } }
+function saveDone(arr){ try{ localStorage.setItem('m7done', JSON.stringify(arr)); }catch(e){} }
+function markDone(id){ const d = loadDone(); if(!d.includes(id)){ d.push(id); saveDone(d); } refreshTiles(); }
+function refreshTiles(){ const d = loadDone(); $$('.tile[data-l]').forEach(t => t.classList.toggle('done', d.includes(t.dataset.l))); }
+function go(id){ $$('main > section').forEach(s => s.hidden = s.id !== id); window.scrollTo(0,0); }
+$$('.tile[data-l]').forEach(t => t.onclick = () => go(t.dataset.l));
+
+ORDER.forEach((id, i) => {
+  const nav = document.querySelector('#' + id + ' .nav');
+  const next = ORDER[i+1];
+  nav.innerHTML = `<button class="btn light">← Početna</button>
+    <button class="btn green">${next ? 'Gotovo ✓ &nbsp;Dalje: ' + NAMES[next] + ' →' : 'Gotovo ✓ &nbsp;Na probni test →'}</button>`;
+  nav.children[0].onclick = () => go('home');
+  nav.children[1].onclick = () => { markDone(id); if(next) go(next); else { go('test'); startTest(); } };
+});
+refreshTiles();
+
+/* ---------- vježbe (zajednička logika) ---------- */
+function norm(v){ return String(v).trim().toLowerCase().replace(/\s/g,'').replace(',', '.'); }
+function isRight(input, answers){
+  const v = norm(input); if(!v) return false;
+  return answers.split('|').some(a => { const n = norm(a); return (!isNaN(+v) && !isNaN(+n)) ? +v === +n : v === n; });
+}
+$$('.task').forEach(task => {
+  const inp = task.querySelector('input'), fb = task.querySelector('.fb'), hint = task.querySelector('.hint');
+  let tries = 0;
+  const check = () => {
+    if(!inp.value.trim()){ fb.className = 'fb no'; fb.textContent = 'Upiši odgovor 🙂'; return; }
+    if(isRight(inp.value, task.dataset.answer)){
+      task.classList.add('ok'); fb.className = 'fb ok'; fb.textContent = '✓ Bravo! ' + task.dataset.solution;
+    } else {
+      tries++; task.classList.remove('ok'); fb.className = 'fb no';
+      if(tries === 1){ fb.textContent = 'Još nije. Pogledaj pomoć 💡 i pokušaj ponovo.'; hint.hidden = false; }
+      else fb.textContent = 'Rješenje: ' + task.dataset.solution + ' – upiši ga da zapamtiš.';
+    }
+  };
+  task.querySelector('.check').onclick = check;
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') check(); });
+  task.querySelector('.hintbtn').onclick = () => hint.hidden = !hint.hidden;
+});
+
+/* ---------- SVG pomoćne funkcije (koordinatna mreža) ---------- */
+function G(cols, rows, cell = 40){ return {cols, rows, cell, w: cols*cell, h: rows*cell, X: x => x*cell, Y: y => (rows - y)*cell}; }
+function svgGrid(g, inner, extra = ''){
+  let s = '';
+  for(let i = 0; i <= g.cols; i++) s += `<line class="gl" x1="${i*g.cell}" y1="0" x2="${i*g.cell}" y2="${g.h}"/>`;
+  for(let j = 0; j <= g.rows; j++) s += `<line class="gl" x1="0" y1="${j*g.cell}" x2="${g.w}" y2="${j*g.cell}"/>`;
+  return `<svg class="grid-svg" viewBox="-6 -6 ${g.w+12} ${g.h+12}" ${extra}>${s}${inner}</svg>`;
+}
+function arrow(g, p, q, color, label = '', o = {}){
+  const x1 = g.X(p[0]), y1 = g.Y(p[1]), x2 = g.X(q[0]), y2 = g.Y(q[1]);
+  const a = Math.atan2(y2 - y1, x2 - x1), L = 16, W = 8;
+  const bx = x2 - L*Math.cos(a), by = y2 - L*Math.sin(a);
+  const pts = `${x2},${y2} ${bx + W*Math.sin(a)},${by - W*Math.cos(a)} ${bx - W*Math.sin(a)},${by + W*Math.cos(a)}`;
+  const side = o.side ?? 1, mx = (x1 + x2)/2 + side*18*Math.sin(a), my = (y1 + y2)/2 - side*18*Math.cos(a);
+  return `<g opacity="${o.op ?? 1}"><line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${color}" stroke-width="${o.w ?? 5}" stroke-linecap="round" ${o.dash ? 'stroke-dasharray="6 6"' : ''}/>
+    <polygon points="${pts}" fill="${color}"/>${label ? `<text x="${mx}" y="${my}" fill="${color}" font-size="22" text-anchor="middle" dominant-baseline="middle">${label}</text>` : ''}</g>`;
+}
+function dot(g, p, color, label = '', dx = 8, dy = -10){
+  return `<circle cx="${g.X(p[0])}" cy="${g.Y(p[1])}" r="6" fill="${color}"/>${label ? `<text x="${g.X(p[0]) + dx}" y="${g.Y(p[1]) + dy}" fill="${color}" font-size="20">${label}</text>` : ''}`;
+}
+function poly(g, pts, color, fill = .18){
+  return `<polygon points="${pts.map(p => g.X(p[0]) + ',' + g.Y(p[1])).join(' ')}" fill="${color}" fill-opacity="${fill}" stroke="${color}" stroke-width="4" stroke-linejoin="round"/>`;
+}
+
+/* ---------- POTENCIJE ---------- */
+(function(){
+  const t = $('#powTable');
+  for(let n = 1; n <= 9; n++){
+    const tr = document.createElement('tr'); tr.dataset.n = n;
+    tr.innerHTML = `<td>10<sup>${n}</sup></td><td>1<span class="zeros">${'0'.repeat(n)}</span></td><td>${n}</td>`;
+    t.appendChild(tr);
+  }
+  const ex = [
+    {txt:'👥 Ljudi u Hrvatskoj', d:4, n:6},
+    {txt:'🏙️ Stanovnici Zagreba', d:8, n:5},
+    {txt:'💡 Brzina svjetlosti (km/s)', d:3, n:5},
+    {txt:'🌍 Ljudi na Zemlji', d:8, n:9},
+  ];
+  const fmt = s => s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const box = $('#sciBtns');
+  ex.forEach(e => {
+    const b = document.createElement('button'); b.className = 'btn light small'; b.textContent = e.txt;
+    b.onclick = () => {
+      const zeros = fmt('1' + '0'.repeat(e.n)).slice(1);
+      $('#sciOut').innerHTML = `<div class="bignum">${e.d}<span class="zeros">${zeros}</span></div>
+        <p class="center" style="margin:4px 0">Iza <b>${e.d}</b> ima <b class="zeros">${e.n}</b> nula</p>
+        <p class="bignum" style="color:var(--blue)">${e.d} · 10<sup>${e.n}</sup></p>`;
+      $$('#powTable tr').forEach(r => r.classList.toggle('hl', +r.dataset.n === e.n));
+    };
+    box.appendChild(b);
+  });
+  box.firstChild.click();
+})();
+
+/* ---------- POSTOTAK ---------- */
+(function(){
+  const items = [{n:'👟 Tenisice', p:60}, {n:'👕 Majica', p:20}, {n:'🎒 Ruksak', p:40}];
+  let item = items[0], pct = 20;
+  const h = $('#hundred'); for(let i = 0; i < 100; i++) h.appendChild(document.createElement('span'));
+  const ib = $('#pctItems'), pb = $('#pctBtns');
+  items.forEach(it => { const b = document.createElement('button'); b.className = 'btn small light'; b.textContent = `${it.n} ${it.p} €`; b.onclick = () => { item = it; draw(); }; b.dataset.p = it.p; ib.appendChild(b); });
+  [10, 20, 50].forEach(p => { const b = document.createElement('button'); b.className = 'btn small light'; b.textContent = `−${p} %`; b.dataset.pct = p; b.onclick = () => { pct = p; draw(); }; pb.appendChild(b); });
+  const e = x => String(x).replace('.', ',');
+  function draw(){
+    [...ib.children].forEach(b => b.setAttribute('aria-pressed', +b.dataset.p === item.p));
+    [...pb.children].forEach(b => b.setAttribute('aria-pressed', +b.dataset.pct === pct));
+    [...h.children].forEach((s, i) => s.classList.toggle('on', i < pct));
+    const ten = item.p/10, disc = item.p*pct/100;
+    let how = pct === 10 ? `${item.p} : 10 = <b>${e(ten)} €</b>`
+            : pct === 20 ? `10 % = ${e(ten)} €, pa 20 % = ${e(ten)} · 2 = <b>${e(disc)} €</b>`
+            : `50 % = pola → ${item.p} : 2 = <b>${e(disc)} €</b>`;
+    $('#pctOut').innerHTML = `<p class="calc-line">${item.n}: <b>${item.p} €</b> <span class="tag">−${pct} %</span></p>
+      <p class="calc-line">Popust: ${how}</p>
+      <p class="calc-line">Nova cijena: ${item.p} − ${e(disc)} = <b style="color:var(--green);font-size:26px">${e(item.p - disc)} €</b></p>
+      <p class="muted" style="font-size:16px">Narančasti kvadratići (${pct} od 100) = dio koji ne plaćaš.</p>`;
+  }
+  draw();
+})();
+
+/* ---------- PROPORCIONALNOST ---------- */
+$('#pCheck').onclick = () => {
+  let ok = 0; const ins = $$('#pTable input');
+  ins.forEach(i => { const good = +norm(i.value) === +i.dataset.v && i.value.trim() !== ''; i.style.borderColor = good ? C.green : C.orange; if(good) ok++; });
+  $('#pFb').className = 'fb center ' + (ok === 3 ? 'ok' : 'no');
+  $('#pFb').textContent = ok === 3 ? '✓ Super! Svaki put računaš k · x = 2 · x' : `Točno: ${ok} od 3. Pomoć: cijena = 2 · broj kugli`;
+};
+
+/* ---------- JEDNADŽBE ---------- */
+(function(){
+  const steps = [
+    ['5 − x − 1 = 2', '① Minus ispred zagrade → mijenjaj predznake: +x postaje −x, +1 postaje −1'],
+    ['4 − x = 2', '③ Sredi lijevu stranu: 5 − 1 = 4'],
+    ['−x = 2 − 4', '② Broj 4 prelazi desno → mijenja predznak'],
+    ['−x = −2', '③ Izračunaj: 2 − 4 = −2'],
+    ['x = 2', '④ Pomnoži (podijeli) s −1'],
+    ['5 − (2 + 1) = 2 ✓', '✔ Provjera: 5 − 3 = 2. Točno!'],
+  ];
+  let k = 0;
+  const out = $('#eqSteps');
+  const render = () => {
+    out.innerHTML = `<div class="eq-line"><b>5 − (x + 1) = 2</b><span class="why">početak</span></div>` +
+      steps.slice(0, k).map(s => `<div class="eq-line"><b>${s[0]}</b><span class="why">${s[1]}</span></div>`).join('');
+    $('#eqNext').disabled = k >= steps.length;
+    $('#eqNext').style.opacity = k >= steps.length ? .4 : 1;
+  };
+  $('#eqNext').onclick = () => { k++; render(); };
+  $('#eqReset').onclick = () => { k = 0; render(); };
+  render();
+})();
+
+/* ---------- VEKTORI ---------- */
+(function(){
+  const g = G(10, 7, 44);
+  const O = [1, 2], A = [4, 3];
+  function draw(mode){
+    $('#vSum').setAttribute('aria-pressed', mode === 'sum'); $('#vDiff').setAttribute('aria-pressed', mode === 'diff');
+    $('#vSum').classList.toggle('light', mode !== 'sum'); $('#vDiff').classList.toggle('light', mode !== 'diff');
+    let inner = `<text x="${g.X(6.6)}" y="${g.Y(4)}" font-size="16" fill="#64748b">zadani b:</text>` + arrow(g, [7, 1], [8, 3], C.red, 'b');
+    inner += arrow(g, O, A, C.blue, 'a', {side: -1});
+    let text;
+    if(mode === 'sum'){
+      inner += arrow(g, A, [5, 5], C.red, 'b') + arrow(g, O, [5, 5], C.green, 'a+b', {dash: true});
+      text = `<ol class="steps"><li>Nacrtaj <b style="color:var(--blue)">a</b> (3 desno, 1 gore).</li>
+        <li>Na <b>kraj</b> od a nadoveži <b style="color:var(--red)">b</b> (1 desno, 2 gore).</li>
+        <li>Spoji <b>početak a</b> i <b>kraj b</b> → <b style="color:var(--green)">a + b</b> (4 desno, 3 gore).</li></ol>`;
+    } else {
+      inner += arrow(g, A, [3, 1], C.orange, '−b') + arrow(g, O, [3, 1], C.green, 'a−b', {dash: true});
+      text = `<ol class="steps"><li>Oduzimanje = dodaj <b>suprotni</b> vektor: a − b = a + (<b style="color:var(--orange)">−b</b>).</li>
+        <li><b style="color:var(--orange)">−b</b> je b okrenut naopako (1 <b>lijevo</b>, 2 <b>dolje</b>).</li>
+        <li>Nadoveži −b na kraj a i spoji početak a s krajem −b → <b style="color:var(--green)">a − b</b>.</li></ol>`;
+    }
+    inner += dot(g, O, '#111', 'početak', -20, 24);
+    $('#vecSvg').innerHTML = svgGrid(g, inner);
+    $('#vecText').innerHTML = text;
+  }
+  $('#vSum').onclick = () => draw('sum');
+  $('#vDiff').onclick = () => draw('diff');
+  draw('sum');
+})();
+
+/* ---------- TRANSLACIJA ---------- */
+(function(){
+  const g = G(12, 9, 40), v = [5, 2];
+  const P = {A: [1, 1], B: [4, 1], C: [1, 4]};
+  const keys = ['A', 'B', 'C'];
+  let k = 0;
+  const msgs = ['Vektor v: 5 desno, 2 gore. Klikni gumb ▶',
+    'A: 5 kvadratića desno, 2 gore → A\'', 'B: 5 desno, 2 gore → B\'', 'C: 5 desno, 2 gore → C\'',
+    'Spoji A\', B\', C\' crvenom bojicom. Gotovo! 🎉'];
+  function draw(){
+    let s = poly(g, keys.map(n => P[n]), C.blue) + arrow(g, [1, 6], [6, 8], C.green, 'v');
+    keys.forEach(n => s += dot(g, P[n], C.blue, n, -22, 22));
+    keys.slice(0, Math.min(k, 3)).forEach(n => {
+      const Q = [P[n][0] + v[0], P[n][1] + v[1]];
+      s += arrow(g, P[n], Q, C.green, '', {dash: true, w: 3, op: .7}) + dot(g, Q, C.red, n + '\'', 8, 22);
+    });
+    if(k >= 4) s += poly(g, keys.map(n => [P[n][0] + v[0], P[n][1] + v[1]]), C.red);
+    $('#trSvg').innerHTML = svgGrid(g, s);
+    $('#trText').textContent = msgs[k];
+    $('#trNext').disabled = k >= 4; $('#trNext').style.opacity = k >= 4 ? .4 : 1;
+  }
+  $('#trNext').onclick = () => { k++; draw(); };
+  $('#trReset').onclick = () => { k = 0; draw(); };
+  draw();
+})();
+
+/* ---------- MJERNE JEDINICE ---------- */
+const UNITS = {
+  len:  {u: ['km', 'm', 'dm', 'cm', 'mm'], f: [1000, 10, 10, 10], color: C.blue},
+  mass: {u: ['t', 'kg', 'dag', 'g'], f: [1000, 100, 10], color: C.purple},
+};
+function stairs(set, hl = null){
+  const n = set.u.length, sw = 96, sh = 44, W = n*sw, H = n*sh + 10;
+  let s = '';
+  set.u.forEach((u, i) => {
+    const on = hl && hl.includes(i);
+    s += `<rect x="${i*sw}" y="${i*sh}" width="${sw - 4}" height="${H - i*sh - 10}" rx="8" fill="${set.color}" fill-opacity="${on ? .45 : .14}"/>
+      <text x="${i*sw + sw/2 - 2}" y="${i*sh + 30}" text-anchor="middle" font-size="22" fill="${set.color}">${u}</text>`;
+    if(i < n - 1) s += `<text x="${(i + 1)*sw - 2}" y="${(i + 1)*sh + 4}" text-anchor="middle" font-size="15" fill="#111" font-weight="800">×${set.f[i]}</text>`;
+  });
+  return `<svg viewBox="-4 -4 ${W + 8} ${H + 8}" style="width:100%;max-width:${W}px;display:block;margin:0 auto">${s}</svg>`;
+}
+$('#stairLen').innerHTML = stairs(UNITS.len);
+$('#stairMass').innerHTML = stairs(UNITS.mass) + '<p class="center muted" style="font-size:16px;margin:6px 0 0">Prečac: kg → g = ×1 000</p>';
+(function(){
+  const all = [...UNITS.len.u.map(u => ['len', u]), ...UNITS.mass.u.map(u => ['mass', u])];
+  const opt = (sel, def) => { sel.innerHTML = all.map(([c, u]) => `<option value="${c}:${u}" ${u === def ? 'selected' : ''}>${u}</option>`).join(''); };
+  opt($('#cvFrom'), 'm'); opt($('#cvTo'), 'cm');
+  const fmt = x => (+x.toFixed(6)).toString().replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  function run(){
+    const [c1, u1] = $('#cvFrom').value.split(':'), [c2, u2] = $('#cvTo').value.split(':');
+    const num = parseFloat(norm($('#cvNum').value));
+    const out = $('#cvOut');
+    if(c1 !== c2){ out.innerHTML = '⚠️ Ne može: duljinu ne možemo pretvoriti u masu.'; return; }
+    if(isNaN(num)){ out.innerHTML = 'Upiši broj.'; return; }
+    const set = UNITS[c1], i = set.u.indexOf(u1), j = set.u.indexOf(u2);
+    if(i === j){ out.innerHTML = `${fmt(num)} ${u1} = ${fmt(num)} ${u2} 🙂`; return; }
+    const lo = Math.min(i, j), hi = Math.max(i, j), fs = set.f.slice(lo, hi), F = fs.reduce((a, b) => a*b, 1);
+    const down = j > i;
+    out.innerHTML = `${down ? '⬇️ Silazimo' : '⬆️ Penjemo se'} ${hi - lo} ${hi - lo === 1 ? 'stepenicu' : 'stepenice'}: ${fs.map(f => (down ? '×' : ':') + f).join(' ')} = <b>${down ? '×' : ':'}${fmt(F)}</b><br>
+      <span class="big">${fmt(num)} ${u1} = <span style="color:var(--green)">${fmt(down ? num*F : num/F)} ${u2}</span></span>`;
+    $('#stair' + (c1 === 'len' ? 'Len' : 'Mass')).innerHTML = stairs(set, Array.from({length: hi - lo + 1}, (_, x) => lo + x)) + (c1 === 'mass' ? '<p class="center muted" style="font-size:16px;margin:6px 0 0">Prečac: kg → g = ×1 000</p>' : '');
+  }
+  ['#cvNum', '#cvFrom', '#cvTo'].forEach(s => $(s).addEventListener('input', run));
+  run();
+})();
+
+/* ---------- DIJAGRAMI ---------- */
+function barChart(data, title, onClick){
+  const W = 360, H = 250, left = 44, bottom = 210, max = 50, bw = 54, gap = (W - left - data.length*bw)/(data.length + 1);
+  const y = v => bottom - v/max*180;
+  let s = `<text x="${W/2}" y="16" text-anchor="middle" font-size="15" fill="#334155">${title}</text>`;
+  for(let v = 0; v <= max; v += 10) s += `<line x1="${left}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="#e2e8f0"/><text x="${left - 6}" y="${y(v) + 5}" text-anchor="end" font-size="13" fill="#64748b">${v} %</text>`;
+  data.forEach((d, i) => {
+    const x = left + gap + i*(bw + gap);
+    s += `<g style="cursor:pointer" data-i="${i}"><rect x="${x}" y="${y(d.v)}" width="${bw}" height="${bottom - y(d.v)}" rx="5" fill="${d.c}"/>
+      <text x="${x + bw/2}" y="${bottom + 20}" text-anchor="middle" font-size="14" fill="#334155">${d.n}</text></g>`;
+  });
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px;display:block;margin:0 auto">${s}</svg>`;
+  if(onClick) wrap.querySelectorAll('g[data-i]').forEach(gEl => gEl.onclick = () => onClick(data[+gEl.dataset.i]));
+  return wrap;
+}
+function pie(el, legend, data){
+  let a = 0;
+  el.style.background = `conic-gradient(${data.map(d => { const s = `${d.c} ${a}% ${a + d.v}%`; a += d.v; return s; }).join(',')})`;
+  legend.innerHTML = data.map(d => `<span><i style="background:${d.c}"></i>${d.n} ${d.v} %</span>`).join('');
+}
+(function(){
+  const pets = [{n:'pas', v:40, c:'#2563eb'}, {n:'mačka', v:30, c:'#f59e0b'}, {n:'hrčak', v:20, c:'#16a34a'}, {n:'ribica', v:10, c:'#ec4899'}];
+  $('#barChart').appendChild(barChart(pets, 'Omiljeni ljubimac – 7.b', d => $('#barInfo').textContent = `${d.n}: ${d.v} % učenika`));
+  pie($('#pie'), $('#pieLegend'), pets);
+})();
+
+/* ---------- PROBNI TEST ---------- */
+function testSvgVec(){
+  const g = G(8, 3, 40);
+  return svgGrid(g, arrow(g, [1, 2], [4, 2], C.blue, 'a') + arrow(g, [4, 1], [6, 1], C.red, 'b'));
+}
+function testSvgTr(){
+  const g = G(7, 5, 40);
+  return svgGrid(g, `<line x1="0" y1="${g.Y(0)}" x2="${g.w}" y2="${g.Y(0)}" stroke="#334155" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="${g.h}" stroke="#334155" stroke-width="2"/>` +
+    dot(g, [2, 1], C.blue, 'A(2, 1)', 8, 22) + arrow(g, [4, 2], [7, 4], C.green, 'v'));
+}
+function testSvgChart(){
+  return barChart([{n:'pješice', v:50, c:'#16a34a'}, {n:'autobus', v:30, c:'#2563eb'}, {n:'auto', v:20, c:'#f59e0b'}], 'Kako dolazimo u školu?').innerHTML;
+}
+const TEST = [
+  {l:'postotak', q:'Majica košta <b>30 €</b>. Popust je <b>10 %</b>. Koliko eura iznosi popust?', o:['3 €', '10 €', '27 €', '0,3 €'], c:0,
+   h:'10 % → podijeli s 10.', e:'30 : 10 = 3 €'},
+  {l:'postotak', q:'Tenisice koštaju <b>80 €</b>. Popust je <b>50 %</b>. Kolika je <b>nova cijena</b>?', o:['30 €', '40 €', '50 €', '8 €'], c:1,
+   h:'50 % = pola cijene.', e:'Popust = 80 : 2 = 40 €. Nova cijena = 80 − 40 = 40 €.'},
+  {l:'potencije', q:'Kako u znanstvenom zapisu pišemo <b>4 000 000</b>?', o:['4 · 10⁵', '40 · 10⁵', '4 · 10⁶', '4 · 10⁷'], c:2,
+   h:'Prebroji nule iza broja 4.', e:'Iza 4 je 6 nula → 4 · 10⁶.'},
+  {l:'potencije', q:'Koji je broj <b>3 · 10³</b>?', o:['30', '3 000', '300', '30 000'], c:1,
+   h:'10³ = 1 000 (tri nule).', e:'3 · 1 000 = 3 000.'},
+  {l:'jednadzbe', q:'Riješi jednadžbu: <b>2(x + 3) = 14</b>', o:['x = 4', 'x = 5,5', 'x = 8', 'x = 10'], c:0,
+   h:'Broj 2 množi SVAKI član u zagradi: 2x + 6 = 14', e:'2x + 6 = 14 → 2x = 8 → x = 4.'},
+  {l:'proporcionalnost', q:'<b>2 kg</b> jabuka košta <b>4 €</b>. Koliko košta <b>5 kg</b>?', o:['9 €', '20 €', '10 €', '7 €'], c:2,
+   h:'Prvo k = 4 : 2 (cijena 1 kg).', e:'k = 2 € po kg → 5 · 2 = 10 €.'},
+  {l:'vektori', q:'Koliko kvadratića udesno ide vektor <b>a + b</b>?', svg:testSvgVec, o:['1', '5', '6', '3'], c:1,
+   h:'Nadoveži b na kraj a i prebroji.', e:'a = 3 desno, b = 2 desno → 3 + 2 = 5.'},
+  {l:'translacija', q:'Točku A pomakni za vektor <b>v</b> (3 desno, 2 gore). Gdje je A\'?', svg:testSvgTr, o:['(5, 3)', '(3, 5)', '(5, 1)', '(2, 3)'], c:0,
+   h:'Desno → dodaj na x. Gore → dodaj na y.', e:'x: 2 + 3 = 5, y: 1 + 2 = 3 → A\'(5, 3).'},
+  {l:'jedinice', q:'Koliko je <b>4 m</b> u centimetrima?', o:['40 cm', '4 000 cm', '400 cm', '0,4 cm'], c:2,
+   h:'m → cm: 2 stepenice dolje, ×10 ×10 = ×100', e:'4 · 100 = 400 cm.'},
+  {l:'dijagrami', q:'Koliko posto učenika dolazi u školu <b>autobusom</b>?', svg:testSvgChart, o:['20 %', '30 %', '50 %', '3 %'], c:1,
+   h:'Pronađi stupac „autobus” i pogledaj lijevo.', e:'Stupac „autobus” ide do 30 %.'},
+];
+let tIdx = 0, tAns = [];
+function startTest(){ tIdx = 0; tAns = []; renderQ(); }
+function renderQ(){
+  const box = $('#testBox');
+  if(tIdx >= TEST.length) return renderResult();
+  const t = TEST[tIdx];
+  box.innerHTML = `<p class="muted" style="margin:0">Pitanje ${tIdx + 1} od ${TEST.length} · ${NAMES[t.l]}</p>
+    <div class="progress"><div style="width:${tIdx/TEST.length*100}%"></div></div>
+    <div class="card">
+      <p class="big" style="font-size:23px;margin-top:0">${t.q}</p>
+      ${t.svg ? `<div style="margin:10px 0">${t.svg()}</div>` : ''}
+      <button class="btn light small" id="tHint">💡 Pomoć</button>
+      <p class="hint" id="tHintTxt" hidden>${t.h}</p>
+      <div class="opts">${t.o.map((o, i) => `<button class="opt" data-i="${i}">${o}</button>`).join('')}</div>
+      <div id="tFb"></div>
+    </div>`;
+  $('#tHint').onclick = () => $('#tHintTxt').hidden = false;
+  $$('.opt').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i, ok = i === t.c;
+    tAns.push(ok);
+    $$('.opt').forEach(x => { x.disabled = true; if(+x.dataset.i === t.c) x.classList.add('right'); });
+    if(!ok) b.classList.add('wrong');
+    $('#tFb').innerHTML = `<div class="box ${ok ? 'tip' : 'warn'}" style="margin-bottom:0"><b>${ok ? '✓ Točno!' : '✗ Nije točno.'}</b> ${t.e}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="tNext">${tIdx + 1 < TEST.length ? 'Sljedeće pitanje →' : 'Pogledaj rezultat 🎉'}</button></div>`;
+    $('#tNext').onclick = () => { tIdx++; renderQ(); window.scrollTo(0, 0); };
+    $('#tNext').focus();
+  });
+}
+function renderResult(){
+  const n = tAns.filter(Boolean).length;
+  const stars = n >= 9 ? 3 : n >= 6 ? 2 : n >= 3 ? 1 : 0;
+  const msg = n >= 9 ? 'Odlično! Spreman/spremna si za test! 🏆' : n >= 6 ? 'Vrlo dobro! Ponovi lekcije ispod i bit će savršeno.' : 'Dobar početak! Ponovi lekcije ispod – jednu po jednu.';
+  const wrong = [...new Set(TEST.filter((_, i) => !tAns[i]).map(t => t.l))];
+  $('#testBox').innerHTML = `<div class="card center">
+      <div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>
+      <p class="big">${n} / ${TEST.length} točno</p><p>${msg}</p>
+      ${wrong.length ? `<p class="muted">Ponovi:</p><div class="row" style="justify-content:center">${wrong.map(l => `<button class="btn light small" onclick="go('${l}')">${NAMES[l]}</button>`).join('')}</div>` : ''}
+    </div>
+    <div class="card"><h3>Pregled</h3><ul class="res-list">${TEST.map((t, i) => `<li>${tAns[i] ? '✅' : '❌'} ${i + 1}. ${t.q.replace(/<[^>]+>/g, '')}<br><span class="muted" style="font-size:16px">${t.e}</span></li>`).join('')}</ul></div>
+    <div class="row" style="justify-content:center"><button class="btn" onclick="startTest()">🔁 Ponovi test</button><button class="btn light" onclick="go('home')">🏠 Početna</button></div>`;
+}
+
+/* ---------- MINI PAUZA ---------- */
+let pTimer = null;
+function openPause(){
+  $('#pause').classList.add('open');
+  let left = 60, phase = 0;
+  const tick = () => {
+    if(left % 4 === 0){ phase = 1 - phase; $('#breath').classList.toggle('in', phase === 1); $('#breathTxt').textContent = phase ? 'Udahni…' : 'Izdahni…'; }
+    $('#pauseLeft').textContent = left + ' s';
+    if(left-- <= 0){ closePause(); }
+  };
+  tick(); clearInterval(pTimer); pTimer = setInterval(tick, 1000);
+}
+function closePause(){ clearInterval(pTimer); $('#pause').classList.remove('open'); $('#breath').classList.remove('in'); }
+</script>
+</body>
+</html>
