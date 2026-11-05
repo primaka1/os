@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listen & Repeat – 10 rečenica</title>
+<style>
+:root{--b:#0879bd;--d:#12344d;--g:#16834b;--o:#f59e0b;--p:#6d28d9;--bg:#eff5f9}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#17212b}
+header{background:linear-gradient(135deg,#0069a8,#13a9ca);color:#fff;padding:20px 15px;text-align:center}
+header h1{margin:0;font-size:clamp(1.6rem,5.5vw,2.6rem)}
+header p{margin:6px 0 0}
+.wrap{max-width:760px;margin:auto;padding:14px}
+.card{background:#fff;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 5px 18px #12344d18}
+button{font:inherit;border:0;border-radius:12px;padding:13px 18px;background:var(--b);color:#fff;font-weight:700;cursor:pointer;margin:4px}
+button:hover{filter:brightness(.92)} button:disabled{opacity:.4;cursor:default}
+button.gray{background:#64748b} button.green{background:var(--g)} button.orange{background:var(--o)} button.purple{background:var(--p)} button.light{background:#e2e8f0;color:#17212b}
+.hud{position:sticky;top:8px;z-index:20;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.pillHud{background:linear-gradient(135deg,#5b21b6,#8b5cf6);color:#fff;border:3px solid #c4b5fd;border-radius:999px;padding:8px 16px;font-weight:900;box-shadow:0 6px 18px #5b21b655}
+.dots{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:6px 0 2px}
+.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:#dce6ed;color:#475569;border:3px solid transparent;cursor:pointer;padding:0;margin:0}
+.dot.done{background:#ede9fe;color:var(--p)} .dot.done::after{content:"💎";font-size:.9rem}
+.dot.done span{display:none}
+.dot.cur{border-color:var(--b)}
+.lesson{display:inline-block;background:#dff2ff;color:#075985;border-radius:99px;padding:5px 11px;font-weight:700;font-size:.9rem}
+.emoji{font-size:4rem;text-align:center;margin:8px 0}
+.en{font-size:clamp(1.6rem,6vw,2.3rem);font-weight:800;color:#075985;text-align:center;line-height:1.35;margin:6px 0}
+.en .w{border-radius:8px;padding:0 3px;transition:background .15s}
+.en .w.on{background:#fde68a}
+.hr{font-size:1.15rem;color:#475569;text-align:center;margin:8px 0 4px}
+.hr.hide{filter:blur(7px);user-select:none}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+.step{border:3px solid #e2e8f0;border-radius:16px;padding:12px;text-align:center;background:#fbfdff}
+.step.active{border-color:var(--b);background:#f0f9ff}
+.step.ok{border-color:var(--g);background:#f0fdf4}
+.step .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--d);color:#fff;font-weight:800}
+.step p{margin:6px 0;font-weight:700}
+.step button{width:100%;margin:4px 0}
+.fb{text-align:center;font-weight:800;min-height:26px;margin-top:10px}
+.fb.ok{color:var(--g)} .fb.no{color:#b45309}
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+.note{background:#fff7d6;border-left:5px solid #e4ae16;padding:12px 14px;border-radius:10px}
+.pop{position:fixed;left:50%;top:18%;transform:translate(-50%,-20px) scale(.8);opacity:0;background:linear-gradient(135deg,#6d28d9,#a855f7);color:#fff;border:3px solid #ddd6fe;border-radius:18px;padding:14px 22px;z-index:99;font-weight:900;text-align:center;transition:.3s;pointer-events:none}
+.pop.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.end{text-align:center} .end .big{font-size:3.5rem}
+.listAll{display:grid;gap:8px;text-align:left;margin:14px 0}
+.listAll div{background:#f8fafc;border-radius:10px;padding:10px 12px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>🗣️ Listen &amp; Repeat</h1><p>10 kratkih rečenica iz lekcija 2A, 2B i 3C</p></header>
+<main class="wrap">
+  <div class="hud"><div class="pillHud">💎 <span id="gems">0</span> / 10 dijamanata</div></div>
+  <div class="dots" id="dots"></div>
+
+  <div class="note" id="intro" style="margin-top:12px">
+    <b>Kako vježbati:</b> ① Poslušaj rečenicu &nbsp;② Ponovi je naglas &nbsp;③ Klikni <b>„Ponovio/la sam”</b>.
+    Ako ti ide brzo, klikni <b>🐢 Sporije</b>. Jedna rečenica = jedan 💎.
+  </div>
+
+  <section id="practice" class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <span class="lesson" id="lesson"></span>
+      <span style="font-weight:800;color:#075985" id="counter"></span>
+    </div>
+    <div class="emoji" id="emoji"></div>
+    <div class="en" id="en"></div>
+    <div class="hr" id="hr"></div>
+    <div style="text-align:center"><button class="light" id="toggleHr" style="padding:6px 12px;font-size:.9rem">🙈 Sakrij prijevod</button></div>
+
+    <div class="steps">
+      <div class="step active" id="s1"><span class="num">1</span><p>Poslušaj</p>
+        <button id="play">🔊 Poslušaj</button><button class="gray" id="slow">🐢 Sporije</button></div>
+      <div class="step" id="s2"><span class="num">2</span><p>Ponovi naglas</p>
+        <button class="orange" id="mic">🎤 Provjeri izgovor</button>
+        <small id="micInfo" style="color:#64748b">(nije obavezno)</small></div>
+      <div class="step" id="s3"><span class="num">3</span><p>Gotovo?</p>
+        <button class="green" id="done">✓ Ponovio/la sam</button></div>
+    </div>
+    <p class="fb" id="fb"></p>
+
+    <div class="nav">
+      <button class="light" id="prev">← Natrag</button>
+      <button id="next">Dalje →</button>
+    </div>
+  </section>
+
+  <section id="end" class="card end hidden">
+    <div class="big">🏆</div>
+    <h2>Bravo! Ponovio/la si svih 10 rečenica!</h2>
+    <p>Skupio/la si <b>10 💎</b>. Sad probaj poslušati sve rečenice zaredom.</p>
+    <button class="purple" id="playAll">🔊 Poslušaj sve zaredom</button>
+    <button class="gray" id="restart">🔁 Vježbaj ispočetka</button>
+    <div class="listAll" id="listAll"></div>
+  </section>
+</main>
+<div class="pop" id="pop"></div>
+
+<script>
+'use strict';
+const el = id => document.getElementById(id);
+const S = [
+  {l:'2A', e:'📦', en:'Manaia found a box.', hr:'Manaia je pronašla kutiju.'},
+  {l:'2A', e:'🧶', en:'The beanie is soft and white.', hr:'Kapa je mekana i bijela.'},
+  {l:'2A', e:'👵', en:'Her grandmother made the beanie.', hr:'Njezina baka izradila je kapu.'},
+  {l:'2A', e:'🪵', en:'The figurine is made of wood.', hr:'Figurica je izrađena od drveta.'},
+  {l:'2B', e:'🎣', en:'Maui wanted to go fishing.', hr:'Maui je želio ići u ribolov.'},
+  {l:'2B', e:'🛶', en:'Maui hid in the canoe.', hr:'Maui se sakrio u kanuu.'},
+  {l:'2B', e:'🏝️', en:'The fish became an island.', hr:'Riba je postala otok.'},
+  {l:'3C', e:'🐋', en:'Whales are mammals.', hr:'Kitovi su sisavci.'},
+  {l:'3C', e:'🐳', en:'A young whale is called a calf.', hr:'Mladunče kita zove se calf.'},
+  {l:'3C', e:'🌊', en:'Whales come to the surface to breathe.', hr:'Kitovi izranjaju na površinu da bi disali.'},
+];
+const LESSON = {'2A':'2A A Treasure Chest', '2B':"2B Maui's Fish", '3C':'3C Whale Record-Breakers'};
+
+const store = (() => { try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); return localStorage; } catch(e) { return {getItem:() => null, setItem:() => {}}; } })();
+let done = []; try { done = JSON.parse(store.getItem('listenRepeatDone') || '[]'); } catch(e) {}
+let i = Math.min(done.length, S.length - 1), heard = false, hideHr = false;
+
+/* ---------- govor ---------- */
+function voice(){ const v = speechSynthesis.getVoices(); return v.find(x => x.lang === 'en-GB') || v.find(x => x.lang.startsWith('en')) || null; }
+function speak(text, rate, onEnd){
+  if(!('speechSynthesis' in window)){ alert('Ovaj preglednik ne podržava glasovno čitanje. Probaj Chrome ili Edge.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang = 'en-GB'; u.rate = rate; u.voice = voice();
+  u.onboundary = ev => { if(ev.name && ev.name !== 'word') return; highlight(ev.charIndex); };
+  u.onend = () => { highlight(-1); if(onEnd) onEnd(); };
+  speechSynthesis.speak(u);
+}
+function highlight(charIndex){
+  document.querySelectorAll('#en .w').forEach(w => w.classList.toggle('on', charIndex >= +w.dataset.s && charIndex < +w.dataset.e));
+}
+function listened(){
+  heard = true;
+  el('s1').classList.add('ok'); el('s1').classList.remove('active'); el('s2').classList.add('active');
+  el('fb').className = 'fb'; el('fb').textContent = '🗣️ Sad ti! Ponovi rečenicu naglas.';
+}
+
+/* ---------- prikaz ---------- */
+function render(){
+  const s = S[i];
+  el('practice').classList.remove('hidden'); el('end').classList.add('hidden');
+  el('lesson').textContent = LESSON[s.l];
+  el('counter').textContent = `Rečenica ${i + 1} od ${S.length}`;
+  el('emoji').textContent = s.e;
+  let pos = 0;
+  el('en').innerHTML = s.en.split(' ').map(w => { const st = s.en.indexOf(w, pos); pos = st + w.length; return `<span class="w" data-s="${st}" data-e="${pos + 1}">${w}</span>`; }).join(' ');
+  el('hr').textContent = s.hr; el('hr').classList.toggle('hide', hideHr);
+  heard = false;
+  ['s1','s2','s3'].forEach(id => el(id).className = 'step');
+  el('s1').classList.add('active');
+  const isDone = done.includes(i);
+  if(isDone){ el('s1').classList.add('ok'); el('s2').classList.add('ok'); el('s3').classList.add('ok'); }
+  el('fb').className = 'fb' + (isDone ? ' ok' : '');
+  el('fb').textContent = isDone ? '💎 Ovu rečenicu si već ponovio/la. Možeš ponovno vježbati!' : '';
+  el('prev').disabled = i === 0;
+  el('next').textContent = i === S.length - 1 ? 'Završi 🏁' : 'Dalje →';
+  renderDots();
+}
+function renderDots(){
+  el('gems').textContent = done.length;
+  el('dots').innerHTML = S.map((_, k) => `<button class="dot ${done.includes(k) ? 'done' : ''} ${k === i ? 'cur' : ''}" data-k="${k}" aria-label="Rečenica ${k + 1}"><span>${k + 1}</span></button>`).join('');
+  document.querySelectorAll('.dot').forEach(d => d.onclick = () => { speechSynthesis.cancel(); i = +d.dataset.k; render(); });
+}
+function pop(msg){ const p = el('pop'); p.innerHTML = msg; p.classList.add('show'); setTimeout(() => p.classList.remove('show'), 1500); }
+function showEnd(){
+  el('practice').classList.add('hidden'); el('end').classList.remove('hidden');
+  el('listAll').innerHTML = S.map((s, k) => `<div>${s.e} <b>${s.en}</b><br><small style="color:#64748b">${s.hr}</small></div>`).join('');
+  window.scrollTo(0, 0);
+}
+
+/* ---------- gumbi ---------- */
+el('play').onclick = () => speak(S[i].en, .8, listened);
+el('slow').onclick = () => speak(S[i].en, .55, listened);
+el('toggleHr').onclick = () => { hideHr = !hideHr; el('hr').classList.toggle('hide', hideHr); el('toggleHr').textContent = hideHr ? '👀 Pokaži prijevod' : '🙈 Sakrij prijevod'; };
+el('done').onclick = () => {
+  if(!heard && !done.includes(i)){ el('fb').className = 'fb no'; el('fb').textContent = '👂 Prvo poslušaj rečenicu (korak 1).'; return; }
+  ['s1','s2','s3'].forEach(id => { el(id).classList.add('ok'); el(id).classList.remove('active'); });
+  if(!done.includes(i)){ done.push(i); store.setItem('listenRepeatDone', JSON.stringify(done)); pop('💎 +1<br><small>Bravo, ponovio/la si!</small>'); }
+  el('fb').className = 'fb ok'; el('fb').textContent = '✓ Odlično! Klikni „Dalje”.';
+  renderDots();
+};
+el('next').onclick = () => {
+  speechSynthesis.cancel();
+  if(i < S.length - 1){ i++; render(); return; }
+  if(done.length === S.length) showEnd();
+  else { const miss = S.findIndex((_, k) => !done.includes(k)); el('fb').className = 'fb no'; el('fb').textContent = `Još nisi ponovio/la rečenicu ${miss + 1}. Klikni njezin kružić gore.`; }
+};
+el('prev').onclick = () => { speechSynthesis.cancel(); if(i > 0){ i--; render(); } };
+el('restart').onclick = () => { done = []; store.setItem('listenRepeatDone', '[]'); i = 0; render(); };
+el('playAll').onclick = () => {
+  let k = 0;
+  const nextOne = () => { if(k >= S.length) return; const t = S[k++].en; const u = new SpeechSynthesisUtterance(t); u.lang = 'en-GB'; u.rate = .75; u.voice = voice(); u.onend = () => setTimeout(nextOne, 1200); speechSynthesis.speak(u); };
+  speechSynthesis.cancel(); nextOne();
+};
+
+/* ---------- provjera izgovora (samo ako preglednik podržava) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(!SR){ el('mic').classList.add('hidden'); el('micInfo').textContent = 'Reci rečenicu naglas, pa idi na korak 3.'; }
+else el('mic').onclick = () => {
+  speechSynthesis.cancel();
+  const r = new SR(); r.lang = 'en-GB'; r.interimResults = false; r.maxAlternatives = 3;
+  el('mic').disabled = true; el('mic').textContent = '🎙️ Slušam te…';
+  const clean = t => t.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
+  r.onresult = ev => {
+    const target = clean(S[i].en);
+    let best = 0;
+    for(const alt of ev.results[0]){ const said = clean(alt.transcript); best = Math.max(best, target.filter(w => said.includes(w)).length / target.length); }
+    if(best >= .7){ el('fb').className = 'fb ok'; el('fb').textContent = '🌟 Super izgovor! Sad klikni „Ponovio/la sam”.'; el('s2').classList.add('ok'); el('s3').classList.add('active'); heard = true; }
+    else { el('fb').className = 'fb no'; el('fb').textContent = '🙂 Skoro! Poslušaj još jednom (🐢 Sporije) i probaj ponovo.'; }
+  };
+  r.onerror = () => { el('fb').className = 'fb no'; el('fb').textContent = 'Mikrofon nije uspio. Nije važno – samo reci rečenicu naglas.'; };
+  r.onend = () => { el('mic').disabled = false; el('mic').textContent = '🎤 Provjeri izgovor'; };
+  r.start();
+};
+
+if('speechSynthesis' in window) speechSynthesis.getVoices();
+render();
+</script>
+</body>
+</html>
