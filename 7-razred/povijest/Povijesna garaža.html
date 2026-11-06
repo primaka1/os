@@ -1,0 +1,352 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Povijesna garaža</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kartica u sredini, jedno pitanje odjednom; gore cesta-traka napretka, garaža s osvojenim autićima */
+:root{
+  --bg:#EEF2F5; --card:#FFFFFF; --ink:#1C2630; --muted:#5C6B78; --line:#D5DDE3;
+  --asphalt:#2E3842; --lane:#F2B705; --accent:#1F6FD1; --accent-ink:#FFFFFF;
+  --good:#1E8E4E; --good-bg:#E3F5EA; --bad:#C2412D; --bad-bg:#FBE7E3; --chip:#E4EBF1;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141A20; --card:#1E262E; --ink:#E9EEF2; --muted:#9DABB7; --line:#33404B;
+  --asphalt:#0C1115; --lane:#F2C230; --accent:#5AA2F5; --accent-ink:#0B1520;
+  --good:#5BCB8A; --good-bg:#183526; --bad:#F08A76; --bad-bg:#3E1F1A; --chip:#2A343D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141A20; --card:#1E262E; --ink:#E9EEF2; --muted:#9DABB7; --line:#33404B;
+  --asphalt:#0C1115; --lane:#F2C230; --accent:#5AA2F5; --accent-ink:#0B1520;
+  --good:#5BCB8A; --good-bg:#183526; --bad:#F08A76; --bad-bg:#3E1F1A; --chip:#2A343D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.5}
+.wrap{max-width:640px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.45rem;font-weight:800}
+.sub{color:var(--muted);margin:4px 0 0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:14px 22px;font-weight:700;font-size:1.05rem;min-height:52px}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* izbornik dijelova */
+.sections{display:grid;gap:12px}
+.sec{display:flex;align-items:center;gap:14px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;width:100%}
+.sec .num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.2rem}
+.sec.done .num{background:var(--good-bg);color:var(--good)}
+.sec .txt{flex:1;min-width:0}
+.sec .t{font-weight:700;display:block}
+.sec .d{color:var(--muted);font-size:.9rem}
+.sec .mini{flex:none;width:70px}
+
+/* garaža */
+.garage{background:var(--asphalt);border-radius:18px;padding:14px 14px 10px;color:#fff}
+.garage h3{font-size:1rem;color:#fff;opacity:.9;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{border:2px dashed rgba(255,255,255,.22);border-radius:10px;aspect-ratio:2/1.2;display:grid;place-items:center;max-width:100%}
+.slot.full{border-style:solid;border-color:var(--lane)}
+.slot svg{width:92%}
+.slot .q{opacity:.35;font-family:var(--display);font-size:1.4rem}
+
+/* cesta napretka */
+.road{position:relative;height:44px;background:var(--asphalt);border-radius:12px;overflow:hidden}
+.road::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:3px dashed var(--lane);opacity:.7}
+.road .carIcon{position:absolute;top:2px;width:64px;transition:left .5s ease;z-index:1}
+.road .flag{position:absolute;right:8px;top:8px;font-size:1.3rem;z-index:1}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.counter{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
+
+/* pitanje */
+.q{font-family:var(--display);font-weight:600;font-size:1.4rem;line-height:1.3;margin:0 0 16px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--chip);border:2px solid transparent;border-radius:14px;padding:14px 16px;min-height:56px;font-size:1.05rem;width:100%}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--card)}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.opt .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;margin-right:8px;font-size:.9rem}
+.hint{color:var(--muted);font-size:.95rem;margin:-8px 0 14px}
+input.year{font:inherit;font-size:1.6rem;font-family:var(--display);width:160px;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
+.fb{margin-top:16px;border-radius:14px;padding:14px 16px;font-size:1rem}
+.fb.ok{background:var(--good-bg);color:var(--ink);border-left:6px solid var(--good)}
+.fb.no{background:var(--bad-bg);color:var(--ink);border-left:6px solid var(--bad)}
+.fb b{display:block;margin-bottom:2px}
+.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* zapamti */
+.facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.facts li{background:var(--chip);border-radius:12px;padding:12px 14px}
+.facts li strong{color:var(--accent)}
+
+/* nagrada */
+.reward{text-align:center}
+.bigcar{width:min(320px,100%);margin:6px auto 0;display:block;animation:drive 1.1s cubic-bezier(.2,.8,.3,1) both}
+@keyframes drive{from{transform:translateX(-120%)}to{transform:translateX(0)}}
+.stars{font-family:var(--display);font-size:1.1rem;margin:10px 0 0}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:5}
+@media (prefers-reduced-motion: reduce){.bigcar{animation:none}.road .carIcon{transition:none}}
+.foot{color:var(--muted);font-size:.85rem;text-align:center}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.9rem;padding:6px}
+</style>
+
+<div class="wrap" id="app"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<script>
+/* ---------- AUTIĆI ---------- */
+const CARS=[
+ {name:"Žuti sportaš",color:"#F2B705",kind:"sport"},
+ {name:"Crveni bolid",color:"#D8432F",kind:"race"},
+ {name:"Zeleni džip",color:"#2E9D5B",kind:"jeep"},
+ {name:"Plava buba",color:"#2F7BE0",kind:"beetle"},
+ {name:"Narančasti kamion",color:"#EE7A1E",kind:"truck"},
+ {name:"Ljubičasti autobus",color:"#7E4FD1",kind:"bus"}
+];
+function wheel(x,y,r){return `<circle cx="${x}" cy="${y}" r="${r}" fill="#1B1F24"/><circle cx="${x}" cy="${y}" r="${r*.5}" fill="#C9D1D8"/><circle cx="${x}" cy="${y}" r="${r*.18}" fill="#1B1F24"/>`}
+function carSVG(i){
+ const c=CARS[i].color, g="#BFE3FF";
+ let b="";
+ switch(CARS[i].kind){
+  case"sport":b=`<path d="M10 76 Q12 60 40 56 L70 50 Q90 33 120 33 Q146 35 162 52 L186 58 Q196 62 193 77 Z" fill="${c}"/>
+   <path d="M80 50 Q95 39 117 39 L119 52 Z M126 40 Q142 42 152 52 L126 52 Z" fill="${g}"/>
+   <rect x="180" y="62" width="10" height="5" rx="2" fill="#FFF6C8"/>${wheel(52,78,16)+wheel(156,78,16)}`;break;
+  case"race":b=`<rect x="8" y="40" width="26" height="6" rx="2" fill="#1B1F24"/><rect x="18" y="44" width="5" height="22" fill="#1B1F24"/>
+   <path d="M6 70 L30 64 L72 62 L90 46 L112 46 L122 62 L170 60 L196 56 L196 72 L6 75Z" fill="${c}"/>
+   <circle cx="101" cy="52" r="7" fill="#FFFFFF"/><path d="M94 52 a7 7 0 0 1 14 0 Z" fill="#1B1F24"/>
+   <rect x="130" y="64" width="34" height="6" rx="3" fill="#FFFFFF" opacity=".8"/>${wheel(42,74,18)+wheel(166,74,18)}`;break;
+  case"jeep":b=`<circle cx="9" cy="62" r="10" fill="#1B1F24"/><path d="M14 82 L14 52 L42 50 L54 24 L140 24 L150 50 L188 54 L188 82 Z" fill="${c}"/>
+   <path d="M60 31 L93 31 L93 49 L52 49 Z M99 31 L134 31 L142 49 L99 49 Z" fill="${g}"/>
+   <rect x="180" y="58" width="9" height="7" rx="2" fill="#FFF6C8"/>${wheel(54,82,19)+wheel(150,82,19)}`;break;
+  case"beetle":b=`<path d="M16 82 Q12 48 60 30 Q100 16 140 32 Q188 50 186 82 Z" fill="${c}"/>
+   <path d="M70 36 Q98 25 104 26 L104 52 L58 52 Z M110 26 Q134 28 150 50 L110 52 Z" fill="${g}"/>
+   <circle cx="176" cy="62" r="5" fill="#FFF6C8"/>${wheel(56,82,17)+wheel(148,82,17)}`;break;
+  case"truck":b=`<rect x="8" y="16" width="118" height="64" rx="5" fill="#E9EEF2"/><rect x="8" y="16" width="118" height="64" rx="5" fill="${c}" opacity=".35"/>
+   <path d="M130 80 L130 30 L168 30 L190 54 L192 80 Z" fill="${c}"/><path d="M140 36 L164 36 L180 54 L140 54Z" fill="${g}"/>
+   <rect x="184" y="62" width="8" height="6" rx="2" fill="#FFF6C8"/>${wheel(40,84,15)+wheel(98,84,15)+wheel(162,84,15)}`;break;
+  case"bus":b=`<path d="M8 82 L8 22 Q8 12 18 12 L180 12 Q194 12 194 28 L194 82 Z" fill="${c}"/>
+   <rect x="18" y="22" width="30" height="24" rx="4" fill="${g}"/><rect x="56" y="22" width="30" height="24" rx="4" fill="${g}"/><rect x="94" y="22" width="30" height="24" rx="4" fill="${g}"/><rect x="132" y="22" width="22" height="24" rx="4" fill="${g}"/><path d="M162 22 L184 22 Q188 22 188 30 L188 46 L162 46Z" fill="${g}"/>
+   <rect x="8" y="54" width="186" height="5" fill="#FFFFFF" opacity=".6"/>${wheel(46,84,15)+wheel(160,84,15)}`;break;
+ }
+ return `<svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${CARS[i].name}"><ellipse cx="100" cy="98" rx="88" ry="5" fill="#000" opacity=".18"/>${b}</svg>`;
+}
+
+/* ---------- GRADIVO ---------- */
+const SECTIONS=[
+{title:"Prosvijećeni apsolutizam",desc:"Marija Terezija, Josip II., Fridrik, Katarina",
+ facts:["<strong>Prosvijećeni apsolutist</strong> = vladar koji ima svu vlast, ali uvodi reforme po idejama prosvjetiteljstva.","<strong>Marija Terezija</strong> (1740. – 1780.) – prva i posljednja žena na habsburškom prijestolju. Osnovala je <strong>Hrvatsko kraljevsko vijeće</strong> i donijela <strong>Urbar</strong>.","<strong>Josip II.</strong> (1780. – 1790.) – službeni jezik postaje <strong>njemački</strong> (germanizacija).","<strong>Fridrik II. Veliki</strong> (Pruska) – „prvi sluga države“. <strong>Katarina Velika</strong> – Rusija."],
+ qs:[
+ {t:"mc",q:"Koji su vladari bili prosvijećeni apsolutisti?",o:["Marija Terezija, Josip II., Fridrik II. Veliki","Luj XVI., Robespierre, Napoleon","George Washington, Lincoln, Jefferson"],a:0,e:"Uz njih se ubraja i Katarina Velika."},
+ {t:"mc",q:"Marija Terezija bila je ___ i posljednja žena na habsburškom prijestolju.",o:["prva","druga","treća"],a:0,e:"Bila je prva i jedina žena koja je vladala Habsburškom Monarhijom."},
+ {t:"mc",q:"Kako se zove vlada koju je Marija Terezija osnovala u Hrvatskoj?",o:["Hrvatski sabor","Hrvatsko kraljevsko vijeće","Kongres"],a:1,e:"Hrvatsko kraljevsko vijeće osnovano je 1767."},
+ {t:"mc",q:"Što je Marija Terezija donijela da smanji teške obveze kmetova?",o:["Deklaraciju neovisnosti","Urbar","Ustav"],a:1,e:"Urbar je propisao koliko kmet smije raditi i davati gospodaru."},
+ {t:"mc",q:"Koji je jezik bio službeni u vrijeme Josipa II.?",o:["latinski","hrvatski","njemački"],a:2,e:"Josip II. uveo je njemački – to se zove germanizacija."},
+ {t:"mc",q:"Što je germanizacija?",o:["nametanje njemačkog jezika i kulture","ukidanje ropstva","dopuna ustava"],a:0,e:"Josip II. htio je da se u cijeloj Monarhiji služi njemačkim."},
+ {t:"mc",q:"U kojoj je državi vladala Katarina Velika?",o:["u Pruskoj","u Rusiji","u Francuskoj"],a:1,e:"Katarina II. Velika bila je ruska carica."},
+ {t:"mc",q:"Koji je vladar sebe nazivao „prvim slugom države“?",o:["Josip II.","Luj XVI.","Fridrik II. Veliki"],a:2,e:"Fridrik II. Veliki, pruski kralj."},
+ {t:"mc",q:"Koliko je vladala Marija Terezija?",o:["1740. – 1780.","1780. – 1790.","1861. – 1865."],a:0,e:"Nakon nje 1780. dolazi njezin sin Josip II."},
+ {t:"mc",q:"Koliko je vladao Josip II.?",o:["1740. – 1780.","1780. – 1790.","1789. – 1799."],a:1,e:"Vladao je 10 godina, od 1780. do 1790."},
+ {t:"mc",q:"Što je Enciklopedija?",o:["zbirka svog znanja koju su napisali francuski prosvjetitelji","američki zakon","sprava za smaknuće"],a:0,e:"Uredili su je Diderot i d'Alembert."}
+ ]},
+{title:"Francuska revolucija",desc:"staleži, Bastilla, republika",
+ facts:["Kralj u vrijeme revolucije: <strong>Luj XVI.</strong>","Društvo je bilo podijeljeno na <strong>tri staleža</strong>: svećenstvo, plemstvo i treći stalež (građani i seljaci).","Revolucija počinje <strong>padom Bastille, 14. 7. 1789.</strong>","Redoslijed: apsolutistička monarhija → ustavna monarhija → <strong>republika (1792.)</strong> → Direktorij."],
+ qs:[
+ {t:"mc",q:"Koji je kralj vladao Francuskom kad je izbila revolucija?",o:["Luj XIV.","Luj XVI.","Napoleon"],a:1,e:"Luj XVI. pogubljen je 1793."},
+ {t:"mc",q:"Kako je bilo podijeljeno francusko društvo prije revolucije?",o:["na tri staleža: svećenstvo, plemstvo, treći stalež","na Sjever i Jug","na 13 kolonija"],a:0,e:"Treći stalež bio je najbrojniji, a plaćao je sve poreze."},
+ {t:"mc",q:"Kojim događajem počinje Francuska revolucija?",o:["Bostonskom čajankom","padom Bastille","smaknućem kralja"],a:1,e:"Bastilla je bila zatvor – simbol kraljeve vlasti."},
+ {t:"year",q:"Upiši godinu pada Bastille.",a:"1789",e:"14. srpnja 1789."},
+ {t:"year",q:"Upiši godinu kad je Francuska proglašena republikom.",a:"1792",e:"Republika je proglašena 1792."},
+ {t:"order",q:"Poredaj od najstarijeg prema najnovijem.",items:["apsolutistička monarhija","ustavna monarhija","Francuska Republika","Direktorij"],e:"Kralj ima svu vlast → kralj + ustav → bez kralja → Direktorij."},
+ {t:"mc",q:"Što je giljotina?",o:["sprava za smaknuće odsijecanjem glave","francuski parlament","vrsta poreza"],a:0,e:"Giljotina je postala simbol jakobinskog terora."}
+ ]},
+{title:"Jakobinski teror",desc:"Robespierre i giljotina",
+ facts:["Vođa jakobinaca: <strong>Maximilien Robespierre</strong>.","Teror traje <strong>1793. – 1794.</strong>","Obilježja: smaknuća <strong>giljotinom</strong>, progon svih protivnika, ukidanje slobode, strah.","Kraj: Robespierre je i sam pogubljen 1794. Vlast zatim preuzima <strong>Direktorij</strong>."],
+ qs:[
+ {t:"mc",q:"Kako se zvao vođa jakobinaca?",o:["Robespierre","Jefferson","Josip II."],a:0,e:"Maximilien Robespierre."},
+ {t:"mc",q:"Kada je trajala jakobinska vladavina (teror)?",o:["1740. – 1780.","1793. – 1794.","1861. – 1865."],a:1,e:"Trajala je otprilike godinu dana."},
+ {t:"multi",q:"Odaberi 3 obilježja jakobinskog terora.",o:["smaknuća giljotinom","progon protivnika revolucije","ukidanje slobode i strah","ukidanje ropstva u Americi","izbor prvog predsjednika SAD-a"],a:[0,1,2],e:"To su tri glavna obilježja. Uz to: teror traje 1793. – 1794."},
+ {t:"mc",q:"Što se dogodilo s Robespierreom na kraju?",o:["postao je kralj","i on je pogubljen giljotinom","otišao je u Ameriku"],a:1,e:"Pogubljen je 1794. i teror je završio."},
+ {t:"mc",q:"Tko preuzima vlast nakon jakobinaca?",o:["Direktorij","Kongres","Marija Terezija"],a:0,e:"Direktorij je bio vlada od 5 direktora."}
+ ]},
+{title:"Američki rat za neovisnost",desc:"13 kolonija, Deklaracija, Washington",
+ facts:["Na istoku Amerike bilo je <strong>13 britanskih kolonija</strong>.","Povod ratu: <strong>Bostonska čajanka (1773.)</strong>.","<strong>Deklaracija neovisnosti, 1776.</strong> – glavni tvorac <strong>Thomas Jefferson</strong>. Ideje prosvjetiteljstva: svi su ljudi jednaki, pravo na <strong>život</strong>, slobodu i sreću.","Prvi predsjednik: <strong>George Washington</strong>. Parlament: <strong>Kongres</strong>. Ustav SAD-a 1787."],
+ qs:[
+ {t:"mc",q:"Koliko je britanskih kolonija bilo na istoku Amerike?",o:["10","13","50"],a:1,e:"Zato američka zastava ima 13 pruga."},
+ {t:"mc",q:"Što je bio povod Američkom ratu za neovisnost?",o:["pad Bastille","Bostonska čajanka","atentat na Lincolna"],a:1,e:"Kolonisti su bacili britanski čaj u more zbog poreza."},
+ {t:"mc",q:"Kojim dokumentom SAD postaju neovisna država?",o:["Deklaracijom neovisnosti","Ustavom","Urbarom"],a:0,e:"Deklaracija neovisnosti, 4. srpnja 1776."},
+ {t:"year",q:"Upiši godinu Deklaracije neovisnosti.",a:"1776",e:"4. srpnja 1776."},
+ {t:"mc",q:"Tko je glavni tvorac Deklaracije neovisnosti?",o:["George Washington","Thomas Jefferson","Abraham Lincoln"],a:1,e:"Thomas Jefferson."},
+ {t:"mc",q:"Koje su ideje unesene u Deklaraciju neovisnosti?",o:["ideje prosvjetiteljstva","ideje apsolutizma","ideje germanizacije"],a:0,e:"Npr. svi su ljudi jednaki."},
+ {t:"mc",q:"Svi su ljudi jednaki pred zakonom, svatko ima pravo na ___, slobodu i sreću.",o:["bogatstvo","život","zemlju"],a:1,e:"Pravo na život, slobodu i sreću."},
+ {t:"mc",q:"Tko je bio prvi predsjednik SAD-a?",o:["George Washington","Thomas Jefferson","Abraham Lincoln"],a:0,e:"George Washington vodio je i vojsku u ratu za neovisnost."},
+ {t:"mc",q:"Kako se zove američki parlament?",o:["Sabor","Kongres","Direktorij"],a:1,e:"Kongres."},
+ {t:"mc",q:"Što je ustav?",o:["najvažniji (najviši) zakon države","dopuna zakona","sprava za smaknuće"],a:0,e:"Ustav SAD-a donesen je 1787."},
+ {t:"mc",q:"Što je amandman?",o:["dopuna ustava","vrsta poreza","vođa Apaša"],a:0,e:"Amandmanom se ustav mijenja ili nadopunjuje."},
+ {t:"multi",q:"Što se odnosi na Deklaraciju neovisnosti? Odaberi 3.",o:["svi su ljudi jednaki","neovisnost od Engleske","1776.","najvažniji zakon","Kongres","1861."],a:[0,1,2],e:"„Najvažniji zakon“ je ustav, a 1861. je početak Građanskog rata."}
+ ]},
+{title:"Američki građanski rat",desc:"Sjever i Jug, Lincoln, Apaši",
+ facts:["Rat <strong>1861. – 1865.</strong> između <strong>Unije (Sjever)</strong> i <strong>Konfederacije (Jug)</strong>.","Glavni uzrok: <strong>ropstvo</strong>. Sjever je protiv, Jug za ropstvo.","<strong>Abraham Lincoln</strong> – predsjednik, ukinuo je ropstvo, ubijen u atentatu 1865.","<strong>Abolicionizam</strong> = pokret za ukidanje ropstva. Najpoznatiji vođa Apaša: <strong>Geronimo</strong>."],
+ qs:[
+ {t:"mc",q:"Između koga se vodio Američki građanski rat?",o:["Unije (Sjever) i Konfederacije (Jug)","Francuske i Engleske","kolonija i Rusije"],a:0,e:"Sjever = Unija, Jug = Konfederacija."},
+ {t:"mc",q:"Tko je ukinuo ropstvo i vodio Uniju do pobjede?",o:["George Washington","Abraham Lincoln","Thomas Jefferson"],a:1,e:"Abraham Lincoln."},
+ {t:"mc",q:"Na koga se odnosi: SJEVER / PROTIVNIK ROPSTVA / PREDSJEDNIK / 1861. / ATENTAT?",o:["Geronimo","Robespierre","Abraham Lincoln"],a:2,e:"Lincoln je ubijen u atentatu 1865."},
+ {t:"mc",q:"Koliko je trajao Američki građanski rat?",o:["1861. – 1865.","1776. – 1783.","1793. – 1794."],a:0,e:"Od 1861. do 1865."},
+ {t:"year",q:"Građanski rat vodio se od 1861. do ___ godine. Upiši godinu.",a:"1865",e:"Završio je 1865."},
+ {t:"mc",q:"Što je abolicionizam?",o:["pokret za ukidanje ropstva","nametanje njemačkog jezika","vlast jednog vladara"],a:0,e:"Abolicionisti su bili protiv ropstva."},
+ {t:"mc",q:"Tko je bio najpoznatiji vođa Apaša?",o:["Geronimo","Robespierre","Jefferson"],a:0,e:"Apaši su indijansko pleme."},
+ {t:"order",q:"Poredaj događaje od najstarijeg prema najnovijem.",items:["Bostonska čajanka","Deklaracija neovisnosti","Ustav SAD-a","Američki građanski rat"],e:"1773. → 1776. → 1787. → 1861."}
+ ]},
+{title:"Veliki završni krug",desc:"miješana pitanja iz svega",mix:true,
+ facts:["Ovo je mješavina svih dijelova.","Ako nešto ne znaš, nema veze – pitanje će se vratiti na kraju.","Polako. Pročitaj pitanje do kraja prije nego što odgovoriš."],qs:[]}
+];
+
+/* ---------- STANJE ---------- */
+let won=[];
+try{won=JSON.parse(localStorage.getItem("povijest7-garaza")||"[]")}catch(e){won=[]}
+function save(){try{localStorage.setItem("povijest7-garaza",JSON.stringify(won))}catch(e){}}
+const app=document.getElementById("app");
+let S=null; // aktivna sesija
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function garageHTML(){
+ return `<div class="garage"><h3>Moja garaža · ${won.length}/6</h3><div class="slots">${CARS.map((c,i)=>won.includes(i)?`<div class="slot full" title="${c.name}">${carSVG(i)}</div>`:`<div class="slot"><span class="q">?</span></div>`).join("")}</div></div>`;
+}
+
+function home(){
+ S=null;
+ app.innerHTML=`<header><h1>Povijesna garaža</h1><p class="sub">7. razred · Prosvijećeni apsolutizam, Francuska revolucija i SAD. Riješi dio i osvoji autić!</p></header>
+ ${garageHTML()}
+ <div class="sections">${SECTIONS.map((s,i)=>`<button class="sec ${won.includes(i)?"done":""}" data-i="${i}"><span class="num">${won.includes(i)?"✓":i+1}</span><span class="txt"><span class="t">${s.title}</span><span class="d">${s.desc} · ${s.mix?8:s.qs.length} pitanja</span></span><span class="mini">${won.includes(i)?carSVG(i):""}</span></button>`).join("")}</div>
+ <p class="foot">Savjet: jedan dio, pa kratka pauza. ${won.length?`<button class="linkbtn" id="reset">Isprazni garažu</button>`:""}</p>`;
+ app.querySelectorAll(".sec").forEach(b=>b.onclick=()=>intro(+b.dataset.i));
+ const r=document.getElementById("reset"); if(r) r.onclick=()=>{won=[];save();home()};
+ scrollTo(0,0);
+}
+
+function intro(i){
+ const s=SECTIONS[i];
+ app.innerHTML=`<div class="card"><p class="counter">Dio ${i+1} od 6 · ${s.title}</p><h2>Prvo zapamti</h2>
+ <ul class="facts">${s.facts.map(f=>`<li>${f}</li>`).join("")}</ul>
+ <div class="actions"><button class="btn" id="go">Krećemo! 🏁</button><button class="btn ghost" id="back">Natrag</button></div></div>`;
+ document.getElementById("go").onclick=()=>start(i);
+ document.getElementById("back").onclick=home;
+ scrollTo(0,0);
+}
+
+function start(i){
+ const s=SECTIONS[i];
+ let qs=s.mix?shuffle(SECTIONS.slice(0,5).flatMap(x=>x.qs)).slice(0,8):s.qs.slice();
+ S={i,queue:qs.map(q=>({q,first:true})),total:qs.length,done:0,firstRight:0};
+ ask();
+}
+
+function ask(){
+ if(!S.queue.length) return reward();
+ const item=S.queue[0], q=item.q;
+ const pct=S.done/S.total;
+ let body="";
+ if(q.t==="mc"){
+  const order=shuffle(q.o.map((_,k)=>k));
+  body=`<div class="opts">${order.map(k=>`<button class="opt" data-k="${k}">${esc(q.o[k])}</button>`).join("")}</div>`;
+ } else if(q.t==="multi"){
+  const order=shuffle(q.o.map((_,k)=>k));
+  body=`<p class="hint">Dodirni ${q.a.length} odgovora, pa „Provjeri“.</p><div class="opts">${order.map(k=>`<button class="opt" data-k="${k}">${esc(q.o[k])}</button>`).join("")}</div><div class="actions"><button class="btn" id="check" disabled>Provjeri</button></div>`;
+ } else if(q.t==="order"){
+  body=`<p class="hint">Dodiruj redom: prvo ono što se dogodilo najranije.</p><div class="opts">${shuffle(q.items).map(t=>`<button class="opt" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div><div class="actions"><button class="btn ghost" id="redo">Kreni ispočetka</button></div>`;
+ } else {
+  body=`<div class="row"><input class="year" id="yr" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="____"><button class="btn" id="check">Provjeri</button></div>`;
+ }
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag na izbornik">✕</button><span class="counter">${S.done+1 > S.total ? S.total : S.done+1} / ${S.total}</span></div>
+ <div class="road" aria-hidden="true"><div class="carIcon" style="left:calc(${pct} * (100% - 100px) + 6px)">${carSVG(S.i)}</div><span class="flag">🏁</span></div>
+ <div class="card"><p class="q">${esc(q.q)}</p>${body}<div id="fb"></div></div>`;
+ document.getElementById("back").onclick=home;
+
+ if(q.t==="mc"){
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+   const ok=+b.dataset.k===q.a;
+   app.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add("right")});
+   if(!ok)b.classList.add("wrong");
+   result(ok,q.o[q.a]);
+  });
+ } else if(q.t==="multi"){
+  const sel=new Set(), chk=document.getElementById("check");
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+   const k=+b.dataset.k; sel.has(k)?sel.delete(k):sel.add(k); b.classList.toggle("sel");
+   chk.disabled=sel.size!==q.a.length;
+  });
+  chk.onclick=()=>{
+   const ok=q.a.every(k=>sel.has(k));
+   app.querySelectorAll(".opt").forEach(x=>{x.disabled=true;const k=+x.dataset.k;x.classList.remove("sel");if(q.a.includes(k))x.classList.add("right");else if(sel.has(k))x.classList.add("wrong")});
+   chk.remove(); result(ok,q.a.map(k=>q.o[k]).join(", "));
+  };
+ } else if(q.t==="order"){
+  let picked=[];
+  const btns=[...app.querySelectorAll(".opt")];
+  const redo=document.getElementById("redo");
+  redo.onclick=()=>{picked=[];btns.forEach(b=>{b.disabled=false;b.classList.remove("sel");b.innerHTML=esc(b.dataset.t)})};
+  btns.forEach(b=>b.onclick=()=>{
+   picked.push(b.dataset.t); b.disabled=true; b.classList.add("sel");
+   b.innerHTML=`<span class="n">${picked.length}</span>${esc(b.dataset.t)}`;
+   if(picked.length===q.items.length){
+    const ok=picked.every((t,k)=>t===q.items[k]);
+    btns.forEach(x=>x.classList.add(q.items.indexOf(x.dataset.t)===picked.indexOf(x.dataset.t)?"right":"wrong"));
+    redo.parentNode.remove();
+    result(ok,q.items.map((t,k)=>`${k+1}. ${t}`).join("  →  "));
+   }
+  });
+ } else {
+  const inp=document.getElementById("yr"), chk=document.getElementById("check");
+  inp.focus();
+  const go=()=>{ if(!inp.value.trim())return; const ok=inp.value.replace(/\D/g,"")===q.a; inp.disabled=true; chk.remove(); inp.style.borderColor=ok?"var(--good)":"var(--bad)"; result(ok,q.a+".");};
+  chk.onclick=go; inp.onkeydown=e=>{if(e.key==="Enter")go()};
+ }
+}
+
+const PRAISE=["Bravo!","Točno!","Super!","Odlično!","Tako je!","Pogodak!"];
+function result(ok,correct){
+ const item=S.queue.shift(), q=item.q;
+ if(ok){S.done++; if(item.first)S.firstRight++;}
+ else {item.first=false; S.queue.push(item);}  // vrati pitanje na kraj
+ const fb=document.getElementById("fb");
+ fb.innerHTML=ok
+  ?`<div class="fb ok"><b>${PRAISE[Math.random()*PRAISE.length|0]} ✅</b>${esc(q.e||"")}</div>`
+  :`<div class="fb no"><b>Ne baš. Točno je: ${esc(correct)}</b>${esc(q.e||"")}<br><span style="color:var(--muted)">Ovo pitanje vratit će ti se na kraju.</span></div>`;
+ fb.insertAdjacentHTML("beforeend",`<div class="actions"><button class="btn" id="next">${S.queue.length?"Dalje →":"Do cilja! 🏁"}</button></div>`);
+ const n=document.getElementById("next"); n.focus({preventScroll:true}); n.scrollIntoView({block:"nearest",behavior:"smooth"});
+ n.onclick=ask;
+}
+
+function reward(){
+ const i=S.i, first=!won.includes(i);
+ if(first){won.push(i);save();}
+ const all=won.length===6;
+ app.innerHTML=`<div class="card reward"><p class="counter">Dio ${i+1} riješen!</p>
+ <h2>${first?"Novi autić u garaži!":"Opet si stigao do cilja!"}</h2>
+ <div class="bigcar">${carSVG(i)}</div>
+ <h3 style="margin-top:8px">${CARS[i].name}</h3>
+ <p class="stars">Iz prve točno: ${S.firstRight} / ${S.total} ${"⭐".repeat(Math.max(1,Math.round(S.firstRight/S.total*3)))}</p>
+ ${all?`<p><strong>Sakupio si svih 6 autića! Spreman si za test. 🏆</strong></p>`:`<p class="sub">Popij vode, protegni se 1 minutu, pa idemo dalje.</p>`}
+ <div class="actions" style="justify-content:center">${i<5?`<button class="btn" id="nextSec">Sljedeći dio</button>`:""}<button class="btn ghost" id="home">Garaža</button></div></div>`;
+ document.getElementById("home").onclick=home;
+ const ns=document.getElementById("nextSec"); if(ns) ns.onclick=()=>intro(i+1);
+ confetti(); scrollTo(0,0);
+}
+
+function confetti(){
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const cv=document.getElementById("confetti"), x=cv.getContext("2d");
+ cv.hidden=false; cv.width=innerWidth; cv.height=innerHeight;
+ const cols=["#F2B705","#D8432F","#2E9D5B","#2F7BE0","#EE7A1E","#7E4FD1"];
+ const P=Array.from({length:120},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,r:Math.random()*6,c:cols[Math.random()*6|0],a:Math.random()*6}));
+ let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-4,-2,8+p.r,5);x.restore()});if(++t<160)requestAnimationFrame(f);else cv.hidden=true})();
+}
+
+home();
+</script>
+
+</body></html>
