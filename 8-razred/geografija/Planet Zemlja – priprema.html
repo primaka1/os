@@ -1,0 +1,405 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Planet Zemlja – priprema</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kolona, kartice-alati ispod zaglavlja s planetima; boje preuzete iz bilježnice (crvena tinta + narančasti marker) */
+:root{
+  --bg:#F2F3F8; --surface:#FFFFFF; --ink:#1B2140; --muted:#59607F; --line:#DADDEA;
+  --red:#B3263A; --ochre:#D98E2B; --ochre-soft:#F7E3C4; --ok:#2C7A4D; --ok-soft:#DDF0E4; --bad-soft:#F8DDE1;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1326; --surface:#181D36; --ink:#E8EAF4; --muted:#9BA1BF; --line:#2B3153;
+  --red:#F2707F; --ochre:#E9A84C; --ochre-soft:#3A2E1C; --ok:#5DC48B; --ok-soft:#173225; --bad-soft:#3A1C24; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1326; --surface:#181D36; --ink:#E8EAF4; --muted:#9BA1BF; --line:#2B3153;
+  --red:#F2707F; --ochre:#E9A84C; --ochre-soft:#3A2E1C; --ok:#5DC48B; --ok-soft:#173225; --bad-soft:#3A1C24; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,7vw,3rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.35rem;font-weight:700}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.hl{background:linear-gradient(transparent 62%,var(--ochre-soft) 62%)}
+header{display:flex;flex-direction:column;gap:8px}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.planets{width:100%;height:auto;margin-top:6px}
+.planets text{fill:var(--muted);font-family:var(--body);font-size:10px}
+
+nav{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav button{font:700 .95rem var(--body);border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+nav button.warn{border-color:var(--red);color:var(--red)}
+nav button.warn[aria-selected="true"]{background:var(--red);color:var(--surface)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ochre);outline-offset:2px}
+
+section{display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.muted{color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:700 1rem var(--body);border:none;border-radius:10px;padding:11px 16px;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ok{background:var(--ok);color:var(--surface)}
+.btn.no{background:var(--red);color:var(--surface)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:700 .85rem var(--body);border:1.5px solid var(--line);background:transparent;color:var(--muted);padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--ochre);color:var(--ink);background:var(--ochre-soft)}
+
+/* kartice */
+.card{perspective:1200px;cursor:pointer;min-height:220px}
+.card-in{position:relative;min-height:220px;transition:transform .45s;transform-style:preserve-3d}
+.card.flip .card-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:22px;display:flex;flex-direction:column;justify-content:center;gap:10px;border:1px solid var(--line)}
+.front{background:var(--surface)}
+.back{background:var(--ochre-soft);transform:rotateY(180deg)}
+.face .q{font-family:var(--display);font-size:1.45rem;font-weight:700;text-wrap:balance}
+.face .a{font-size:1.1rem}
+.face .tag{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.face .hint{font-size:.85rem;color:var(--muted)}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--ochre);transition:width .3s}
+.counter{font-variant-numeric:tabular-nums}
+
+/* kviz */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;font:400 1rem var(--body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--red);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.explain{border-left:4px solid var(--ochre);padding:8px 12px;background:var(--ochre-soft);border-radius:0 8px 8px 0}
+.score{font-family:var(--display);font-size:3rem;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* računanje */
+.task{font-size:1.1rem}
+.task b{font-variant-numeric:tabular-nums}
+input[type=text]{font:700 1.3rem var(--body);width:7.5em;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+.steps{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.rule{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.rule div{border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.rule strong{font-family:var(--display);font-size:1.3rem;display:block}
+
+/* godišnja doba */
+.seasons{display:flex;flex-direction:column;gap:12px}
+.season{display:grid;grid-template-columns:7.5rem 1fr;gap:4px 12px;align-items:center}
+.season .name{font-weight:700}
+.season .date{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:.75rem;font-weight:700}
+.bar .d{background:var(--ochre);color:#2A1B05;display:flex;align-items:center;padding-left:6px}
+.bar .n{background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+
+/* pazi */
+.fix{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-top:1px solid var(--line)}
+.fix:first-of-type{border-top:none;padding-top:0}
+.fix .was{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
+.fix .now{font-weight:700}
+@media (prefers-reduced-motion:reduce){.card-in,.progress span{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Geografija · 8. razred</div>
+  <h1>Planet <span class="hl">Zemlja</span></h1>
+  <p>Priprema za test iz tvojih bilješki: svemir, Sunčev sustav, Mjesec, godišnja doba i računanje vremena.</p>
+  <svg class="planets" viewBox="0 0 360 64" role="img" aria-label="Sunce i osam planeta">
+    <circle cx="-30" cy="30" r="58" fill="var(--ochre)"/>
+    <g fill="none" stroke="var(--red)" stroke-width="1.6">
+      <circle cx="44" cy="30" r="3"/><circle cx="62" cy="30" r="5.5"/><circle cx="82" cy="30" r="6"/><circle cx="100" cy="30" r="4"/>
+      <circle cx="140" cy="30" r="22"/><circle cx="208" cy="30" r="18"/><ellipse cx="208" cy="30" rx="27" ry="6" transform="rotate(-12 208 30)"/>
+      <circle cx="268" cy="30" r="11"/><circle cx="316" cy="30" r="10.5"/>
+    </g>
+    <text x="72" y="60" text-anchor="middle">kameni</text>
+    <text x="230" y="60" text-anchor="middle">plinoviti divovi</text>
+  </svg>
+</header>
+
+<nav role="tablist">
+  <button role="tab" data-tab="kartice" aria-selected="true">Kartice</button>
+  <button role="tab" data-tab="kviz" aria-selected="false">Kviz</button>
+  <button role="tab" data-tab="vrijeme" aria-selected="false">Računaj vrijeme</button>
+  <button role="tab" data-tab="doba" aria-selected="false">Godišnja doba</button>
+  <button role="tab" data-tab="pazi" class="warn" aria-selected="false">Pazi!</button>
+</nav>
+
+<!-- KARTICE -->
+<section id="kartice">
+  <div class="chips" id="cardFilters"></div>
+  <div class="card" id="card" tabindex="0" aria-live="polite">
+    <div class="card-in">
+      <div class="face front"><span class="tag" id="cTag"></span><div class="q" id="cQ"></div><span class="hint">Dodirni karticu za odgovor</span></div>
+      <div class="face back"><span class="tag">Odgovor</span><div class="a" id="cA"></div></div>
+    </div>
+  </div>
+  <div class="progress"><span id="cBar"></span></div>
+  <div class="row" style="justify-content:space-between">
+    <span class="muted counter" id="cCount"></span>
+    <div class="row">
+      <button class="btn no" id="cNo">Ponovi</button>
+      <button class="btn ok" id="cYes">Znam</button>
+    </div>
+  </div>
+  <p class="muted" style="margin:0;font-size:.9rem">„Ponovi” vraća karticu na kraj špila. „Znam” je miče dok ne promiješaš ponovno.</p>
+  <button class="btn ghost" id="cReset">Promiješaj sve ponovno</button>
+</section>
+
+<!-- KVIZ -->
+<section id="kviz" hidden>
+  <div class="panel" id="quizBox"></div>
+</section>
+
+<!-- VRIJEME -->
+<section id="vrijeme" hidden>
+  <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+    <h2>Pravila koja trebaš znati</h2>
+    <div class="rule">
+      <div><strong>1 h = 15°</strong><span class="muted">360° : 24 h</span></div>
+      <div><strong>1° = 4 min</strong><span class="muted">60 min : 15°</span></div>
+      <div><strong>Istok je ispred</strong><span class="muted">istočnije → više sati</span></div>
+      <div><strong>RH = GMT+1</strong><span class="muted">SEV / CET</span></div>
+    </div>
+  </div>
+  <div class="chips" id="tModes">
+    <button class="chip" aria-pressed="true" data-m="mjesno">Mjesno vrijeme</button>
+    <button class="chip" aria-pressed="false" data-m="pojasno">Pojasno vrijeme</button>
+  </div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+    <div class="task" id="tText"></div>
+    <form class="row" id="tForm">
+      <label for="tIn" class="muted">Odgovor (hh:mm)</label>
+      <input type="text" id="tIn" inputmode="numeric" placeholder="14:20" autocomplete="off">
+      <button class="btn" type="submit">Provjeri</button>
+    </form>
+    <div id="tRes"></div>
+    <div class="row"><button class="btn ghost" id="tNext">Novi zadatak</button><span class="muted counter" id="tScore"></span></div>
+  </div>
+</section>
+
+<!-- GODIŠNJA DOBA -->
+<section id="doba" hidden>
+  <div class="panel seasons">
+    <h2>Trajanje dana i noći</h2>
+    <p class="muted" style="margin:0">Vrijednosti iz bilježnice, za sjevernu polutku (približno).</p>
+    <div class="season"><div><div class="name">Proljeće</div><div class="date">21. 3.</div></div>
+      <div><div class="bar"><span class="d" style="width:50%">dan 12 h</span><span class="n" style="width:50%">noć 12 h</span></div><div class="date">proljetna ravnodnevnica</div></div></div>
+    <div class="season"><div><div class="name">Ljeto</div><div class="date">21. 6.</div></div>
+      <div><div class="bar"><span class="d" style="width:66.7%">dan 16 h</span><span class="n" style="width:33.3%">8 h</span></div><div class="date">ljetni suncostaj · najdulji dan</div></div></div>
+    <div class="season"><div><div class="name">Jesen</div><div class="date">23. 9.</div></div>
+      <div><div class="bar"><span class="d" style="width:50%">dan 12 h</span><span class="n" style="width:50%">noć 12 h</span></div><div class="date">jesenska ravnodnevnica</div></div></div>
+    <div class="season"><div><div class="name">Zima</div><div class="date">21. 12.</div></div>
+      <div><div class="bar"><span class="d" style="width:33.3%">8 h</span><span class="n" style="width:66.7%">noć 16 h</span></div><div class="date">zimski suncostaj · najkraći dan</div></div></div>
+  </div>
+  <div class="panel">
+    <h2 style="margin-bottom:8px">Kako zapamtiti</h2>
+    <p style="margin:0"><b>Ravnodnevnica</b> = „ravan” dan i noć, po 12 sati. <b>Suncostaj</b> = Sunce „stoji” na najvišoj (ljeto) ili najnižoj (zima) točki, pa je dan najdulji ili najkraći. Godišnja doba nastaju zbog <b>revolucije</b> Zemlje i nagiba njezine osi.</p>
+  </div>
+</section>
+
+<!-- PAZI -->
+<section id="pazi" hidden>
+  <div class="panel">
+    <h2 style="margin-bottom:4px">Provjeri ovo u bilježnici</h2>
+    <p class="muted" style="margin:0 0 12px">Na nekoliko mjesta bilješke se razlikuju od udžbenika. Ovo nauči ovako:</p>
+    <div class="fix"><span class="was">Veliki prasak prije 13,8 milijuna godina</span><span class="now">Veliki prasak bio je prije oko 13,8 milijardi godina.</span></div>
+    <div class="fix"><span class="was">Mjesec nema gravitacije</span><span class="now">Mjesec ima gravitaciju, oko 6 puta slabiju od Zemljine. Nema atmosferu, zato ima puno kratera.</span></div>
+    <div class="fix"><span class="was">Pomrčina Mjeseca: kad je Mjesec iza Sunca</span><span class="now">Pomrčina Mjeseca: Zemlja je između Sunca i Mjeseca, pa Zemljina sjena pada na Mjesec (Mjesec je „iza Zemlje”).</span>
+      <span class="muted">Pomrčina Sunca: Mjesec je između Sunca i Zemlje i zakloni Sunce (Sunce je „iza Mjeseca”). To u bilježnici štima.</span></div>
+    <div class="fix"><span class="was">Planeti se okreću po ekliptici</span><span class="now">Staza po kojoj planet kruži oko Sunca zove se putanja (orbita). Ako tvoj nastavnik koristi riječ ekliptika, drži se njegove definicije.</span></div>
+    <div class="fix"><span class="now">Uranovi mjeseci: u bilješci piše 27. Astronomi su otkrili još nekoliko, ali za test koristi broj iz udžbenika ili s ploče.</span></div>
+    <div class="fix"><span class="now">Mali i Veliki Diomed: dva otoka udaljena oko 4 km, a datumska granica prolazi između njih. Veliki Diomed (Rusija) je zapadno od granice i već je „sutra”. Mali Diomed (SAD) je istočno i još je „jučer”.</span></div>
+  </div>
+</section>
+</div>
+
+<script>
+/* ---------- Tabs ---------- */
+const tabs=[...document.querySelectorAll('nav button')];
+function show(id){
+  tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));
+  document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id);
+}
+tabs.forEach(b=>b.addEventListener('click',()=>{show(b.dataset.tab);try{history.replaceState(null,'','#'+b.dataset.tab)}catch(e){}}));
+const h=location.hash.slice(1); if(tabs.some(b=>b.dataset.tab===h)) show(h);
+
+/* ---------- Kartice ---------- */
+const CARDS=[
+ ['Svemir','Što je svemir?','Beskonačan prostor u kojem su galaksije, zvijezde, planeti i ostala nebeska tijela.'],
+ ['Svemir','Kako je nastao svemir i kada?','Velikim praskom, prije oko 13,8 milijardi godina.'],
+ ['Svemir','Kako se zove znanost o svemiru?','Astronomija.'],
+ ['Svemir','Tko je zastupao heliocentrični sustav?','Nikola Kopernik i Galileo Galilei.'],
+ ['Svemir','Što znači heliocentrični sustav?','Sunce je u središtu, a planeti kruže oko njega.'],
+ ['Svemir','Zašto je pogled u nebo pogled u prošlost?','Svjetlost zvijezda putuje jako dugo, pa vidimo kako su zvijezde izgledale kad je svjetlost krenula prema nama.'],
+ ['Svemir','Što je galaksija?','Nakupina mnogo zvijezda.'],
+ ['Svemir','Kako se zove naša galaksija?','Mliječna staza (Kumova slama).'],
+ ['Svemir','Što su zvijezde?','Užarena nebeska tijela koja sama svijetle.'],
+ ['Sunčev sustav','Koja nam je zvijezda najbliža?','Sunce.'],
+ ['Sunčev sustav','Što su planeti?','Tamna i hladna nebeska tijela. Ne svijetle sami, nego odbijaju Sunčevu svjetlost.'],
+ ['Sunčev sustav','Koji su kameni (terestrički) planeti?','Merkur, Venera, Zemlja, Mars.'],
+ ['Sunčev sustav','Koji su plinoviti planeti (divovi)?','Jupiter, Saturn, Uran, Neptun.'],
+ ['Sunčev sustav','Redoslijed planeta od Sunca?','Merkur, Venera, Zemlja, Mars, Jupiter, Saturn, Uran, Neptun.'],
+ ['Sunčev sustav','Što je rotacija?','Okretanje planeta oko svoje osi.'],
+ ['Sunčev sustav','Što je revolucija?','Okretanje (kruženje) planeta oko Sunca.'],
+ ['Sunčev sustav','Što su prirodni sateliti?','Nebeska tijela koja kruže oko planeta.'],
+ ['Sunčev sustav','Koji planeti nemaju satelite?','Merkur i Venera.'],
+ ['Sunčev sustav','Koji planet ima najviše satelita?','Saturn.'],
+ ['Sunčev sustav','Što su asteroidi?','Nebeska tijela od kamena ili željeza, nepravilnog oblika.'],
+ ['Sunčev sustav','Što su kometi?','Nebeska tijela od leda i prašine.'],
+ ['Sunčev sustav','Što su meteori?','Svjetlosna pojava na nebu, „zvijezda padalica”.'],
+ ['Uran','Koji je Uran planet po redu od Sunca?','Sedmi.'],
+ ['Uran','Prosječna udaljenost Urana od Sunca?','2870,7 milijuna km.'],
+ ['Uran','Koliko traje revolucija Urana?','30 688,5 Zemljinih dana, oko 84 godine.'],
+ ['Uran','Koliko traje rotacija Urana?','17 h 14 min 24 s.'],
+ ['Uran','Ekvatorski promjer i gravitacija Urana?','Promjer oko 4 Zemljina promjera, gravitacija 0,89 Zemljine.'],
+ ['Mjesec','Koji je Zemljin prirodni satelit?','Mjesec.'],
+ ['Mjesec','Karakteristike Mjeseca?','Nema atmosferu, ima mnogo kratera, gravitacija mu je oko 6 puta slabija od Zemljine.'],
+ ['Mjesec','Mjesečeve mijene?','Mlađak, prva četvrt, uštap (pun Mjesec), zadnja četvrt. Ciklus traje oko 29,5 dana.'],
+ ['Mjesec','Kada nastaje pomrčina Sunca?','Kad je Mjesec između Sunca i Zemlje i zakloni Sunce.'],
+ ['Mjesec','Kada nastaje pomrčina Mjeseca?','Kad je Zemlja između Sunca i Mjeseca, pa Zemljina sjena padne na Mjesec.'],
+ ['Godišnja doba','Proljetna ravnodnevnica?','21. 3. — dan i noć traju po 12 h.'],
+ ['Godišnja doba','Ljetni suncostaj?','21. 6. — najdulji dan (oko 16 h dan, 8 h noć).'],
+ ['Godišnja doba','Jesenska ravnodnevnica?','23. 9. — dan i noć traju po 12 h.'],
+ ['Godišnja doba','Zimski suncostaj?','21. 12. — najkraći dan (oko 8 h dan, 16 h noć).'],
+ ['Vrijeme','Koliko traje Sunčev dan?','24 sata.'],
+ ['Vrijeme','Što je mjesno vrijeme?','Vrijeme koje imaju sva mjesta na istom meridijanu.'],
+ ['Vrijeme','Za koliko se stupnjeva Zemlja okrene za 1 sat?','15° (360° : 24 = 15°).'],
+ ['Vrijeme','Koliko minuta odgovara 1°?','4 minute (60 min : 15 = 4).'],
+ ['Vrijeme','Koje vrijeme koristimo u svakodnevici?','Pojasno vrijeme (vremensku zonu), ne mjesno.'],
+ ['Vrijeme','U kojoj je vremenskoj zoni Hrvatska?','GMT+1 (srednjoeuropsko vrijeme, SEV / CET).'],
+ ['Vrijeme','Što uglavnom prati datumska granica?','180. meridijan.'],
+ ['Vrijeme','Mali i Veliki Diomed?','Dva otoka između kojih prolazi datumska granica: na jednom je „jučer”, na drugom „sutra”.'],
+];
+const cats=['Sve',...new Set(CARDS.map(c=>c[0]))];
+let cat='Sve',deck=[],known=0,total=0;
+const fbox=document.getElementById('cardFilters');
+cats.forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.setAttribute('aria-pressed',c===cat);
+  b.onclick=()=>{cat=c;[...fbox.children].forEach(x=>x.setAttribute('aria-pressed',x===b));buildDeck()};fbox.appendChild(b)});
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const cardEl=document.getElementById('card');
+function buildDeck(){deck=shuffle(CARDS.filter(c=>cat==='Sve'||c[0]===cat));total=deck.length;known=0;renderCard()}
+function renderCard(){
+  cardEl.classList.remove('flip');
+  const bar=document.getElementById('cBar');bar.style.width=(total?known/total*100:0)+'%';
+  document.getElementById('cCount').textContent=`Znaš ${known} / ${total}`;
+  const has=deck.length>0;
+  document.getElementById('cYes').disabled=!has;document.getElementById('cNo').disabled=!has;
+  if(!has){document.getElementById('cTag').textContent='Gotovo';document.getElementById('cQ').textContent='Sve kartice u ovoj skupini znaš! 🎉';document.getElementById('cA').textContent='Promiješaj ponovno ili prijeđi na kviz.';return}
+  const [t,q,a]=deck[0];
+  setTimeout(()=>{document.getElementById('cTag').textContent=t;document.getElementById('cQ').textContent=q;document.getElementById('cA').textContent=a},cardEl.classList.contains('flip')?0:0);
+}
+cardEl.addEventListener('click',()=>{if(deck.length)cardEl.classList.toggle('flip')});
+cardEl.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(deck.length)cardEl.classList.toggle('flip')}});
+document.getElementById('cYes').onclick=()=>{deck.shift();known++;renderCard()};
+document.getElementById('cNo').onclick=()=>{deck.push(deck.shift());renderCard()};
+document.getElementById('cReset').onclick=buildDeck;
+buildDeck();
+
+/* ---------- Kviz ---------- */
+const Q=[
+ ['Prije koliko je otprilike nastao svemir (Veliki prasak)?',['13,8 milijardi godina','13,8 milijuna godina','4,6 milijardi godina','138 000 godina'],'Veliki prasak bio je prije oko 13,8 milijardi godina.'],
+ ['Tko je zastupao heliocentrični sustav?',['Kopernik i Galilei','Ptolemej i Aristotel','Newton i Einstein','Kolumbo i Magellan'],'Kopernik i Galilei tvrdili su da je Sunce u središtu.'],
+ ['Heliocentrični sustav znači da je u središtu…',['Sunce','Zemlja','Mjesec','središte galaksije'],'Helios = Sunce.'],
+ ['Galaksija je…',['nakupina mnogo zvijezda','jedna vrlo velika zvijezda','skupina planeta oko Sunca','oblak leda i prašine'],'Naša galaksija je Mliječna staza.'],
+ ['Kako se još zove Mliječna staza?',['Kumova slama','Veliki medvjed','Zvijezda Danica','Andromeda'],'Mliječna staza = Kumova slama.'],
+ ['Zvijezde su…',['užarena tijela koja sama svijetle','tamna i hladna tijela','tijela od leda i prašine','svjetlosna pojava u atmosferi'],'Zvijezde svijetle vlastitom svjetlošću.'],
+ ['Planeti su…',['tamna i hladna nebeska tijela','užarena nebeska tijela','svjetlosne pojave','nakupine zvijezda'],'Planeti ne svijetle sami, odbijaju Sunčevu svjetlost.'],
+ ['Koji su kameni (terestrički) planeti?',['Merkur, Venera, Zemlja, Mars','Jupiter, Saturn, Uran, Neptun','Merkur, Mars, Jupiter, Saturn','Venera, Zemlja, Uran, Neptun'],'Četiri unutarnja planeta su kamena.'],
+ ['Koji je planet plinoviti div?',['Saturn','Mars','Venera','Merkur'],'Plinoviti divovi: Jupiter, Saturn, Uran, Neptun.'],
+ ['Koja nam je zvijezda najbliža?',['Sunce','Mjesec','Jupiter','Sjevernjača'],'Mjesec i Jupiter uopće nisu zvijezde.'],
+ ['Rotacija je okretanje planeta…',['oko svoje osi','oko Sunca','oko Mjeseca','oko središta galaksije'],'Rotacija → os. Revolucija → Sunce.'],
+ ['Revolucija je okretanje planeta…',['oko Sunca','oko svoje osi','oko Mjeseca','u mjestu'],'Revolucija Zemlje traje godinu dana.'],
+ ['Koji planeti nemaju prirodnih satelita?',['Merkur i Venera','Mars i Zemlja','Uran i Neptun','Jupiter i Saturn'],'Merkur i Venera nemaju mjesece.'],
+ ['Koji planet ima najviše satelita?',['Saturn','Jupiter','Zemlja','Mars'],'Saturn ima najviše poznatih mjeseci.'],
+ ['Asteroidi su građeni od…',['kamena ili željeza','leda i prašine','plina','vode'],'Asteroidi su nepravilnog oblika.'],
+ ['Kometi su građeni od…',['leda i prašine','kamena i željeza','užarenog plina','samo vode'],'Kad se približe Suncu, led isparava i nastaje rep.'],
+ ['Meteor ili „zvijezda padalica” je…',['svjetlosna pojava','vrsta zvijezde','mali planet','Zemljin satelit'],'Meteor je svjetlosni trag na nebu.'],
+ ['Uran je koji planet po redu od Sunca?',['sedmi','šesti','osmi','peti'],'Merkur, Venera, Zemlja, Mars, Jupiter, Saturn, URAN.'],
+ ['Koliko otprilike traje Uranova revolucija?',['84 godine','17 sati','27 godina','365 dana'],'30 688,5 Zemljinih dana ≈ 84 godine. 17 h je rotacija.'],
+ ['Ljetni suncostaj je…',['21. 6.','21. 3.','23. 9.','21. 12.'],'Tada je najdulji dan.'],
+ ['Na dan ravnodnevnice dan i noć traju…',['po 12 sati','16 h dan, 8 h noć','8 h dan, 16 h noć','24 sata dan'],'Ravnodnevnice: 21. 3. i 23. 9.'],
+ ['Najkraći dan u godini je…',['zimski suncostaj, 21. 12.','ljetni suncostaj, 21. 6.','jesenska ravnodnevnica','proljetna ravnodnevnica'],'Zimi je dan oko 8 h, noć oko 16 h.'],
+ ['Pomrčina Sunca nastaje kad je…',['Mjesec između Sunca i Zemlje','Zemlja između Sunca i Mjeseca','Sunce između Zemlje i Mjeseca','Mjesec iza Zemlje'],'Mjesec zakloni Sunce.'],
+ ['Pomrčina Mjeseca nastaje kad je…',['Zemlja između Sunca i Mjeseca','Mjesec između Sunca i Zemlje','Mjesec iza Sunca','Sunce između Zemlje i Mjeseca'],'Zemljina sjena pada na Mjesec.'],
+ ['Što od navedenog vrijedi za Mjesec?',['nema atmosferu i ima kratere','nema gravitaciju','svijetli vlastitom svjetlošću','ima gustu atmosferu'],'Mjesec ima gravitaciju, ali oko 6 puta slabiju.'],
+ ['Za 1 sat Zemlja se okrene za…',['15°','1°','4°','24°'],'360° : 24 h = 15°.'],
+ ['Jednom stupnju odgovara…',['4 minute','15 minuta','1 sat','60 minuta'],'60 min : 15° = 4 min.'],
+ ['Hrvatska je u zoni…',['GMT+1','GMT','GMT+2','GMT−1'],'Srednjoeuropsko vrijeme (SEV, CET).'],
+ ['Datumska granica uglavnom prati…',['180. meridijan','početni (0.) meridijan','ekvator','Rakovu obratnicu'],'Na njoj se mijenja datum.'],
+ ['Mjesno vrijeme imaju sva mjesta na istom…',['meridijanu','usporedniku','kontinentu','ekvatoru'],'Mjesta na istom meridijanu imaju isto podne.'],
+ ['Koje vrijeme koristimo u svakodnevnom životu?',['pojasno (vremensku zonu)','mjesno','Sunčevo','zvjezdano'],'Mjesno vrijeme ne koristimo jer bi se sat mijenjao od grada do grada.'],
+];
+const qb=document.getElementById('quizBox');
+let qs=[],qi=0,qscore=0,wrongs=[];
+function startQuiz(){qs=shuffle([...Q]).slice(0,10);qi=0;qscore=0;wrongs=[];renderQ()}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function renderQ(){
+  if(qi>=qs.length){
+    const msg=qscore>=9?'Odlično, spremna si!':qscore>=7?'Vrlo dobro. Ponovi ono što si promašila.':qscore>=5?'Dobar početak. Vrati se na kartice.':'Prođi kartice pa pokušaj ponovno.';
+    qb.innerHTML=`<div class="eyebrow">Rezultat</div><div class="score">${qscore} / ${qs.length}</div><p>${msg}</p>`+
+      (wrongs.length?`<h3 style="margin:8px 0">Za ponoviti</h3><ul class="steps">${wrongs.map(w=>`<li><b>${esc(w[0])}</b><br>${esc(w[1][0])}</li>`).join('')}</ul>`:'')+
+      `<div class="row" style="margin-top:14px"><button class="btn" id="qAgain">Novi kviz (10 pitanja)</button></div>`;
+    document.getElementById('qAgain').onclick=startQuiz;return}
+  const [q,opts,ex]=qs[qi];const order=shuffle(opts.map((o,i)=>[o,i]));
+  qb.innerHTML=`<div class="row" style="justify-content:space-between"><span class="eyebrow">Pitanje ${qi+1} / ${qs.length}</span><span class="muted counter">Bodovi: ${qscore}</span></div>
+   <div class="progress" style="margin:10px 0 14px"><span style="width:${qi/qs.length*100}%"></span></div>
+   <h2 style="margin-bottom:14px">${esc(q)}</h2><div class="opts">${order.map(([o,i])=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div><div id="qAfter"></div>`;
+  qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.i==='0';if(ok)qscore++;else wrongs.push(qs[qi]);
+    qb.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.dataset.i==='0')x.classList.add('right')});
+    if(!ok)b.classList.add('wrong');
+    document.getElementById('qAfter').innerHTML=`<p class="explain" style="margin:14px 0 0">${ok?'<b>Točno!</b> ':'<b>Netočno.</b> '}${esc(ex)}</p>
+      <div class="row" style="margin-top:12px"><button class="btn" id="qNext">${qi+1<qs.length?'Sljedeće pitanje':'Pogledaj rezultat'}</button></div>`;
+    document.getElementById('qNext').onclick=()=>{qi++;renderQ()};document.getElementById('qNext').focus();
+  });
+}
+startQuiz();
+
+/* ---------- Računanje vremena ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const fmt=m=>{m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60)};
+const lon=d=>d===0?'0°':(Math.abs(d)+'° '+(d>0?'I':'Z'));
+const ZONES=[['London',0],['Zagreb',1],['Atena',2],['Moskva',3],['Dubai',4],['Peking',8],['Tokio',9],['Sydney',10],['New York',-5],['Chicago',-6],['Los Angeles',-8],['Rio de Janeiro',-3]];
+let mode='mjesno',cur=null,tOk=0,tAll=0;
+document.querySelectorAll('#tModes .chip').forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll('#tModes .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));newTask()});
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function newTask(){
+  document.getElementById('tRes').innerHTML='';document.getElementById('tIn').value='';
+  if(mode==='mjesno'){
+    let a,b;do{a=rnd(-24,30)*5;b=rnd(-24,30)*5}while(a===b);
+    const t=rnd(1,22)*60+rnd(0,3)*15;const diff=b-a;const ans=t+diff*4;
+    cur={ans,html:`Mjesto A je na <b>${lon(a)}</b> i ondje je mjesno vrijeme <b>${fmt(t)}</b>. Koliko je mjesno vrijeme u mjestu B na <b>${lon(b)}</b>?`,
+      steps:[`Razlika u dužini: ${Math.abs(diff)}°${a*b<0?' (jedno mjesto je istočno, drugo zapadno, pa se stupnjevi zbrajaju)':''}.`,
+        `${Math.abs(diff)}° × 4 min = ${Math.abs(diff)*4} min = ${Math.floor(Math.abs(diff)*4/60)} h ${Math.abs(diff)*4%60} min.`,
+        `Mjesto B je ${diff>0?'istočnije, pa je ondje <b>kasnije</b> (dodajemo)':'zapadnije, pa je ondje <b>ranije</b> (oduzimamo)'}.`,
+        `${fmt(t)} ${diff>0?'+':'−'} ${Math.floor(Math.abs(diff)*4/60)} h ${Math.abs(diff)*4%60} min = <b>${fmt(ans)}</b>${dayNote(ans)}.`]};
+  }else{
+    let A,B;do{A=ZONES[rnd(0,ZONES.length-1)];B=ZONES[rnd(0,ZONES.length-1)]}while(A===B);
+    const t=rnd(0,23)*60+rnd(0,3)*15;const diff=B[1]-A[1];const ans=t+diff*60;
+    const z=x=>'GMT'+(x===0?'':(x>0?'+':'−')+Math.abs(x));
+    cur={ans,html:`U gradu <b>${A[0]}</b> (${z(A[1])}) je <b>${fmt(t)}</b>. Koliko je sati u gradu <b>${B[0]}</b> (${z(B[1])})?<br><span class="muted" style="font-size:.9rem">Bez ljetnog računanja vremena.</span>`,
+      steps:[`Razlika zona: ${z(B[1])} − (${z(A[1])}) = ${diff>0?'+':'−'}${Math.abs(diff)} h.`,
+        `${B[0]} je ${diff>0?'istočnije, pa je ondje <b>kasnije</b>':'zapadnije, pa je ondje <b>ranije</b>'}.`,
+        `${fmt(t)} ${diff>0?'+':'−'} ${Math.abs(diff)} h = <b>${fmt(ans)}</b>${dayNote(ans)}.`]};
+  }
+  document.getElementById('tText').innerHTML=cur.html;
+}
+function dayNote(m){return m>=1440?' (sljedeći dan)':m<0?' (prethodni dan)':''}
+document.getElementById('tForm').addEventListener('submit',e=>{
+  e.preventDefault();const v=document.getElementById('tIn').value.trim().replace('.',':').replace(',',':');
+  const mm=v.match(/^(\d{1,2})(?::(\d{1,2}))?$/);const res=document.getElementById('tRes');
+  if(!mm||+mm[1]>23||+(mm[2]||0)>59){res.innerHTML='<p class="explain" style="margin:0">Upiši vrijeme kao sati:minute, npr. 14:20.</p>';return}
+  const val=+mm[1]*60+ +(mm[2]||0);const ok=val===((cur.ans%1440)+1440)%1440;
+  tAll++;if(ok)tOk++;
+  res.innerHTML=`<p style="margin:0 0 8px;font-weight:700;color:${ok?'var(--ok)':'var(--red)'}">${ok?'Točno!':'Nije točno. Točan odgovor je '+fmt(cur.ans)+'.'}</p><ol class="steps">${cur.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
+  document.getElementById('tScore').textContent=`Točno ${tOk} od ${tAll}`;
+});
+document.getElementById('tNext').onclick=newTask;
+newTask();
+</script>
+
+</body></html>
