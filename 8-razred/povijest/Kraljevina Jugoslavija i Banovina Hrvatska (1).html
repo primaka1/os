@@ -1,0 +1,515 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kraljevina Jugoslavija i Banovina Hrvatska</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kolona, kartice-alati ispod zaglavlja. Prilagođeno za disleksiju:
+   Lexend, veća slova, širi razmaci, bez kurziva i velikih slova, tonirana pozadina umjesto čiste bijele, tekst tamnosivi umjesto crnog */
+:root{
+  --bg:#FAF4E4; --surface:#FFFBF1; --ink:#2A2E38; --muted:#575D6B; --line:#DCD3BE;
+  --red:#9E2A2B; --red-soft:#F4DEDD; --blue:#24477A; --blue-soft:#E2E8F2; --ok:#2B7650; --ok-soft:#DCEFE3;
+  --body:"Lexend", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --display:var(--body);
+  --fs:19px; --lh:1.75; --ls:.03em; --ws:.12em;
+}
+:root[data-tint="plava"]{--bg:#E6EEF8;--surface:#F3F7FC;--line:#C9D6E6}
+:root[data-tint="zelena"]{--bg:#E7F2E2;--surface:#F4F9F1;--line:#CADDC1}
+:root[data-tint="ruzicasta"]{--bg:#F7E6EA;--surface:#FCF3F5;--line:#E3C9D0}
+:root[data-tint="siva"]{--bg:#ECEDF0;--surface:#F7F7F8;--line:#D4D6DC}
+:root[data-font="atkinson"]{--body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif}
+:root[data-space="sire"]{--lh:1.95; --ls:.06em; --ws:.2em}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]),:root:not([data-theme="light"])[data-tint]{
+  --bg:#1A1C22; --surface:#23262E; --ink:#E4E2DC; --muted:#A6A9B2; --line:#383C47;
+  --red:#E67776; --red-soft:#3A1E21; --blue:#9BB8E6; --blue-soft:#22304A; --ok:#62C590; --ok-soft:#173226; color-scheme:dark}}
+:root[data-theme="dark"],:root[data-theme="dark"][data-tint]{
+  --bg:#1A1C22; --surface:#23262E; --ink:#E4E2DC; --muted:#A6A9B2; --line:#383C47;
+  --red:#E67776; --red-soft:#3A1E21; --blue:#9BB8E6; --blue-soft:#22304A; --ok:#62C590; --ok-soft:#173226; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:var(--lh);letter-spacing:var(--ls);word-spacing:var(--ws);text-align:left;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+button,input{letter-spacing:inherit;word-spacing:inherit}
+em,i{font-style:normal}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.35}
+h1{font-size:1.75rem;font-weight:700}
+h2{font-size:1.25rem;font-weight:600}
+.eyebrow{font-size:.85rem;color:var(--muted);font-weight:600}
+
+/* postavke čitanja */
+.settings{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.settings summary{font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+.settings summary::-webkit-details-marker{display:none}
+.settings summary::before{content:"▸";transition:transform .2s}
+.settings[open] summary::before{transform:rotate(90deg)}
+.set-grid{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.set-row{display:flex;flex-direction:column;gap:6px}
+.set-row > span{font-size:.85rem;color:var(--muted);font-weight:600}
+.swatch{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.swatch[aria-pressed="true"]{outline:3px solid var(--blue);outline-offset:2px}
+.speak{font:600 .85rem var(--body);letter-spacing:0;word-spacing:0;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--blue);border-radius:999px;padding:6px 12px;cursor:pointer;align-self:flex-start}
+.speak[hidden]{display:none!important}
+.hintbox{font-size:1.3rem;font-weight:700;letter-spacing:.15em;color:var(--blue)}
+header{display:flex;flex-direction:column;gap:8px}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.checker{height:12px;width:100%;max-width:240px;border-radius:2px;
+  background:repeating-conic-gradient(var(--red) 0 25%, transparent 0 50%) 0 0/12px 12px;border:1px solid var(--red)}
+.years{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.years span{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;font-size:.9rem;padding:2px 8px;border-radius:6px;background:var(--blue-soft);color:var(--blue)}
+
+nav{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav button{font:700 .95rem var(--body);border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+nav button.star{border-color:var(--red);color:var(--red)}
+nav button.star[aria-selected="true"]{background:var(--red);color:var(--surface)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+section{display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.muted{color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:700 1rem var(--body);border:none;border-radius:10px;padding:11px 16px;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ok{background:var(--ok);color:var(--surface)}
+.btn.no{background:var(--red);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:default}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:700 .85rem var(--body);border:1.5px solid var(--line);background:transparent;color:var(--muted);padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--blue);color:var(--ink);background:var(--blue-soft)}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--red);transition:width .3s}
+.counter{font-variant-numeric:tabular-nums}
+
+/* kartice */
+.card{perspective:1200px;cursor:pointer}
+.card-in{position:relative;min-height:280px;transition:transform .45s;transform-style:preserve-3d}
+.card.flip .card-in{transform:rotateY(180deg)}
+.card-in{display:grid}
+.face{grid-area:1/1;min-width:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:22px;display:flex;flex-direction:column;justify-content:center;gap:12px;border:1px solid var(--line)}
+.front{background:var(--surface)}
+.back{background:var(--blue-soft);transform:rotateY(180deg)}
+.face .q{font-family:var(--display);font-size:1.3rem;font-weight:600}
+.face .a{font-size:1.15rem}
+.face .tag{font-size:.85rem;color:var(--muted);font-weight:600}
+.face .hint{font-size:.85rem;color:var(--muted)}
+
+/* kviz */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;font:400 1rem var(--body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt:disabled{cursor:default}
+.explain{border-left:4px solid var(--blue);padding:8px 12px;background:var(--blue-soft);border-radius:0 8px 8px 0;margin:0}
+.score{font-family:var(--display);font-size:3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.list{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
+
+/* upiši */
+input[type=text]{font:400 1.1rem var(--body);width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+input.good{border-color:var(--ok);background:var(--ok-soft)}
+input.bad{border-color:var(--red);background:var(--red-soft)}
+.verdict{font-weight:700}
+.verdict.good{color:var(--ok)} .verdict.bad{color:var(--red)}
+.linkbtn{font:700 .9rem var(--body);background:none;border:none;color:var(--blue);padding:0;cursor:pointer;text-decoration:underline}
+
+/* kronologija */
+.timeline{display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none}
+.timeline li{display:grid;grid-template-columns:4.2rem 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.timeline li:first-child{border-top:none}
+.timeline .y{font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--red);font-variant-numeric:tabular-nums}
+.timeline .d{font-size:.85rem;color:var(--muted)}
+.order{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.order li{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)}
+.order li .t{flex:1;min-width:0}
+.order li .n{font-family:var(--display);font-weight:800;color:var(--muted);width:1.4em;font-variant-numeric:tabular-nums}
+.order li.right{border-color:var(--ok);background:var(--ok-soft)}
+.order li.wrong{border-color:var(--red);background:var(--red-soft)}
+.mv{font:700 1rem var(--body);width:38px;height:38px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.mv:disabled{opacity:.3;cursor:default}
+@media (prefers-reduced-motion:reduce){.card-in,.progress span{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Povijest · 8. razred</div>
+  <h1>Kraljevina Jugoslavija i Banovina Hrvatska</h1>
+  <p>Šestosiječanjska diktatura, atentat na kralja Aleksandra, hrvatsko pitanje i Banovina Hrvatska.</p>
+  <div class="checker" aria-hidden="true"></div>
+  <div class="years" aria-label="Ključne godine"><span>1929</span><span>1931</span><span>1934</span><span>1939</span><span>1941</span></div>
+</header>
+
+<details class="settings" id="settings">
+  <summary>Prilagodi čitanje</summary>
+  <div class="set-grid">
+    <div class="set-row"><span>Veličina slova</span>
+      <div class="chips" id="setFs"><button class="chip" data-v="17px">Manja</button><button class="chip" data-v="19px">Srednja</button><button class="chip" data-v="22px">Velika</button><button class="chip" data-v="25px">Najveća</button></div></div>
+    <div class="set-row"><span>Boja pozadine</span>
+      <div class="chips" id="setTint">
+        <button class="swatch" data-v="krem" style="background:#FAF4E4" aria-label="Krem"></button>
+        <button class="swatch" data-v="plava" style="background:#E6EEF8" aria-label="Plava"></button>
+        <button class="swatch" data-v="zelena" style="background:#E7F2E2" aria-label="Zelena"></button>
+        <button class="swatch" data-v="ruzicasta" style="background:#F7E6EA" aria-label="Ružičasta"></button>
+        <button class="swatch" data-v="siva" style="background:#ECEDF0" aria-label="Siva"></button></div></div>
+    <div class="set-row"><span>Razmak između slova i riječi</span>
+      <div class="chips" id="setSpace"><button class="chip" data-v="normal">Obični</button><button class="chip" data-v="sire">Širi</button></div></div>
+    <div class="set-row"><span>Font</span>
+      <div class="chips" id="setFont"><button class="chip" data-v="lexend" style="font-family:Lexend,sans-serif">Lexend</button><button class="chip" data-v="atkinson" style="font-family:'Atkinson Hyperlegible',sans-serif">Atkinson</button></div></div>
+    <div class="set-row" id="setVoiceRow"><span>Čitanje naglas</span>
+      <div class="chips" id="setRate"><button class="chip" data-v="0.75">Sporo</button><button class="chip" data-v="0.95">Normalno</button></div></div>
+  </div>
+</details>
+
+<nav role="tablist">
+  <button role="tab" data-tab="kartice" aria-selected="true">Kartice</button>
+  <button role="tab" data-tab="kviz" aria-selected="false">Kviz</button>
+  <button role="tab" data-tab="upisi" class="star" aria-selected="false">Upiši odgovor</button>
+  <button role="tab" data-tab="crta" aria-selected="false">Vremenska crta</button>
+</nav>
+
+<!-- KARTICE -->
+<section id="kartice">
+  <div class="chips" id="cardFilters"></div>
+  <div class="card" id="card" tabindex="0" aria-live="polite">
+    <div class="card-in">
+      <div class="face front"><span class="tag" id="cTag"></span><div class="q" id="cQ"></div><button class="speak" data-say="cQ" type="button">🔊 Pročitaj</button><span class="hint">Dodirni karticu za odgovor</span></div>
+      <div class="face back"><span class="tag">Odgovor</span><div class="a" id="cA"></div><button class="speak" data-say="cA" type="button">🔊 Pročitaj</button></div>
+    </div>
+  </div>
+  <div class="progress"><span id="cBar"></span></div>
+  <div class="row" style="justify-content:space-between">
+    <span class="muted counter" id="cCount"></span>
+    <div class="row"><button class="btn no" id="cNo">Ponovi</button><button class="btn ok" id="cYes">Znam</button></div>
+  </div>
+  <p class="muted" style="margin:0;font-size:.9rem">„Ponovi” vraća karticu na kraj špila. „Znam” je miče dok ne promiješaš ponovno.</p>
+  <button class="btn ghost" id="cReset">Promiješaj sve ponovno</button>
+</section>
+
+<!-- KVIZ -->
+<section id="kviz" hidden>
+  <div class="chips" id="qLen">
+    <button class="chip" aria-pressed="true" data-n="10">10 pitanja</button>
+    <button class="chip" aria-pressed="false" data-n="36">Svih 36 pitanja</button>
+  </div>
+  <div class="panel" id="quizBox"></div>
+</section>
+
+<!-- UPIŠI -->
+<section id="upisi" hidden>
+  <div class="panel" id="typeBox"></div>
+</section>
+
+<!-- VREMENSKA CRTA -->
+<section id="crta" hidden>
+  <div class="panel">
+    <h2 style="margin-bottom:6px">Poredaj događaje</h2>
+    <p class="muted" style="margin:0 0 12px">Strelicama posloži događaje od najstarijeg prema najnovijem.</p>
+    <ul class="order" id="order"></ul>
+    <div class="row" style="margin-top:12px"><button class="btn" id="oCheck">Provjeri redoslijed</button><button class="btn ghost" id="oNew">Novi zadatak</button></div>
+    <p id="oRes" class="verdict" style="margin:10px 0 0"></p>
+  </div>
+  <div class="panel">
+    <h2 style="margin-bottom:6px">Pregled razdoblja</h2>
+    <ul class="timeline" id="timeline"></ul>
+  </div>
+</section>
+</div>
+
+<script>
+/* ---------- pomoćne ---------- */
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Postavke čitanja (pamte se u ovom pregledniku) ---------- */
+const PREF={fs:'19px',tint:'krem',space:'normal',font:'lexend',rate:'0.75',open:true};
+try{Object.assign(PREF,JSON.parse(localStorage.getItem('citanje')||'{}'))}catch(e){}
+const savePref=()=>{try{localStorage.setItem('citanje',JSON.stringify(PREF))}catch(e){}};
+const root=document.documentElement;
+function applyPref(){
+  root.style.setProperty('--fs',PREF.fs);
+  if(PREF.tint==='krem')delete root.dataset.tint;else root.dataset.tint=PREF.tint;
+  if(PREF.space==='sire')root.dataset.space='sire';else delete root.dataset.space;
+  if(PREF.font==='atkinson')root.dataset.font='atkinson';else delete root.dataset.font;
+  [['setFs','fs'],['setTint','tint'],['setSpace','space'],['setFont','font'],['setRate','rate']].forEach(([id,k])=>
+    document.querySelectorAll('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===PREF[k])));
+}
+[['setFs','fs'],['setTint','tint'],['setSpace','space'],['setFont','font'],['setRate','rate']].forEach(([id,k])=>
+  document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{PREF[k]=b.dataset.v;savePref();applyPref()})));
+$('settings').open=PREF.open!==false;
+$('settings').addEventListener('toggle',()=>{PREF.open=$('settings').open;savePref()});
+applyPref();
+
+/* ---------- Čitanje naglas ---------- */
+const canSpeak='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
+let voice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>/^hr/i.test(x.lang))||v.find(x=>/^(bs|sr)/i.test(x.lang))||null}catch(e){}}
+if(canSpeak){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
+function say(text){
+  if(!canSpeak)return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[–—]/g,', '));
+    u.lang=voice?voice.lang:'hr-HR';if(voice)u.voice=voice;u.rate=parseFloat(PREF.rate)||.8;speechSynthesis.speak(u)}catch(e){}
+}
+if(!canSpeak)$('setVoiceRow').hidden=true;
+function speakBtn(getText){const b=document.createElement('button');b.type='button';b.className='speak';b.textContent='🔊 Pročitaj';b.hidden=!canSpeak;
+  b.addEventListener('click',e=>{e.stopPropagation();say(getText())});return b}
+document.querySelectorAll('.speak[data-say]').forEach(b=>{b.hidden=!canSpeak;b.addEventListener('click',e=>{e.stopPropagation();say($(b.dataset.say).textContent)})});
+
+/* ---------- Tabs ---------- */
+const tabs=[...document.querySelectorAll('nav button')];
+function show(id){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==id)}
+tabs.forEach(b=>b.addEventListener('click',()=>{show(b.dataset.tab);try{history.replaceState(null,'','#'+b.dataset.tab)}catch(e){}}));
+const h0=location.hash.slice(1); if(tabs.some(b=>b.dataset.tab===h0)) show(h0);
+
+/* ---------- Kartice ---------- */
+const CARDS=[
+ ['Diktatura','Kada je uvedena Šestosiječanjska diktatura?','6. siječnja 1929.'],
+ ['Diktatura','Tko je uveo Šestosiječanjsku diktaturu?','Kralj Aleksandar I. Karađorđević.'],
+ ['Diktatura','Što je kralj učinio uvođenjem diktature?','Ukinuo je Vidovdanski ustav i raspustio Narodnu skupštinu.'],
+ ['Diktatura','Što je bilo zabranjeno za vrijeme diktature?','Nacionalna obilježja i stranke s nacionalnim obilježjem u nazivu.'],
+ ['Diktatura','Kako se država zvala od 1929.?','Kraljevina Jugoslavija (prije: Kraljevina SHS).'],
+ ['Diktatura','Na koliko je banovina podijeljena država?','Na devet banovina.'],
+ ['Diktatura','Što je unitarizam?','Ideja o stvaranju jedne, jugoslavenske nacije.'],
+ ['Diktatura','Posljedice diktature?','Ograničene građanske slobode i cenzura. Ljudi su zatvarani zbog isticanja nacionalnih simbola.'],
+ ['Diktatura','Kakva je bila reakcija na diktaturu?','Otpor u cijeloj zemlji i jačanje krajnje ljevice i desnice.'],
+ ['Otpor','Tko je ubijen 1931.?','Milan Šufflay.'],
+ ['Otpor','Kakav je otpor zagovarao HSS?','Politički, a ne oružani otpor.'],
+ ['Otpor','Tko je i kada osnovao Ustašu?','Ante Pavelić, 1930. u Italiji.'],
+ ['Otpor','Cilj Ustaša?','Raspad Kraljevine Jugoslavije i stvaranje samostalne hrvatske države.'],
+ ['Otpor','Gdje su Ustaše imale logore za obuku?','U Italiji i Mađarskoj.'],
+ ['Atentat','Što se dogodilo u Zagrebu 1933.?','Neuspjeli atentat na kralja.'],
+ ['Atentat','Kada i gdje je ubijen kralj Aleksandar I.?','9. listopada 1934. u Marseilleu (Francuska).'],
+ ['Atentat','Tko je izvršio atentat na kralja?','Veličko Kerin, član VMRO-a.'],
+ ['Atentat','Tko je organizirao atentat?','Eugen Dido Kvaternik, suradnik Ante Pavelića.'],
+ ['Atentat','Što su zajednički željeli Ustaše i VMRO?','Raspad Kraljevine Jugoslavije.'],
+ ['Atentat','Tko je naslijedio prijestolje?','Maloljetni sin Petar II.'],
+ ['Atentat','Tko je vladao dok je Petar II. bio maloljetan?','Tročlano namjesništvo na čelu s knezom Pavlom.'],
+ ['Banovina','Što je hrvatsko pitanje?','Neravnopravan položaj Hrvatske u Kraljevini Jugoslaviji (centralizam, ukidanje hrvatske posebnosti, zabrana nacionalnih obilježja).'],
+ ['Banovina','Što je ubrzalo rješavanje hrvatskog pitanja?','Približavanje Drugoga svjetskog rata.'],
+ ['Banovina','Kada je sklopljen Sporazum Cvetković–Maček?','26. kolovoza 1939.'],
+ ['Banovina','Što je nastalo Sporazumom Cvetković–Maček?','Banovina Hrvatska, sa širokom autonomijom unutar Kraljevine Jugoslavije.'],
+ ['Banovina','Tko su bili predsjednik i potpredsjednik nove vlade?','Dragiša Cvetković predsjednik, Vladko Maček potpredsjednik.'],
+ ['Banovina','Tko je bio prvi ban Banovine Hrvatske?','Ivan Šubašić (HSS).'],
+ ['Banovina','Koje su banovine spojene u Banovinu Hrvatsku?','Savska i Primorska banovina.'],
+ ['Banovina','Koji su kotarevi dodani Banovini Hrvatskoj?','Dubrovnik, Ilok, Šid, Brčko, Gradačac, Derventa, Travnik i Fojnica.'],
+ ['Banovina','Ovlasti Banovine Hrvatske?','Poljoprivreda, trgovina, industrija, prosvjeta, zdravstvo, pravda i unutarnja uprava.'],
+ ['Banovina','Što Banovina nije imala u svojim ovlastima?','Vanjsku politiku, vojsku i vlastitu valutu (to je ostalo državi).'],
+ ['Banovina','Zašto je Banovina Hrvatska prestala postojati?','Zbog napada sila Osovine i raspada Kraljevine Jugoslavije 1941.'],
+ ['Banovina','Kakav je bio položaj ostalih nesrpskih naroda?','Također neravnopravan u centralističkoj državi.'],
+];
+const cats=['Sve',...new Set(CARDS.map(c=>c[0]))];
+let cat='Sve',deck=[],known=0,total=0;
+const fbox=$('cardFilters');
+cats.forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.setAttribute('aria-pressed',c===cat);
+  b.onclick=()=>{cat=c;[...fbox.children].forEach(x=>x.setAttribute('aria-pressed',x===b));buildDeck()};fbox.appendChild(b)});
+const cardEl=$('card');
+function buildDeck(){deck=shuffle(CARDS.filter(c=>cat==='Sve'||c[0]===cat));total=deck.length;known=0;renderCard()}
+function renderCard(){
+  cardEl.classList.remove('flip');
+  $('cBar').style.width=(total?known/total*100:0)+'%';
+  $('cCount').textContent=`Znaš ${known} / ${total}`;
+  const has=deck.length>0;$('cYes').disabled=!has;$('cNo').disabled=!has;
+  if(!has){$('cTag').textContent='Gotovo';$('cQ').textContent='Sve kartice u ovoj skupini znaš! 🎉';$('cA').textContent='Promiješaj ponovno ili prijeđi na kviz.';return}
+  const [t,q,a]=deck[0];$('cTag').textContent=t;$('cQ').textContent=q;$('cA').textContent=a;
+}
+cardEl.addEventListener('click',()=>{if(deck.length)cardEl.classList.toggle('flip')});
+cardEl.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();if(deck.length)cardEl.classList.toggle('flip')}});
+$('cYes').onclick=()=>{deck.shift();known++;renderCard()};
+$('cNo').onclick=()=>{deck.push(deck.shift());renderCard()};
+$('cReset').onclick=buildDeck;
+buildDeck();
+
+/* ---------- Kviz (36 pitanja iz testa; prvi odgovor je točan) ---------- */
+const Q=[
+ ['Kada je uvedena Šestosiječanjska diktatura?',['6. siječnja 1929.','6. siječnja 1931.','9. listopada 1934.'],'Naziv dolazi od datuma: 6. siječnja.'],
+ ['Tko je uveo Šestosiječanjsku diktaturu?',['Kralj Aleksandar I. Karađorđević','Kralj Petar II.','Vladko Maček'],''],
+ ['Što je kralj učinio nakon uvođenja diktature?',['Ukinuo Vidovdanski ustav i raspustio Narodnu skupštinu','Uveo višestranačku demokraciju','Proglasio Banovinu Hrvatsku'],''],
+ ['Što je bilo zabranjeno za vrijeme diktature?',['Nacionalna obilježja i stranke s nacionalnim obilježjem u nazivu','Samo sportska društva','Svi državni simboli'],''],
+ ['Kako se država zvala od 1929. godine?',['Kraljevina Jugoslavija','Kraljevina SHS','Republika Jugoslavija'],'Kraljevina SHS bio je stari naziv.'],
+ ['Na koliko je banovina bila podijeljena Kraljevina Jugoslavija?',['Devet','Dvanaest','Šest'],''],
+ ['Što je unitarizam trebao stvoriti?',['Jednu jugoslavensku naciju','Samostalne nacionalne države','Savez s Italijom'],''],
+ ['Koja je bila posljedica diktature?',['Ograničenje građanskih sloboda i cenzura','Proširenje građanskih sloboda','Ukidanje policije'],''],
+ ['Što se događalo zbog isticanja nacionalnih simbola?',['Ljudi su zatvarani','To je bilo obvezno','Dodjeljivane su nagrade'],''],
+ ['Koja je bila reakcija na diktaturu?',['Otpor u cijeloj zemlji i jačanje krajnje ljevice i desnice','Potpuni nestanak oporbe','Uvođenje federalizma'],''],
+ ['Tko je ubijen 1931. godine?',['Milan Šufflay','Vladko Maček','Petar II.'],''],
+ ['Kakav je otpor diktaturi zagovarao HSS?',['Politički, a ne oružani otpor','Nije pružao otpor','Isključivo oružani otpor'],''],
+ ['Tko je 1930. u Italiji osnovao Ustašu, hrvatsku revolucionarnu organizaciju?',['Ante Pavelić','Ivan Šubašić','Dragiša Cvetković'],''],
+ ['Koji je bio cilj Ustaša?',['Raspad Kraljevine Jugoslavije i stvaranje samostalne hrvatske države','Očuvanje centralističke Jugoslavije','Obnova Austro-Ugarske'],''],
+ ['Gdje su Ustaše imale logore za obuku?',['U Italiji i Mađarskoj','U Hrvatskoj i Sloveniji','U Francuskoj i Belgiji'],''],
+ ['Što se dogodilo u Zagrebu 1933.?',['Neuspjeli atentat na kralja','Stvorena je Banovina Hrvatska','Ubijen je Milan Šufflay'],'Šufflay je ubijen 1931., Banovina nastaje 1939.'],
+ ['Kada i gdje je ubijen kralj Aleksandar I.?',['1934. u Marseilleu u Francuskoj','1931. u Zagrebu','1939. u Beogradu'],'Atentat je bio 9. listopada 1934.'],
+ ['Tko je izvršio atentat na kralja Aleksandra I.?',['Veličko Kerin, član VMRO-a','Ante Pavelić','Eugen Dido Kvaternik'],'Kvaternik je atentat organizirao, a Kerin ga je izvršio.'],
+ ['Tko je prema bilješci organizirao atentat na kralja?',['Eugen Dido Kvaternik, suradnik Ante Pavelića','Vladko Maček','Ivan Šubašić'],''],
+ ['Što su zajednički željeli Ustaše i VMRO?',['Raspad Kraljevine Jugoslavije','Jačanje kraljeve vlasti','Stvaranje jedne jugoslavenske nacije'],''],
+ ['Tko je nakon Aleksandrove smrti trebao naslijediti prijestolje?',['Njegov maloljetni sin Petar II.','Vladko Maček','Knez Pavle'],'Knez Pavle vodio je namjesništvo, ali nije bio kralj.'],
+ ['Tko je preuzeo vlast dok je Petar II. bio maloljetan?',['Tročlano namjesništvo na čelu s knezom Pavlom','Vladko Maček samostalno','Narodna skupština'],''],
+ ['Što se podrazumijevalo pod hrvatskim pitanjem?',['Neravnopravan položaj Hrvatske u Kraljevini Jugoslaviji','Pitanje hrvatske valute','Spor Hrvatske i Francuske'],''],
+ ['Što je ubrzalo rješavanje hrvatskog pitanja?',['Približavanje Drugoga svjetskog rata','Osnivanje Europske unije','Završetak Prvoga svjetskog rata'],''],
+ ['Kada je sklopljen Sporazum Cvetković–Maček?',['26. kolovoza 1939.','6. siječnja 1929.','9. listopada 1934.'],'1929. je diktatura, 1934. atentat.'],
+ ['Što je stvoreno Sporazumom Cvetković–Maček?',['Banovina Hrvatska','Nezavisna Država Hrvatska','Kraljevina SHS'],''],
+ ['Kakav je bio položaj Banovine Hrvatske?',['Imala je široku autonomiju unutar Kraljevine Jugoslavije','Bila je talijanska pokrajina','Bila je potpuno neovisna država'],''],
+ ['Tko su bili predsjednik i potpredsjednik nove vlade?',['Dragiša Cvetković predsjednik, Vladko Maček potpredsjednik','Vladko Maček predsjednik, Ivan Šubašić potpredsjednik','Knez Pavle predsjednik, Petar II. potpredsjednik'],'Redoslijed je kao u nazivu sporazuma: prvo Cvetković.'],
+ ['Tko je bio prvi ban Banovine Hrvatske?',['Ivan Šubašić','Vladko Maček','Ante Pavelić'],''],
+ ['Kojoj je stranci pripadao ban Ivan Šubašić?',['Hrvatskoj seljačkoj stranci (HSS)','Narodnoj radikalnoj stranci','Komunističkoj partiji Jugoslavije'],''],
+ ['Koje su banovine bile sjedinjene u Banovinu Hrvatsku?',['Savska i Primorska banovina','Dravska i Dunavska banovina','Vardarska i Zetska banovina'],''],
+ ['Koji su dodatni kotarevi ušli u Banovinu Hrvatsku?',['Dubrovnik, Ilok, Šid, Brčko, Gradačac, Derventa, Travnik i Fojnica','Split, Zagreb, Osijek i Varaždin','Ljubljana, Skoplje i Niš'],''],
+ ['Koji su poslovi bili među ovlastima Banovine Hrvatske?',['Poljoprivreda, trgovina, industrija, prosvjeta, zdravstvo, pravda i unutarnja uprava','Izdavanje vlastite valute i međunarodni ugovori','Vanjska politika i vojska'],''],
+ ['Zašto je Banovina Hrvatska prestala postojati?',['Zbog napada sila Osovine i raspada Kraljevine Jugoslavije 1941.','Zbog smrti Vladka Mačeka','Zbog ukidanja Sporazuma 1939.'],''],
+ ['Koji primjer najbolje pokazuje neravnopravan položaj Hrvatske prije sporazuma?',['Centralizam, ukidanje hrvatske posebnosti i zabrana nacionalnih obilježja','Hrvatska je imala vlastitu vanjsku politiku','Hrvatska je bila potpuno samostalna'],''],
+ ['Kakav je uglavnom bio položaj ostalih nesrpskih naroda?',['Također neravnopravan u centralističkoj državi','Nisu živjeli u Kraljevini Jugoslaviji','Imali su potpunu samostalnost'],''],
+];
+const qb=$('quizBox');let qLen=10,qs=[],qi=0,qscore=0,wrongs=[];
+document.querySelectorAll('#qLen .chip').forEach(b=>b.onclick=()=>{qLen=+b.dataset.n;document.querySelectorAll('#qLen .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));startQuiz()});
+function startQuiz(){qs=shuffle([...Q]).slice(0,qLen);qi=0;qscore=0;wrongs=[];renderQ()}
+function grade(s,n){const p=s/n;return p>=.9?'Odlično! Ovo je za peticu.':p>=.75?'Vrlo dobro. Ponovi ono što si promašio/la.':p>=.5?'Dobar početak. Vrati se na kartice.':'Prođi kartice pa pokušaj ponovno.'}
+function renderQ(){
+  if(qi>=qs.length){
+    qb.innerHTML=`<div class="eyebrow">Rezultat</div><div class="score">${qscore} / ${qs.length}</div><p>${grade(qscore,qs.length)}</p>`+
+      (wrongs.length?`<h3 style="margin:8px 0">Za ponoviti</h3><ul class="list">${wrongs.map(w=>`<li><b>${esc(w[0])}</b><br>${esc(w[1][0])}</li>`).join('')}</ul>`:'')+
+      `<div class="row" style="margin-top:14px"><button class="btn" id="qAgain">Novi kviz</button></div>`;
+    $('qAgain').onclick=startQuiz;return}
+  const [q,opts,ex]=qs[qi];const order=shuffle(opts.map((o,i)=>[o,i]));
+  qb.innerHTML=`<div class="row" style="justify-content:space-between"><span class="eyebrow">Pitanje ${qi+1} / ${qs.length}</span><span class="muted counter">Bodovi: ${qscore}</span></div>
+   <div class="progress" style="margin:10px 0 14px"><span style="width:${qi/qs.length*100}%"></span></div>
+   <h2 style="margin-bottom:10px">${esc(q)}</h2><div id="qSay" style="margin-bottom:14px"></div><div class="opts">${order.map(([o,i],k)=>`<button class="opt" data-i="${i}"><b>${'ABC'[k]}.</b> ${esc(o)}</button>`).join('')}</div><div id="qAfter"></div>`;
+  $('qSay').appendChild(speakBtn(()=>q+' '+order.map(([o],k)=>'ABC'[k]+': '+o+'.').join(' ')));
+  qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.i==='0';if(ok)qscore++;else wrongs.push(qs[qi]);
+    qb.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.dataset.i==='0')x.classList.add('right')});
+    if(!ok)b.classList.add('wrong');
+    const txt=(ok?'<b>Točno!</b> ':'<b>Netočno.</b> Točan odgovor: '+esc(opts[0])+'. ')+esc(ex);
+    $('qAfter').innerHTML=`<p class="explain" style="margin-top:14px">${txt}</p>
+      <div class="row" style="margin-top:12px"><button class="btn" id="qNext">${qi+1<qs.length?'Sljedeće pitanje':'Pogledaj rezultat'}</button></div>`;
+    const exEl=$('qAfter').querySelector('.explain');exEl.after(speakBtn(()=>exEl.textContent));
+    $('qNext').onclick=()=>{qi++;renderQ()};$('qNext').focus();
+  });
+}
+startQuiz();
+
+/* ---------- Upiši odgovor ----------
+   acc: popis prihvatljivih odgovora; svaki je popis dijelova riječi koji svi moraju biti u odgovoru */
+const T=[
+ ['Kojeg je datuma uvedena Šestosiječanjska diktatura?','6. siječnja 1929.',[['6','1929'],['sijecnj','1929']]],
+ ['Koji je kralj uveo diktaturu?','Aleksandar I. Karađorđević',[['aleksandar']]],
+ ['Koji je ustav kralj ukinuo 1929.?','Vidovdanski ustav',[['vidovdan']]],
+ ['Kako se država zvala od 1929.?','Kraljevina Jugoslavija',[['jugoslavij']]],
+ ['Na koliko je banovina podijeljena država?','Na devet',[['9'],['devet']]],
+ ['Kako se zove ideja o stvaranju jedne jugoslavenske nacije?','Unitarizam',[['unitar']]],
+ ['Koji je hrvatski znanstvenik ubijen 1931.?','Milan Šufflay',[['sufflay'],['suflaj'],['suflay'],['sufflaj']]],
+ ['Koja je stranka zagovarala politički, a ne oružani otpor?','Hrvatska seljačka stranka (HSS)',[['hss'],['seljack']]],
+ ['Tko je osnovao Ustašu?','Ante Pavelić',[['pavelic']]],
+ ['U kojoj je državi osnovana Ustaša?','U Italiji',[['italij']]],
+ ['U kojem je gradu ubijen kralj Aleksandar I.?','U Marseilleu (Francuska)',[['marseil'],['marsej'],['marsel'],['marsil']]],
+ ['Koje je godine ubijen kralj Aleksandar I.?','1934.',[['1934']]],
+ ['Kojoj je organizaciji pripadao atentator Veličko Kerin?','VMRO',[['vmro']]],
+ ['Tko je organizirao atentat na kralja?','Eugen Dido Kvaternik',[['kvaternik']]],
+ ['Tko je naslijedio prijestolje nakon kralja Aleksandra?','Njegov maloljetni sin Petar II.',[['petar']]],
+ ['Tko je bio na čelu namjesništva?','Knez Pavle',[['pavl']]],
+ ['Kako zovemo neravnopravan položaj Hrvatske u Kraljevini Jugoslaviji?','Hrvatsko pitanje',[['hrvatsk','pitanj']]],
+ ['Kako se zove sporazum sklopljen 1939.?','Sporazum Cvetković–Maček',[['cvetkovic','macek']]],
+ ['Kojeg je datuma sklopljen taj sporazum?','26. kolovoza 1939.',[['26','1939']]],
+ ['Što je nastalo tim sporazumom?','Banovina Hrvatska',[['banovin','hrvatsk']]],
+ ['Tko je bio prvi ban Banovine Hrvatske?','Ivan Šubašić',[['subasic']]],
+ ['Koje su dvije banovine spojene u Banovinu Hrvatsku?','Savska i Primorska',[['savsk','primorsk']]],
+ ['Koje je godine Banovina Hrvatska prestala postojati?','1941.',[['1941']]],
+ ['Tko je bio potpredsjednik vlade nakon sporazuma 1939.?','Vladko Maček',[['macek']]],
+];
+const norm=s=>s.toLowerCase().replace(/đ/g,'d').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+/* Blaga provjera pravopisa: zamjena, ispuštanje, višak ili zamijenjen redoslijed slova (npr. b/d, ie/ei) */
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++){
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    if(i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])d[i][j]=Math.min(d[i][j],d[i-2][j-2]+1);}
+  return d[a.length][b.length]}
+function tokOk(words,joined,t){
+  if(/^\d+$/.test(t))return words.includes(t);
+  if(joined.includes(t))return true;
+  const tol=t.length>=7?2:t.length>=4?1:0;if(!tol)return false;
+  return words.some(w=>[t.length-1,t.length,t.length+1].some(L=>L>0&&lev(w.slice(0,L),t)<=tol));
+}
+/* Pomoć: prvo slovo svake riječi, ostalo crtice */
+const hintOf=a=>a.replace(/[()]/g,'').split(/\s+/).map(w=>/^\d/.test(w)?w.replace(/\d/g,'_'):w[0]+w.slice(1).replace(/[A-Za-zČĆŠŽĐčćšžđ]/g,'_')).join('   ');
+function isRight(input,acc){const n=norm(input);const words=n.split(' ');return acc.some(req=>req.every(t=>tokOk(words,n,t)))}
+
+const tb=$('typeBox');let ts=[],ti=0,tscore=0,tmiss=[];
+function startType(){ts=shuffle([...T]).slice(0,10);ti=0;tscore=0;tmiss=[];renderT()}
+function renderT(){
+  if(ti>=ts.length){
+    tb.innerHTML=`<div class="eyebrow">Rezultat</div><div class="score">${tscore} / ${ts.length}</div><p>${grade(tscore,ts.length)}</p>`+
+      (tmiss.length?`<h3 style="margin:8px 0">Za ponoviti</h3><ul class="list">${tmiss.map(m=>`<li><b>${esc(m[0])}</b><br>${esc(m[1])}</li>`).join('')}</ul>`:'')+
+      `<div class="row" style="margin-top:14px"><button class="btn" id="tAgain">Novih 10 pitanja</button></div>`;
+    $('tAgain').onclick=startType;return}
+  const [q,ans,acc]=ts[ti];
+  tb.innerHTML=`<div class="row" style="justify-content:space-between"><span class="eyebrow">Pitanje ${ti+1} / ${ts.length}</span><span class="muted counter">Bodovi: ${tscore}</span></div>
+   <div class="progress" style="margin:10px 0 14px"><span style="width:${ti/ts.length*100}%"></span></div>
+   <h2 style="margin-bottom:10px">${esc(q)}</h2><div id="tSay" style="margin-bottom:12px"></div>
+   <form id="tForm" style="display:flex;flex-direction:column;gap:10px">
+     <label for="tIn" class="muted" style="font-size:.9rem">Napiši odgovor. Male greške u pisanju ne smetaju.</label>
+     <input type="text" id="tIn" autocomplete="off" autocapitalize="off" spellcheck="false">
+     <div id="tHintBox" class="hintbox" hidden></div>
+     <div class="row"><button class="btn" type="submit" id="tCheck">Provjeri</button><button class="btn ghost" type="button" id="tHint">💡 Pomoć</button><button class="btn ghost" type="button" id="tSkip">Ne znam</button></div>
+   </form><div id="tAfter" style="margin-top:12px;display:flex;flex-direction:column;gap:10px"></div>`;
+  $('tSay').appendChild(speakBtn(()=>q));
+  const inp=$('tIn');inp.focus();
+  $('tHint').onclick=()=>{const hb=$('tHintBox');hb.textContent=hintOf(ans);hb.hidden=false;$('tHint').disabled=true;inp.focus()};
+  const finish=(ok,given)=>{
+    inp.disabled=true;$('tCheck').disabled=true;$('tSkip').disabled=true;$('tHint').disabled=true;inp.classList.add(ok?'good':'bad');
+    if(ok)tscore++;else tmiss.push([q,ans]);
+    $('tAfter').innerHTML=`<div class="verdict ${ok?'good':'bad'}">${ok?'Točno!':(given?'Nije točno.':'Pogledaj odgovor.')}</div>
+      <p class="explain">Točan odgovor: <b>${esc(ans)}</b></p>
+      ${!ok&&given?'<div><button class="linkbtn" id="tOverride">Moj odgovor znači isto, računaj ga kao točan</button></div>':''}
+      <div class="row"><button class="btn" id="tNext">${ti+1<ts.length?'Sljedeće pitanje':'Pogledaj rezultat'}</button></div>`;
+    const ov=$('tOverride');if(ov)ov.onclick=()=>{tscore++;tmiss.pop();inp.classList.replace('bad','good');ov.parentElement.innerHTML='<span class="verdict good">Računato kao točno.</span>'};
+    $('tAfter').querySelector('.explain').after(speakBtn(()=>'Točan odgovor: '+ans));
+    $('tNext').onclick=()=>{ti++;renderT()};$('tNext').focus();
+  };
+  $('tForm').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();if(!v){inp.focus();return}finish(isRight(v,acc),true)});
+  $('tSkip').onclick=()=>finish(false,false);
+}
+startType();
+
+/* ---------- Vremenska crta ---------- */
+const EV=[
+ [1929,'6. 1. 1929.','Kralj Aleksandar uvodi Šestosiječanjsku diktaturu'],
+ [1929.5,'3. 10. 1929.','Država postaje Kraljevina Jugoslavija s 9 banovina'],
+ [1930,'1930.','Ante Pavelić u Italiji osniva Ustašu'],
+ [1931,'1931.','Ubijen Milan Šufflay'],
+ [1933,'1933.','Neuspjeli atentat na kralja u Zagrebu'],
+ [1934,'9. 10. 1934.','Atentat na kralja Aleksandra u Marseilleu; vlast preuzima namjesništvo kneza Pavla'],
+ [1939,'26. 8. 1939.','Sporazum Cvetković–Maček i nastanak Banovine Hrvatske'],
+ [1941,'1941.','Napad sila Osovine, raspad Kraljevine Jugoslavije i kraj Banovine Hrvatske'],
+];
+$('timeline').innerHTML=EV.map(e=>`<li><span class="y">${Math.floor(e[0])}</span><span><span class="d">${e[1]}</span><br>${esc(e[2])}</span></li>`).join('');
+let ord=[];
+function newOrder(){
+  let pick;do{pick=shuffle([...EV]).slice(0,5)}while(new Set(pick.map(e=>Math.floor(e[0]))).size<5);
+  do{ord=shuffle([...pick])}while(ord.every((e,i,a)=>!i||a[i-1][0]<e[0]));
+  $('oRes').textContent='';$('oRes').className='verdict';renderOrder();
+}
+function renderOrder(done){
+  const ul=$('order');ul.innerHTML='';
+  const sorted=[...ord].sort((a,b)=>a[0]-b[0]);
+  ord.forEach((e,i)=>{
+    const li=document.createElement('li');
+    if(done)li.className=sorted[i]===e?'right':'wrong';
+    li.innerHTML=`<span class="n">${i+1}</span><span class="t">${esc(e[2])}${done?` <b class="muted">(${e[1]})</b>`:''}</span>
+      <button class="mv" aria-label="Pomakni gore" ${i===0||done?'disabled':''}>↑</button><button class="mv" aria-label="Pomakni dolje" ${i===ord.length-1||done?'disabled':''}>↓</button>`;
+    const [up,dn]=li.querySelectorAll('.mv');
+    up.onclick=()=>{[ord[i-1],ord[i]]=[ord[i],ord[i-1]];renderOrder()};
+    dn.onclick=()=>{[ord[i+1],ord[i]]=[ord[i],ord[i+1]];renderOrder()};
+    ul.appendChild(li);
+  });
+  $('oCheck').disabled=!!done;
+}
+$('oCheck').onclick=()=>{
+  const sorted=[...ord].sort((a,b)=>a[0]-b[0]);const n=ord.filter((e,i)=>sorted[i]===e).length;
+  const r=$('oRes');r.textContent=n===ord.length?'Sve je na pravom mjestu!':`Na pravom mjestu: ${n} od ${ord.length}. Pogledaj godine uz događaje.`;
+  r.className='verdict '+(n===ord.length?'good':'bad');renderOrder(true);
+};
+$('oNew').onclick=newOrder;
+newOrder();
+</script>
+
+</body></html>
