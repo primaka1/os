@@ -1,8 +1,8 @@
 ---
 ---
 {% assign razredi = "6,7,8" | split: "," %}
-{% assign predmeti = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;biologija:Biologija;kemija:Kemija;fizika:Fizika;tehnicka:Tehnička kultura;informatika:Informatika" | split: ";" %}
-{% assign predmeti6 = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;priroda:Priroda;tehnicka:Tehnička kultura;informatika:Informatika" | split: ";" %}
+{% assign predmeti = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;biologija:Biologija;kemija:Kemija;fizika:Fizika;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
+{% assign predmeti6 = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;priroda:Priroda;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
 {% assign datoteke = site.static_files | sort: "path" %}
 <!DOCTYPE html>
 <html lang="hr">
@@ -32,9 +32,18 @@
     a.kartica { display: block; padding: 14px 16px; margin: 10px 0; background: #fff; border: 1px solid #d6e0f5; border-left: 6px solid var(--b); border-radius: 10px; text-decoration: none; color: #1a3d8f; font-weight: 600; }
     a.kartica:hover { background: #eef3ff; }
     .prazno { color: #888; font-style: italic; }
-    [data-p="hrvatski"]{--b:#d64545} [data-p="matematika"]{--b:#2f6fd6} [data-p="engleski"]{--b:#7a4fd6}
-    [data-p="povijest"]{--b:#a0662b} [data-p="geografija"]{--b:#2a9d8f} [data-p="biologija"]{--b:#3fa34d}
-    [data-p="kemija"]{--b:#e07b00} [data-p="priroda"]{--b:#6a9a1f} [data-p="fizika"]{--b:#0096c7} [data-p="tehnicka"]{--b:#6c757d} [data-p="informatika"]{--b:#c2185b}
+    [data-p="hrvatski"]{--b:#d64545}
+    [data-p="matematika"]{--b:#2f6fd6}
+    [data-p="engleski"]{--b:#7a4fd6}
+    [data-p="povijest"]{--b:#a0662b}
+    [data-p="geografija"]{--b:#2a9d8f}
+    [data-p="biologija"]{--b:#3fa34d}
+    [data-p="kemija"]{--b:#e07b00}
+    [data-p="priroda"]{--b:#6a9a1f}
+    [data-p="fizika"]{--b:#0096c7}
+    [data-p="tehnicka"]{--b:#6c757d}
+    [data-p="informatika"]{--b:#c2185b}
+    [data-p="vjeronauk"]{--b:#8e24aa}
     .zastor { position: fixed; inset: 0; background: rgba(20,30,60,.55); display: none; align-items: center; justify-content: center; padding: 16px; }
     .zastor.otvoren { display: flex; }
     .okvir { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
@@ -49,48 +58,44 @@
 <body>
   <h1>Digitalni sadržaji za učenje</h1>
   <p class="podnaslov">Odaberi razred, pa predmet.</p>
-
   <div class="izbornik">
     {% for r in razredi %}<button data-razred="{{ r }}">{{ r }}. razred</button>{% endfor %}
   </div>
-
   {% for r in razredi %}
   <div class="pogled" id="v-{{ r }}">
     <h2>{{ r }}. razred</h2>
     <div class="predmeti">
       {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
       {% for p in lista %}
-        {% assign dio = p | split: ":" %}
-        {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
-        {% assign broj = 0 %}
-        {% for f in datoteke %}{% if f.extname == ".html" and f.path contains mapa %}{% assign broj = broj | plus: 1 %}{% endif %}{% endfor %}
-        <button class="predmet{% if broj == 0 %} prazan{% endif %}" data-p="{{ dio[0] }}" data-cilj="{{ r }}/{{ dio[0] }}">
-          {{ dio[1] }}
-          <small>{% if broj == 0 %}nema materijala{% elsif broj == 1 %}1 materijal{% else %}{{ broj }} materijala{% endif %}</small>
-        </button>
+      {% assign dio = p | split: ":" %}
+      {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
+      {% assign broj = 0 %}
+      {% for f in datoteke %}{% if f.extname == ".html" and f.path contains mapa %}{% assign broj = broj | plus: 1 %}{% endif %}{% endfor %}
+      <button class="predmet{% if broj == 0 %} prazan{% endif %}" data-p="{{ dio[0] }}" data-cilj="{{ r }}/{{ dio[0] }}">
+        {{ dio[1] }}
+        <small>{% if broj == 0 %}nema materijala{% elsif broj == 1 %}1 materijal{% else %}{{ broj }} materijala{% endif %}</small>
+      </button>
       {% endfor %}
     </div>
   </div>
-
-    {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
-      {% for p in lista %}
-      {% assign dio = p | split: ":" %}
-      {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
-      <div class="pogled" id="v-{{ r }}-{{ dio[0] }}" data-p="{{ dio[0] }}">
-        <button class="natrag" data-cilj="{{ r }}">← {{ r }}. razred</button>
-        <h2>{{ dio[1] }} – {{ r }}. razred</h2>
-        {% assign ima = false %}
-        {% for f in datoteke %}
-          {% if f.extname == ".html" and f.path contains mapa %}
-            {% assign ima = true %}
-            <a class="kartica" href="{{ f.path | relative_url }}">{{ f.basename | replace: "_", " " }}</a>
-          {% endif %}
-        {% endfor %}
-        {% unless ima %}<p class="prazno">Još nema materijala za ovaj predmet.</p>{% endunless %}
-      </div>
+  {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
+  {% for p in lista %}
+  {% assign dio = p | split: ":" %}
+  {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
+  <div class="pogled" id="v-{{ r }}-{{ dio[0] }}" data-p="{{ dio[0] }}">
+    <button class="natrag" data-cilj="{{ r }}">← {{ r }}. razred</button>
+    <h2>{{ dio[1] }} – {{ r }}. razred</h2>
+    {% assign ima = false %}
+    {% for f in datoteke %}
+    {% if f.extname == ".html" and f.path contains mapa %}
+    {% assign ima = true %}
+    <a class="kartica" href="{{ f.path | relative_url }}">{{ f.basename | replace: "_", " " }}</a>
+    {% endif %}
     {% endfor %}
+    {% unless ima %}<p class="prazno">Još nema materijala za ovaj predmet.</p>{% endunless %}
+  </div>
   {% endfor %}
-
+  {% endfor %}
   <div class="zastor" id="zastor">
     <form class="okvir" id="obrazac">
       <h3>Upiši lozinku</h3>
@@ -102,23 +107,19 @@
       </div>
     </form>
   </div>
-
   <script>
     const HASH = "a35c1153853fe94bcd1de00a675eb8fcd9b755508c903a534cdd15fbdda1095a";
     let otkljucano = false;
     try { otkljucano = localStorage.getItem("os-pristup") === HASH; } catch (e) {}
     let cekaCilj = null;
-
     async function sazetak(tekst) {
       const s = tekst.trim().normalize("NFC").toLowerCase();
       const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
       return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
     }
-
     const zastor = document.getElementById("zastor");
     const polje = document.getElementById("lozinka");
     const greska = document.getElementById("greska");
-
     function traziLozinku(cilj) {
       cekaCilj = cilj;
       greska.textContent = "";
@@ -126,7 +127,10 @@
       zastor.classList.add("otvoren");
       polje.focus();
     }
-    document.getElementById("odustani").addEventListener("click", () => { zastor.classList.remove("otvoren"); cekaCilj = null; });
+    document.getElementById("odustani").addEventListener("click", () => {
+      zastor.classList.remove("otvoren");
+      cekaCilj = null;
+    });
     document.getElementById("obrazac").addEventListener("submit", async e => {
       e.preventDefault();
       if (await sazetak(polje.value) === HASH) {
@@ -139,7 +143,6 @@
         polje.select();
       }
     });
-
     function prikazi(cilj) {
       const dijelovi = (cilj || "").split("/");
       const r = dijelovi[0], p = dijelovi[1];
