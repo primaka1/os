@@ -2,8 +2,8 @@
 """Napravi _data/materijali.json: popis svih HTML materijala s temom, oznakama i datumom.
 
 Tema se čita iz samog HTML-a (<meta name="tema">, pa <title>, pa <h1>).
-Oznake se računaju iz sadržaja HTML-a (naslovi, podnaslovi, gumbi...),
-a mogu se i ručno zadati: <meta name="oznake" content="Test, Priprema">.
+Oznake su teme lekcija pročitane iz HTML-a (popis lekcija u skripti, naslovi odjeljaka),
+a mogu se i ručno zadati: <meta name="oznake" content="Potencije, Vektori">.
 Datum = kad je datoteka prvi put dodana u repozitorij (git povijest).
 """
 import html, json, os, re, subprocess, sys
@@ -16,20 +16,18 @@ PREDMETI = {"hrvatski": "Hrvatski jezik", "matematika": "Matematika", "engleski"
 
 KORIJEN = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-# (oznaka, uzorak) – traži se u vidljivom tekstu HTML-a (bez skripti i stilova)
-PRAVILA = [
-    ("Test",        r"\btest\w*|\bispit"),
-    ("Priprema",    r"priprem"),
-    ("Kviz",        r"\bkviz"),
-    ("Vježba",      r"vježb|vjezb|poredaj|\bspoji|točno ili netočno|primijeni"),
-    ("Ponavljanje", r"ponavlj|ponovi|kartic|zapamti"),
-    ("Lekcija",     r"lekcij|teorij|\buč[ie]|učenje|pregled|objašnjen|korak po korak"),
-    ("Slušanje",    r"listen|slušaj|poslušaj"),
-    ("Čitanje",     r"reading|čitanj|pročitaj"),
-    ("Izlaganje",   r"izlaganj|prezentacij"),
-    ("Interaktivno", r"kalkulator|grafikon|laboratorij|\blab\b|igr[aeu]|garaž"),
-]
-
+# Naslovi koji nisu teme lekcija (izbornici, pauze, testovi...) – ne postaju oznake
+OPCENITO = re.compile(r"""(?ix)^(
+    bok|bravo|mini\ pauza|pauza|po[cč]etna|izbornik|odaberi.*|kako\ u[cč]iti.*|upute.*|
+    (probni\ |mje[sš]oviti\ |zavr[sš]ni\ |napredni\ )*(test|kviz|ispit).*|kviz|kartice.*|kalkulator|
+    pravil[ao]|pravila\ koja.*|pravilo\ u.*|razred|\d+\ .*|rezultat.*|generalna\ proba|pitanja.*|iz\ [zž]ivota|vje[zž]ba|vo[dđ]ena\ vje[zž]ba|
+    tablica.*|klikni.*|moja\ gara[zž]a|veliki\ zavr[sš]ni\ krug|teorija.*|provjeri.*|pripremi.*|
+    poredaj.*|spoji.*|to[cč]no\ ili\ neto[cč]no|to[cč]no|neto[cč]no|gotovo.*|nabroji.*|ponavljanje|lekcije?|sadr[zž]aj|kraj|
+    bonus|odgovori.*|razumij.*|kako\ .*|pregled.*|dopuni.*|pove[zž]i.*|primjena\ znanja|razvrstavanje.*|
+    (hrvatski|matematika|engleski|povijest|geografija|biologija|kemija|fizika|informatika|vjeronauk|priroda|tehni[cč]ka)(\ \d+.*)?|
+    \d+\.?\ razred|priprema.*|u[cč]enje.*|prilago[dđ]eno.*|
+    \d+\.?
+)$""")
 def ocisti(t):
     t = re.sub(r"<[^>]+>", " ", t)
     return re.sub(r"\s+", " ", html.unescape(t)).strip()
@@ -44,6 +42,42 @@ def meta(s, ime):
         if c and c.group(1).strip():
             return html.unescape(c.group(1)).strip()
     return None
+
+def kratko(t):
+    """'🔟 Potencije – znanstveni zapis' -> 'Potencije'"""
+    t = bez_emojija(t)
+    t = re.sub(r"^\d+\.\s*", "", t)
+    t = re.split(r"\s+[–—-]\s+|:\s|[!?]", t)[0]
+    t = re.sub(r"[^\w)]+$", "", t).strip()
+    return t[:1].upper() + t[1:] if t else t
+
+def dodaj(lista, t):
+    t = kratko(t)
+    if 2 < len(t) <= 45 and not OPCENITO.match(t) and t.lower() not in [x.lower() for x in lista]:
+        lista.append(t)
+
+def teme_lekcija(s, vidljivo, svi, tema):
+    """Teme lekcija iz samog HTML-a: naslovi lekcija u podacima skripte i naslovi odjeljaka (h2)."""
+    teme = []
+    # 1) lekcije zapisane u skripti, npr. {title:'Franačka', ...}
+    for x in re.findall(r"""\b(?:title|naslov|lekcija|tema|topic)\s*:\s*(?:"([^"]{3,60})"|'([^']{3,60})')""", s):
+        dodaj(teme, x[0] or x[1])
+    # 2) kratki ključ t:'...' – samo ako ih ima barem tri (popis lekcija)
+    kratki = []
+    for x in re.findall(r"""[{,]\s*t\s*:\s*(?:"([^"]{3,60})"|'([^']{3,60})')""", s):
+        if re.match(r"(\d+\.\s*)?[A-ZČĆŽŠĐ]", x[0] or x[1]):
+            dodaj(kratki, x[0] or x[1])
+    if len(kratki) >= 3:
+        for k in kratki:
+            dodaj(teme, k)
+    # 3) naslovi odjeljaka na stranici
+    for h in svi("h2"):
+        dodaj(teme, h)
+    # 4) ako nema više lekcija, tema materijala je jedina lekcija
+    if not teme:
+        for dio in re.split(r"\s+[–—-]\s+", bez_emojija(tema)):
+            dodaj(teme, dio)
+    return teme[:12]
 
 def procitaj(putanja):
     s = open(putanja, encoding="utf-8", errors="ignore").read()
@@ -66,16 +100,7 @@ def procitaj(putanja):
     if rucne:
         oznake = [o.strip() for o in re.split(r"[,;]", rucne) if o.strip()]
     else:
-        # 1) najvažniji dijelovi: naslov, opis, naslovi odjeljaka, gumbi
-        kljucno = " ".join([naslov, meta(s, "description") or ""] + h1 + svi("h2") + svi("h3") + svi("button"))
-        # 2) ako tu nema ničega, cijeli vidljivi tekst; 3) na kraju i tekst iz skripti
-        oznake = []
-        for tekst in (kljucno, ocisti(vidljivo), ocisti(s)):
-            oznake = [ime for ime, uz in PRAVILA if re.search(uz, tekst.lower())]
-            if oznake:
-                break
-        if not oznake:
-            oznake = ["Lekcija"]
+        oznake = teme_lekcija(s, vidljivo, svi, tema)
     return tema, podnaslov, oznake
 
 def datum_dodavanja(rel):
