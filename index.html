@@ -8,41 +8,76 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Digitalni sadržaji za učenje</title>
+  <link rel="manifest" href="{{ '/manifest.webmanifest' | relative_url }}">
+  <link rel="icon" type="image/png" href="{{ '/ikona-192.png' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | relative_url }}">
+  <meta name="theme-color" content="#1a3d8f" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121826" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Učenje OŠ">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <style>
+    :root {
+      color-scheme: light;
+      --pozadina: #f7f9fc; --povrsina: #fff; --tekst: #222; --blago: #555; --tiho: #777;
+      --glavna: #1a3d8f; --na-glavnoj: #fff; --hover: #eef3ff; --rub: #d6e0f5; --rub-jaci: #b8c6e6;
+      --oznaka-bg: #eef2fa; --oznaka-tx: #34466e; --oznaka-rub: #dbe3f3;
+      --novo-bg: #e6f6ea; --novo-tx: #1e7a3c; --novo-rub: #bfe5c9; --greska: #c62828;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --pozadina: #121826; --povrsina: #1c2434; --tekst: #e6eaf2; --blago: #b4bdcc; --tiho: #8e98aa;
+        --glavna: #8fb0ff; --na-glavnoj: #0f1830; --hover: #243049; --rub: #2e3a52; --rub-jaci: #3f4d69;
+        --oznaka-bg: #26314a; --oznaka-tx: #c9d5f0; --oznaka-rub: #36435f;
+        --novo-bg: #173a24; --novo-tx: #8fe0a8; --novo-rub: #275a37; --greska: #ff8a80;
+      }
+    }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 820px; margin: 32px auto; padding: 0 16px; background: #f7f9fc; color: #222; }
-    h1 { color: #1a3d8f; margin-bottom: 4px; }
-    h2 { color: #1a3d8f; margin: 8px 0 16px; }
-    .podnaslov { color: #555; margin-top: 0; }
-    .izbornik { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-    .izbornik button { flex: 1; min-width: 110px; padding: 16px; font-size: 1.15rem; font-weight: 700; border: 2px solid #1a3d8f; border-radius: 12px; background: #fff; color: #1a3d8f; cursor: pointer; }
-    .izbornik button:hover { background: #eef3ff; }
-    .izbornik button.aktivan { background: #1a3d8f; color: #fff; }
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 820px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px 40px; background: var(--pozadina); color: var(--tekst); }
+    h1 { color: var(--glavna); margin: 8px 0 4px; }
+    h2 { color: var(--glavna); margin: 8px 0 16px; }
+    .podnaslov { color: var(--blago); margin-top: 0; }
+    .trazilica { position: relative; margin: 16px 0 0; }
+    .trazilica input { width: 100%; padding: 13px 44px 13px 42px; font-size: 1.05rem; border: 2px solid var(--rub-jaci); border-radius: 12px; background: var(--povrsina); color: var(--tekst); }
+    .trazilica input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .trazilica input:focus { outline: none; border-color: var(--glavna); }
+    .trazilica .lupa { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--tiho); pointer-events: none; }
+    .trazilica .ocisti { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: none; color: var(--tiho); font-size: 1.3rem; padding: 6px 10px; cursor: pointer; display: none; }
+    .trazilica.ima .ocisti { display: block; }
+    .izbornik { display: flex; gap: 10px; margin: 16px 0 20px; flex-wrap: wrap; }
+    .izbornik button { flex: 1; min-width: 100px; padding: 16px; font-size: 1.15rem; font-weight: 700; border: 2px solid var(--glavna); border-radius: 12px; background: var(--povrsina); color: var(--glavna); cursor: pointer; }
+    .izbornik button:hover { background: var(--hover); }
+    .izbornik button.aktivan { background: var(--glavna); color: var(--na-glavnoj); }
     .pogled { display: none; }
     .pogled.aktivan { display: block; }
-    .predmeti { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
-    .predmet { text-align: left; padding: 18px 16px; border-radius: 12px; border: 1px solid #d6e0f5; border-left: 6px solid var(--b); background: #fff; cursor: pointer; font-size: 1rem; font-weight: 700; color: #222; }
-    .predmet:hover { background: #f0f4ff; }
-    .predmet small { display: block; font-weight: 400; color: #777; margin-top: 6px; }
-    .predmet.prazan { opacity: .55; }
-    .natrag { background: none; border: none; color: #1a3d8f; font-size: 1rem; cursor: pointer; padding: 6px 0; }
+    .predmeti { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .predmet { text-align: left; padding: 18px 16px; border-radius: 12px; border: 1px solid var(--rub); border-left: 6px solid var(--b); background: var(--povrsina); cursor: pointer; font-size: 1rem; font-weight: 700; color: var(--tekst); }
+    .predmet:hover { background: var(--hover); }
+    .predmet small { display: block; font-weight: 400; color: var(--tiho); margin-top: 6px; }
+    .predmet.prazan { opacity: .5; }
+    .natrag { background: none; border: none; color: var(--glavna); font-size: 1rem; cursor: pointer; padding: 6px 0; }
     .natrag:hover { text-decoration: underline; }
-    a.kartica { display: block; padding: 14px 16px; margin: 10px 0; background: #fff; border: 1px solid #d6e0f5; border-left: 6px solid var(--b); border-radius: 10px; text-decoration: none; color: #222; }
-    a.kartica:hover { background: #eef3ff; }
-    .kartica .tema { display: block; color: #1a3d8f; font-weight: 700; font-size: 1.05rem; }
-    .kartica .podnaslov-k { display: block; color: #555; font-size: .92rem; margin-top: 2px; }
+    a.kartica { display: block; padding: 14px 16px; margin: 10px 0; background: var(--povrsina); border: 1px solid var(--rub); border-left: 6px solid var(--b); border-radius: 10px; text-decoration: none; color: var(--tekst); }
+    a.kartica:hover { background: var(--hover); }
+    .kartica .tema { display: block; color: var(--glavna); font-weight: 700; font-size: 1.05rem; }
+    .kartica .podnaslov-k { display: block; color: var(--blago); font-size: .92rem; margin-top: 2px; }
     .kartica .dno { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-    .kartica .datum { color: #666; font-size: .85rem; margin-left: auto; white-space: nowrap; }
-    .kartica .gdje { color: #666; font-size: .85rem; }
-    .oznaka { display: inline-block; padding: 2px 9px; border-radius: 999px; background: #eef2fa; color: #34466e; font-size: .8rem; font-weight: 600; border: 1px solid #dbe3f3; }
-    .oznaka.novo { background: #e6f6ea; color: #1e7a3c; border-color: #bfe5c9; }
+    .kartica .datum { color: var(--tiho); font-size: .85rem; margin-left: auto; white-space: nowrap; }
+    .kartica .gdje { color: var(--tiho); font-size: .85rem; }
+    .kartica.otvoren .tema::before { content: "✓ "; color: var(--novo-tx); }
+    .oznaka { display: inline-block; padding: 2px 9px; border-radius: 999px; background: var(--oznaka-bg); color: var(--oznaka-tx); font-size: .8rem; font-weight: 600; border: 1px solid var(--oznaka-rub); }
+    .oznaka.novo { background: var(--novo-bg); color: var(--novo-tx); border-color: var(--novo-rub); }
+    .oznaka.pogodak { background: var(--glavna); color: var(--na-glavnoj); border-color: var(--glavna); }
     .filteri { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
-    .filteri button { padding: 6px 12px; border-radius: 999px; border: 1px solid #b8c6e6; background: #fff; color: #1a3d8f; font-size: .9rem; cursor: pointer; }
-    .filteri button.aktivan { background: #1a3d8f; color: #fff; border-color: #1a3d8f; }
-    h3.odjeljak { color: #1a3d8f; margin: 28px 0 4px; font-size: 1.05rem; }
-    .prazno { color: #888; font-style: italic; }
+    .filteri button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rub-jaci); background: var(--povrsina); color: var(--glavna); font-size: .9rem; cursor: pointer; }
+    .filteri button.aktivan { background: var(--glavna); color: var(--na-glavnoj); border-color: var(--glavna); }
+    h3.odjeljak { color: var(--glavna); margin: 28px 0 4px; font-size: 1.05rem; }
+    .prazno { color: var(--tiho); font-style: italic; }
+    .legenda { color: var(--tiho); font-size: .85rem; margin: 4px 0 0; }
     [data-p="hrvatski"]{--b:#d64545}
     [data-p="matematika"]{--b:#2f6fd6}
     [data-p="engleski"]{--b:#7a4fd6}
@@ -55,22 +90,31 @@
     [data-p="tehnicka"]{--b:#6c757d}
     [data-p="informatika"]{--b:#c2185b}
     [data-p="vjeronauk"]{--b:#8e24aa}
-    .zastor { position: fixed; inset: 0; background: rgba(20,30,60,.55); display: none; align-items: center; justify-content: center; padding: 16px; }
+    .zastor { position: fixed; inset: 0; background: rgba(10,15,30,.6); display: none; align-items: center; justify-content: center; padding: 16px; }
     .zastor.otvoren { display: flex; }
-    .okvir { background: #fff; border-radius: 14px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-    .okvir h3 { margin: 0 0 12px; color: #1a3d8f; }
-    .okvir input { width: 100%; padding: 12px; font-size: 1rem; border: 1px solid #b8c6e6; border-radius: 8px; }
+    .okvir { background: var(--povrsina); border-radius: 14px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .okvir h3 { margin: 0 0 12px; color: var(--glavna); }
+    .okvir input { width: 100%; padding: 12px; font-size: 1rem; border: 1px solid var(--rub-jaci); border-radius: 8px; background: var(--pozadina); color: var(--tekst); }
     .okvir .gumbi { display: flex; gap: 8px; margin-top: 14px; }
-    .okvir .gumbi button { flex: 1; padding: 11px; font-size: 1rem; border-radius: 8px; border: 1px solid #1a3d8f; cursor: pointer; background: #fff; color: #1a3d8f; }
-    .okvir .gumbi button[type=submit] { background: #1a3d8f; color: #fff; font-weight: 700; }
-    .greska { color: #c62828; min-height: 1.2em; margin: 8px 0 0; font-size: .95rem; }
+    .okvir .gumbi button { flex: 1; padding: 11px; font-size: 1rem; border-radius: 8px; border: 1px solid var(--glavna); cursor: pointer; background: var(--povrsina); color: var(--glavna); }
+    .okvir .gumbi button[type=submit] { background: var(--glavna); color: var(--na-glavnoj); font-weight: 700; }
+    .greska { color: var(--greska); min-height: 1.2em; margin: 8px 0 0; font-size: .95rem; }
   </style>
 </head>
 <body>
   <h1>Digitalni sadržaji za učenje</h1>
-  <p class="podnaslov">Odaberi razred, pa predmet. Uz svaki materijal pišu teme lekcija i datum kad je dodan.</p>
+  <p class="podnaslov">Odaberi razred, pa predmet – ili potraži lekciju.</p>
+  <div class="trazilica" id="trazilica">
+    <span class="lupa" aria-hidden="true">🔍</span>
+    <input type="search" id="trazi" placeholder="Traži lekciju, npr. vektori" autocomplete="off" aria-label="Traži lekciju">
+    <button type="button" class="ocisti" id="ocisti" aria-label="Obriši pretragu">×</button>
+  </div>
   <div class="izbornik">
     {% for r in razredi %}<button data-razred="{{ r }}">{{ r }}. razred</button>{% endfor %}
+  </div>
+  <div class="pogled" id="v-trazi">
+    <h2 id="trazi-naslov">Rezultati</h2>
+    <div id="trazi-rezultati"></div>
   </div>
   {% for r in razredi %}
   <div class="pogled" id="v-{{ r }}">
@@ -118,8 +162,9 @@
   </div>
   <script>
     const HASH = "a35c1153853fe94bcd1de00a675eb8fcd9b755508c903a534cdd15fbdda1095a";
-    let otkljucano = false;
-    try { otkljucano = localStorage.getItem("os-pristup") === HASH; } catch (e) {}
+    const spremi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+    const procitaj = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    let otkljucano = procitaj("os-pristup") === HASH;
     let cekaCilj = null;
     async function sazetak(tekst) {
       const s = tekst.trim().normalize("NFC").toLowerCase();
@@ -129,6 +174,7 @@
     const zastor = document.getElementById("zastor");
     const polje = document.getElementById("lozinka");
     const greska = document.getElementById("greska");
+    const trazi = document.getElementById("trazi");
     function traziLozinku(cilj) {
       cekaCilj = cilj;
       greska.textContent = "";
@@ -144,15 +190,18 @@
       e.preventDefault();
       if (await sazetak(polje.value) === HASH) {
         otkljucano = true;
-        try { localStorage.setItem("os-pristup", HASH); } catch (e) {}
+        spremi("os-pristup", HASH);
         zastor.classList.remove("otvoren");
-        prikazi(cekaCilj);
+        if (cekaCilj === "@trazi") { trazi.focus(); pretrazi(); }
+        else prikazi(cekaCilj);
       } else {
         greska.textContent = "Pogrešna lozinka. Pokušaj ponovno.";
         polje.select();
       }
     });
-    function prikazi(cilj) {
+
+    // ---------- prikaz razreda / predmeta (razred se pamti na uređaju) ----------
+    function prikazi(cilj, zamijeni) {
       const dijelovi = (cilj || "").split("/");
       const r = dijelovi[0], p = dijelovi[1];
       const id = p ? "v-" + r + "-" + p : "v-" + r;
@@ -162,9 +211,30 @@
       document.querySelectorAll(".izbornik button").forEach(b => b.classList.toggle("aktivan", b.dataset.razred === r));
       if (!el) return;
       el.classList.add("aktivan");
-      if (location.hash.slice(1) !== cilj) history.pushState(null, "", "#" + cilj);
+      spremi("os-razred", r);
+      if (trazi.value) { trazi.value = ""; document.getElementById("trazilica").classList.remove("ima"); }
+      if (location.hash.slice(1) !== cilj) history[zamijeni ? "replaceState" : "pushState"](null, "", "#" + cilj);
     }
-    // Oznaka NOVO za materijale dodane u zadnjih 7 dana
+
+    // ---------- kvačica ✓ na otvorenim materijalima ----------
+    function otvoreni() { try { return new Set(JSON.parse(procitaj("os-otvoreno") || "[]")); } catch (e) { return new Set(); } }
+    function oznaciOtvorene() {
+      const o = otvoreni();
+      document.querySelectorAll("a.kartica").forEach(k => {
+        const otv = o.has(decodeURIComponent(new URL(k.href).pathname));
+        k.classList.toggle("otvoren", otv);
+        k.title = otv ? "Već otvoreno" : "";
+      });
+    }
+    document.addEventListener("click", e => {
+      const k = e.target.closest("a.kartica");
+      if (!k) return;
+      const o = otvoreni(); o.add(decodeURIComponent(new URL(k.href).pathname));
+      spremi("os-otvoreno", JSON.stringify([...o]));
+    });
+    window.addEventListener("pageshow", oznaciOtvorene);
+
+    // ---------- oznaka NOVO (zadnjih 7 dana) ----------
     const danas = new Date();
     document.querySelectorAll(".kartica[data-datum]").forEach(k => {
       const dana = (danas - new Date(k.dataset.datum + "T00:00:00")) / 864e5;
@@ -174,7 +244,8 @@
         k.querySelector(".dno").prepend(n);
       }
     });
-    // Filtriranje po oznakama unutar predmeta
+
+    // ---------- filtriranje po oznakama unutar predmeta ----------
     document.querySelectorAll(".pogled").forEach(pogled => {
       const traka = pogled.querySelector(".filteri");
       if (!traka) return;
@@ -191,10 +262,65 @@
         traka.appendChild(b);
       });
     });
+
+    // ---------- tražilica (svi razredi i predmeti) ----------
+    const bezKvacica = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+    const svi = [...document.querySelectorAll('.pogled[id^="v-"][data-p] .kartica')].map(k => ({
+      k, tekst: bezKvacica([k.querySelector(".tema").textContent, k.querySelector(".podnaslov-k")?.textContent || "",
+        k.dataset.oznake.replace(/\|/g, " "), k.dataset.pn, k.dataset.razred + ". razred"].join(" "))
+    }));
+    const rezultati = document.getElementById("trazi-rezultati");
+    let prijeTrazenja = null;
+    function pretrazi() {
+      const upit = bezKvacica(trazi.value.trim());
+      document.getElementById("trazilica").classList.toggle("ima", !!trazi.value);
+      const pogledTrazi = document.getElementById("v-trazi");
+      if (!upit) {
+        if (pogledTrazi.classList.contains("aktivan")) {
+          pogledTrazi.classList.remove("aktivan");
+          if (prijeTrazenja) prijeTrazenja.classList.add("aktivan");
+        }
+        return;
+      }
+      if (!pogledTrazi.classList.contains("aktivan")) {
+        prijeTrazenja = document.querySelector(".pogled.aktivan");
+        document.querySelectorAll(".pogled").forEach(d => d.classList.remove("aktivan"));
+        pogledTrazi.classList.add("aktivan");
+      }
+      const rijeci = upit.split(/\s+/);
+      const nadeno = svi.filter(x => rijeci.every(w => x.tekst.includes(w)));
+      const mojRazred = procitaj("os-razred");
+      nadeno.sort((a, b) => (b.k.dataset.razred === mojRazred) - (a.k.dataset.razred === mojRazred));
+      rezultati.innerHTML = "";
+      document.getElementById("trazi-naslov").textContent = nadeno.length ? "Pronađeno: " + nadeno.length : "Ništa nije pronađeno";
+      if (!nadeno.length) rezultati.innerHTML = '<p class="prazno">Pokušaj drugu riječ, npr. samo početak: „potenc”.</p>';
+      nadeno.forEach(({ k }) => {
+        const c = k.cloneNode(true);
+        c.style.display = "";
+        const g = document.createElement("span");
+        g.className = "gdje"; g.textContent = k.dataset.razred + ". r. · " + k.dataset.pn + " ·";
+        c.querySelector(".dno").prepend(g);
+        c.querySelectorAll(".oznaka:not(.novo)").forEach(o => {
+          if (rijeci.some(w => bezKvacica(o.textContent).includes(w))) o.classList.add("pogodak");
+        });
+        rezultati.appendChild(c);
+      });
+    }
+    trazi.addEventListener("focus", () => { if (!otkljucano) { trazi.blur(); traziLozinku("@trazi"); } });
+    trazi.addEventListener("input", pretrazi);
+    document.getElementById("ocisti").addEventListener("click", () => { trazi.value = ""; pretrazi(); trazi.focus(); });
+
     document.querySelectorAll(".izbornik button").forEach(b => b.addEventListener("click", () => prikazi(b.dataset.razred)));
     document.querySelectorAll("[data-cilj]").forEach(b => b.addEventListener("click", () => prikazi(b.dataset.cilj)));
     window.addEventListener("popstate", () => prikazi(decodeURIComponent(location.hash.slice(1))));
-    prikazi(decodeURIComponent(location.hash.slice(1)));
+
+    // pri otvaranju: hash iz adrese, inače zapamćeni razred
+    const pocetni = decodeURIComponent(location.hash.slice(1));
+    if (pocetni) prikazi(pocetni, true);
+    else if (otkljucano && procitaj("os-razred")) prikazi(procitaj("os-razred"), true);
+
+    // dodavanje na početni zaslon
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("{{ '/sw.js' | relative_url }}").catch(() => {});
   </script>
 </body>
 </html>

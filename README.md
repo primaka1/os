@@ -15,6 +15,15 @@ Stranica: https://primaka1.github.io/os/
 
 Naziv datoteke nije bitan za prikaz.
 
+## Što stranica radi za učenike
+
+- pamti razred na uređaju i sljedeći put ga odmah otvori,
+- tražilica po lekcijama u svim razredima i predmetima (radi i bez kvačica: „franacka”),
+- kvačica ✓ uz materijale koje je učenik već otvorio,
+- u svakom materijalu gumb **← Popis** za povratak na predmet,
+- može se dodati na početni zaslon mobitela (otvara se kao aplikacija),
+- tamni način rada prema postavci uređaja.
+
 ### Ručno zadavanje teme ili oznaka (neobavezno)
 
 Ako automatika pogodi krivo, u `<head>` HTML-a dodaj:
@@ -30,7 +39,9 @@ Ako automatika pogodi krivo, u `<head>` HTML-a dodaj:
 index.html                     početna stranica (razred → predmet → materijali)
 _includes/kartica.html         izgled jedne kartice materijala
 6-razred/, 7-razred/, 8-razred/   materijali po predmetima
+manifest.webmanifest, sw.js   dodavanje stranice na početni zaslon mobitela
 .github/scripts/materijali.py  računa temu, oznake (teme lekcija) i datum
+.github/scripts/objava.py      u svaki materijal ubaci gumb „← Popis” i napravi ikone
 .github/workflows/stranica.yml na svaki push složi popis i objavi stranicu
 ```
 
