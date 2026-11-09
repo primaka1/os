@@ -1,6 +1,7 @@
 ---
 ---
-{% assign razredi = "6,7,8" | split: "," %}
+{% assign razredi = "1,6,7,8" | split: "," %}
+{% assign predmeti1 = "hrvatski:Hrvatski jezik;matematika:Matematika;priroda-drustvo:Priroda i društvo;engleski:Engleski jezik;likovna:Likovna kultura;glazbena:Glazbena kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
 {% assign predmeti = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;biologija:Biologija;kemija:Kemija;fizika:Fizika;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
 {% assign predmeti6 = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;priroda:Priroda;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
 {% assign materijali = site.data.materijali %}
@@ -49,7 +50,7 @@
     .trazilica .ocisti { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: none; color: var(--tiho); font-size: 1.3rem; padding: 6px 10px; cursor: pointer; display: none; }
     .trazilica.ima .ocisti { display: block; }
     .izbornik { display: flex; gap: 10px; margin: 16px 0 20px; flex-wrap: wrap; }
-    .izbornik button { flex: 1; min-width: 100px; padding: 16px; font-size: 1.15rem; font-weight: 700; border: 2px solid var(--glavna); border-radius: 12px; background: var(--povrsina); color: var(--glavna); cursor: pointer; }
+    .izbornik button { flex: 1; min-width: 72px; padding: 15px 4px; font-size: clamp(.95rem, 3.8vw, 1.15rem); white-space: nowrap; font-weight: 700; border: 2px solid var(--glavna); border-radius: 12px; background: var(--povrsina); color: var(--glavna); cursor: pointer; }
     .izbornik button:hover { background: var(--hover); }
     .izbornik button.aktivan { background: var(--glavna); color: var(--na-glavnoj); }
     .pogled { display: none; }
@@ -90,6 +91,9 @@
     [data-p="tehnicka"]{--b:#6c757d}
     [data-p="informatika"]{--b:#c2185b}
     [data-p="vjeronauk"]{--b:#8e24aa}
+    [data-p="priroda-drustvo"]{--b:#4caf50}
+    [data-p="likovna"]{--b:#ef6c00}
+    [data-p="glazbena"]{--b:#5c6bc0}
     .zastor { position: fixed; inset: 0; background: rgba(10,15,30,.6); display: none; align-items: center; justify-content: center; padding: 16px; }
     .zastor.otvoren { display: flex; }
     .okvir { background: var(--povrsina); border-radius: 14px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
@@ -120,7 +124,7 @@
   <div class="pogled" id="v-{{ r }}">
     <h2>{{ r }}. razred</h2>
     <div class="predmeti">
-      {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
+      {% if r == "1" %}{% assign lista = predmeti1 %}{% elsif r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
       {% for p in lista %}
       {% assign dio = p | split: ":" %}
       {% assign broj = materijali | where: "razred", r | where: "predmet", dio[0] | size %}
@@ -136,7 +140,7 @@
     {% for m in uRazredu limit: 5 %}{% include kartica.html m=m s_predmetom=true %}{% endfor %}
     {% endif %}
   </div>
-  {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
+  {% if r == "1" %}{% assign lista = predmeti1 %}{% elsif r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
   {% for p in lista %}
   {% assign dio = p | split: ":" %}
   <div class="pogled" id="v-{{ r }}-{{ dio[0] }}" data-p="{{ dio[0] }}">
