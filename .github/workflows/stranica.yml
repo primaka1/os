@@ -29,6 +29,8 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      - name: Gumb natrag u materijalima i ikone
+        run: sudo python3 .github/scripts/objava.py _site
       - uses: actions/upload-pages-artifact@v3
 
   objavi:
