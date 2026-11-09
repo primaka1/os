@@ -1,0 +1,10 @@
+{%- assign m = include.m -%}
+<a class="kartica" data-p="{{ m.predmet }}" data-datum="{{ m.datum }}" data-oznake="{{ m.oznake | join: '|' }}" href="{{ m.putanja | relative_url }}">
+  <span class="tema">{{ m.tema }}</span>
+  {%- if m.podnaslov != "" %}<span class="podnaslov-k">{{ m.podnaslov }}</span>{% endif %}
+  <span class="dno">
+    {%- if include.s_predmetom %}<span class="gdje">{{ m.predmet_naziv }} ·</span>{% endif -%}
+    {%- for o in m.oznake %}<span class="oznaka">{{ o }}</span>{% endfor -%}
+    <span class="datum">dodano {{ m.datum | date: "%-d. %-m. %Y." }}</span>
+  </span>
+</a>
