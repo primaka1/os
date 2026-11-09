@@ -1,5 +1,5 @@
 {%- assign m = include.m -%}
-<a class="kartica" data-p="{{ m.predmet }}" data-datum="{{ m.datum }}" data-oznake="{{ m.oznake | join: '|' }}" href="{{ m.putanja | relative_url }}">
+<a class="kartica" data-p="{{ m.predmet }}" data-razred="{{ m.razred }}" data-pn="{{ m.predmet_naziv }}" data-datum="{{ m.datum }}" data-oznake="{{ m.oznake | join: '|' }}" href="{{ m.putanja | relative_url }}">
   <span class="tema">{{ m.tema }}</span>
   {%- if m.podnaslov != "" %}<span class="podnaslov-k">{{ m.podnaslov }}</span>{% endif %}
   <span class="dno">
