@@ -3,7 +3,7 @@
 {% assign razredi = "6,7,8" | split: "," %}
 {% assign predmeti = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;biologija:Biologija;kemija:Kemija;fizika:Fizika;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
 {% assign predmeti6 = "hrvatski:Hrvatski jezik;matematika:Matematika;engleski:Engleski jezik;povijest:Povijest;geografija:Geografija;priroda:Priroda;tehnicka:Tehnička kultura;informatika:Informatika;vjeronauk:Vjeronauk" | split: ";" %}
-{% assign datoteke = site.static_files | sort: "path" %}
+{% assign materijali = site.data.materijali %}
 <!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -29,8 +29,19 @@
     .predmet.prazan { opacity: .55; }
     .natrag { background: none; border: none; color: #1a3d8f; font-size: 1rem; cursor: pointer; padding: 6px 0; }
     .natrag:hover { text-decoration: underline; }
-    a.kartica { display: block; padding: 14px 16px; margin: 10px 0; background: #fff; border: 1px solid #d6e0f5; border-left: 6px solid var(--b); border-radius: 10px; text-decoration: none; color: #1a3d8f; font-weight: 600; }
+    a.kartica { display: block; padding: 14px 16px; margin: 10px 0; background: #fff; border: 1px solid #d6e0f5; border-left: 6px solid var(--b); border-radius: 10px; text-decoration: none; color: #222; }
     a.kartica:hover { background: #eef3ff; }
+    .kartica .tema { display: block; color: #1a3d8f; font-weight: 700; font-size: 1.05rem; }
+    .kartica .podnaslov-k { display: block; color: #555; font-size: .92rem; margin-top: 2px; }
+    .kartica .dno { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+    .kartica .datum { color: #666; font-size: .85rem; margin-left: auto; white-space: nowrap; }
+    .kartica .gdje { color: #666; font-size: .85rem; }
+    .oznaka { display: inline-block; padding: 2px 9px; border-radius: 999px; background: #eef2fa; color: #34466e; font-size: .8rem; font-weight: 600; border: 1px solid #dbe3f3; }
+    .oznaka.novo { background: #e6f6ea; color: #1e7a3c; border-color: #bfe5c9; }
+    .filteri { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
+    .filteri button { padding: 6px 12px; border-radius: 999px; border: 1px solid #b8c6e6; background: #fff; color: #1a3d8f; font-size: .9rem; cursor: pointer; }
+    .filteri button.aktivan { background: #1a3d8f; color: #fff; border-color: #1a3d8f; }
+    h3.odjeljak { color: #1a3d8f; margin: 28px 0 4px; font-size: 1.05rem; }
     .prazno { color: #888; font-style: italic; }
     [data-p="hrvatski"]{--b:#d64545}
     [data-p="matematika"]{--b:#2f6fd6}
@@ -57,7 +68,7 @@
 </head>
 <body>
   <h1>Digitalni sadržaji za učenje</h1>
-  <p class="podnaslov">Odaberi razred, pa predmet.</p>
+  <p class="podnaslov">Odaberi razred, pa predmet. Uz svaki materijal piše vrsta i datum kad je dodan.</p>
   <div class="izbornik">
     {% for r in razredi %}<button data-razred="{{ r }}">{{ r }}. razred</button>{% endfor %}
   </div>
@@ -68,31 +79,29 @@
       {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
       {% for p in lista %}
       {% assign dio = p | split: ":" %}
-      {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
-      {% assign broj = 0 %}
-      {% for f in datoteke %}{% if f.extname == ".html" and f.path contains mapa %}{% assign broj = broj | plus: 1 %}{% endif %}{% endfor %}
+      {% assign broj = materijali | where: "razred", r | where: "predmet", dio[0] | size %}
       <button class="predmet{% if broj == 0 %} prazan{% endif %}" data-p="{{ dio[0] }}" data-cilj="{{ r }}/{{ dio[0] }}">
         {{ dio[1] }}
         <small>{% if broj == 0 %}nema materijala{% elsif broj == 1 %}1 materijal{% else %}{{ broj }} materijala{% endif %}</small>
       </button>
       {% endfor %}
     </div>
+    {% assign uRazredu = materijali | where: "razred", r %}
+    {% if uRazredu.size > 0 %}
+    <h3 class="odjeljak">Najnovije dodano</h3>
+    {% for m in uRazredu limit: 5 %}{% include kartica.html m=m s_predmetom=true %}{% endfor %}
+    {% endif %}
   </div>
   {% if r == "6" %}{% assign lista = predmeti6 %}{% else %}{% assign lista = predmeti %}{% endif %}
   {% for p in lista %}
   {% assign dio = p | split: ":" %}
-  {% assign mapa = "/" | append: r | append: "-razred/" | append: dio[0] | append: "/" %}
   <div class="pogled" id="v-{{ r }}-{{ dio[0] }}" data-p="{{ dio[0] }}">
     <button class="natrag" data-cilj="{{ r }}">← {{ r }}. razred</button>
     <h2>{{ dio[1] }} – {{ r }}. razred</h2>
-    {% assign ima = false %}
-    {% for f in datoteke %}
-    {% if f.extname == ".html" and f.path contains mapa %}
-    {% assign ima = true %}
-    <a class="kartica" href="{{ f.path | relative_url }}">{{ f.basename | replace: "_", " " }}</a>
-    {% endif %}
-    {% endfor %}
-    {% unless ima %}<p class="prazno">Još nema materijala za ovaj predmet.</p>{% endunless %}
+    {% assign lista_m = materijali | where: "razred", r | where: "predmet", dio[0] %}
+    <div class="filteri"></div>
+    {% for m in lista_m %}{% include kartica.html m=m %}{% endfor %}
+    {% if lista_m.size == 0 %}<p class="prazno">Još nema materijala za ovaj predmet.</p>{% endif %}
   </div>
   {% endfor %}
   {% endfor %}
@@ -155,6 +164,33 @@
       el.classList.add("aktivan");
       if (location.hash.slice(1) !== cilj) history.pushState(null, "", "#" + cilj);
     }
+    // Oznaka NOVO za materijale dodane u zadnjih 7 dana
+    const danas = new Date();
+    document.querySelectorAll(".kartica[data-datum]").forEach(k => {
+      const dana = (danas - new Date(k.dataset.datum + "T00:00:00")) / 864e5;
+      if (dana < 7) {
+        const n = document.createElement("span");
+        n.className = "oznaka novo"; n.textContent = "NOVO";
+        k.querySelector(".dno").prepend(n);
+      }
+    });
+    // Filtriranje po oznakama unutar predmeta
+    document.querySelectorAll(".pogled").forEach(pogled => {
+      const traka = pogled.querySelector(".filteri");
+      if (!traka) return;
+      const kartice = [...pogled.querySelectorAll(".kartica")];
+      const sve = [...new Set(kartice.flatMap(k => (k.dataset.oznake || "").split("|").filter(Boolean)))].sort((a, b) => a.localeCompare(b, "hr"));
+      if (sve.length < 2) return;
+      ["Sve", ...sve].forEach((o, i) => {
+        const b = document.createElement("button");
+        b.textContent = o; if (i === 0) b.classList.add("aktivan");
+        b.addEventListener("click", () => {
+          traka.querySelectorAll("button").forEach(x => x.classList.toggle("aktivan", x === b));
+          kartice.forEach(k => k.style.display = (o === "Sve" || k.dataset.oznake.split("|").includes(o)) ? "" : "none");
+        });
+        traka.appendChild(b);
+      });
+    });
     document.querySelectorAll(".izbornik button").forEach(b => b.addEventListener("click", () => prikazi(b.dataset.razred)));
     document.querySelectorAll("[data-cilj]").forEach(b => b.addEventListener("click", () => prikazi(b.dataset.cilj)));
     window.addEventListener("popstate", () => prikazi(decodeURIComponent(location.hash.slice(1))));
