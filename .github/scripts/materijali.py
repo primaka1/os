@@ -12,7 +12,8 @@ from datetime import date
 PREDMETI = {"hrvatski": "Hrvatski jezik", "matematika": "Matematika", "engleski": "Engleski jezik",
             "povijest": "Povijest", "geografija": "Geografija", "biologija": "Biologija", "kemija": "Kemija",
             "fizika": "Fizika", "tehnicka": "Tehnička kultura", "informatika": "Informatika",
-            "vjeronauk": "Vjeronauk", "priroda": "Priroda"}
+            "vjeronauk": "Vjeronauk", "priroda": "Priroda",
+            "priroda-drustvo": "Priroda i društvo", "likovna": "Likovna kultura", "glazbena": "Glazbena kultura"}
 
 KORIJEN = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
