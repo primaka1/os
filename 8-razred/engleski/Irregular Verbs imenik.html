@@ -1,0 +1,431 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Irregular Verbs imenik</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kartica u sredini; početna = imenik s ocjenama + grupe glagola; učenje = jedna kartica glagola; vježba = jedno pitanje */
+:root{
+  --bg:#EEF1F6; --card:#FFFFFF; --ink:#1B2433; --muted:#5D6880; --line:#D6DCE6; --chip:#E6EAF2;
+  --accent:#2C5BD6; --accent-ink:#FFFFFF; --good:#1E8E4E; --good-bg:#E3F5EA; --bad:#C2412D; --bad-bg:#FBE7E3;
+  --hint-bg:#FFF6D6; --hint-line:#E8B400; --paper:#FBFAF5; --rule:#C9D3E6;
+  --g5:#1E8E4E; --g4:#2C7BD6; --g3:#C98A00; --g2:#D9622B;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131823; --card:#1D2431; --ink:#E8ECF3; --muted:#9EA9BE; --line:#323C4E; --chip:#283142;
+  --accent:#6E98F5; --accent-ink:#0C1424; --good:#5BCB8A; --good-bg:#173425; --bad:#F08A76; --bad-bg:#3E1F1A;
+  --hint-bg:#3A3215; --hint-line:#E8B400; --paper:#1A2130; --rule:#344158;
+  --g5:#5BCB8A; --g4:#6EA8F5; --g3:#F2C230; --g2:#F59A62; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131823; --card:#1D2431; --ink:#E8ECF3; --muted:#9EA9BE; --line:#323C4E; --chip:#283142;
+  --accent:#6E98F5; --accent-ink:#0C1424; --good:#5BCB8A; --good-bg:#173425; --bad:#F08A76; --bad-bg:#3E1F1A;
+  --hint-bg:#3A3215; --hint-line:#E8B400; --paper:#1A2130; --rule:#344158;
+  --g5:#5BCB8A; --g4:#6EA8F5; --g3:#F2C230; --g2:#F59A62; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.5}
+.wrap{max-width:660px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:2rem;font-weight:800} h2{font-size:1.4rem;font-weight:800} h3{font-size:1.1rem}
+.sub{color:var(--muted);margin:4px 0 0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:1.05rem;min-height:52px}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.95rem}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.counter{color:var(--muted);font-size:.95rem;margin:0;font-variant-numeric:tabular-nums}
+
+/* imenik */
+.imenik{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 18px 12px;
+ }
+.imenik .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.imenik .avg{font-family:var(--display);font-weight:800;font-size:1.1rem}
+.irow{display:flex;align-items:center;gap:10px;min-height:44px;border-top:1px solid var(--rule)}
+.irow .nm{flex:1;min-width:0;font-size:.95rem}
+.grades{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.gr{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-family:var(--display);font-weight:800;font-size:1.05rem;border:2.5px solid currentColor;transform:rotate(-6deg)}
+.gr.g5{color:var(--g5)} .gr.g4{color:var(--g4)} .gr.g3{color:var(--g3)} .gr.g2{color:var(--g2)}
+.gr.empty{color:var(--line);border-style:dashed}
+.big{width:110px;height:110px;font-size:4rem;border-width:6px;margin:8px auto;animation:stamp .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes stamp{from{transform:scale(2.4) rotate(-20deg);opacity:0}to{transform:rotate(-8deg);opacity:1}}
+
+/* grupe */
+.groups{display:grid;gap:10px}
+.grp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.grp .txt{flex:1;min-width:150px}
+.grp .t{font-weight:700;display:block}
+.grp .d{color:var(--muted);font-size:.9rem}
+.final{border:2px solid var(--accent)}
+
+/* kartica glagola */
+.verbcard{display:grid;gap:14px}
+.vhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vbase{font-family:var(--display);font-weight:800;font-size:2.6rem;letter-spacing:.01em}
+.forms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.form{background:var(--chip);border-radius:14px;padding:10px 8px;text-align:center;display:grid;gap:4px;justify-items:center;min-width:0}
+.form .lab{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.form .w{font-weight:700;font-size:1.15rem;overflow-wrap:anywhere}
+.form .pr{font-size:.82rem;color:var(--muted)}
+.reveal{border:2px dashed var(--line);background:transparent;border-radius:12px;padding:10px 14px;text-align:left;width:100%;min-height:50px;color:var(--muted)}
+.reveal.open{border-style:solid;border-color:var(--good);background:var(--good-bg);color:var(--ink);font-weight:700}
+.sent{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.sent .en{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;font-size:1.15rem}
+.sent mark{background:var(--hint-bg);color:inherit;border-radius:4px;padding:0 3px;font-weight:700}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--accent)}
+
+/* vježba */
+.progress{height:12px;background:var(--chip);border-radius:6px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:6px;transition:width .4s}
+.qhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.qtext{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.35;margin:0 0 14px}
+.qtext .en{font-weight:800;color:var(--accent)}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--chip);border:2px solid transparent;border-radius:14px;padding:12px 16px;min-height:56px;font-size:1.15rem;width:100%}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.inp{font:inherit;font-size:1.4rem;font-weight:700;width:min(260px,100%);padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink)}
+.inp.ok{border-color:var(--good);background:var(--good-bg)} .inp.no{border-color:var(--bad);background:var(--bad-bg)}
+.msg{margin-top:10px;font-weight:700;color:var(--bad)}
+.fb{margin-top:16px;border-radius:14px;padding:14px 16px;font-size:1rem;display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.fb.ok{background:var(--good-bg);border-left:6px solid var(--good)}
+.fb.no{background:var(--bad-bg);border-left:6px solid var(--bad)}
+.fb b{display:block}
+.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.toggle{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;width:100%;text-align:left}
+.toggle .sw{flex:none;width:52px;height:30px;border-radius:15px;background:var(--line);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--good)}
+.toggle[aria-pressed="true"] .sw::after{left:25px}
+
+.spk{flex:none;display:inline-grid;place-items:center;width:48px;height:48px;border-radius:50%;border:0;background:var(--chip);color:var(--accent)}
+.spk svg{width:24px;height:24px}
+.spk.sm{width:38px;height:38px}.spk.sm svg{width:19px;height:19px}
+.form .spk{background:var(--card)}
+.spk.on{background:var(--accent);color:var(--accent-ink);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.help{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;max-width:560px;margin:0 auto;background:var(--card);color:var(--ink);border:2px solid var(--accent);border-radius:16px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.help p{margin:6px 0 12px;font-size:.98rem}
+.reward{text-align:center}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:5}
+.foot{color:var(--muted);font-size:.85rem;text-align:center}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.9rem;padding:6px}
+@media (prefers-reduced-motion: reduce){.big,.spk.on{animation:none}.progress span{transition:none}}
+@media (max-width:420px){.vbase{font-size:2.1rem}.form .w{font-size:1rem}}
+</style>
+
+<div class="wrap" id="app"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<script>
+/* ================= GLAGOLI (iz priloženog popisa) =================
+ infinitiv | past simple | past participle | prijevod | izgovor 1 | izgovor 2 | izgovor 3 | rečenica ({} = past simple) | prijevod rečenice */
+const RAW=`be|was/were|been|biti|bi|vaz/vr|bin|I {was} at home yesterday.|Jučer sam bio kod kuće.
+beat|beat|beaten|pretući, pobijediti|bit|bit|bitn|Our team {beat} the other team.|Naša je ekipa pobijedila drugu ekipu.
+become|became|become|postati|bikom|bikejm|bikam|She {became} a doctor.|Postala je liječnica.
+begin|began|begun|početi|bigin|bigen|bigan|The film {began} at eight.|Film je počeo u osam.
+bite|bit|bitten|ugristi|bajt|||The dog {bit} my leg.|Pas me ugrizao za nogu.
+blow|blew|blown|puhati|blou|blu|bloun|The wind {blew} all night.|Vjetar je puhao cijelu noć.
+break|broke|broken|slomiti|brejk|brouk|brouken|He {broke} his arm.|Slomio je ruku.
+bring|brought|brought|donijeti|bring|brot|brot|She {brought} a cake to school.|Donijela je tortu u školu.
+build|built|built|graditi|bild|bilt|bilt|We {built} a sandcastle.|Sagradili smo dvorac od pijeska.
+burn|burnt/burned|burnt/burned|paliti, opeći|brn|brnt/brnd|brnt/brnd|I {burnt} my finger.|Opekao sam prst.
+buy|bought|bought|kupiti|baj|bot|bot|Mum {bought} new shoes.|Mama je kupila nove cipele.
+catch|caught|caught|loviti, uhvatiti|keč|kot|kot|The cat {caught} a mouse.|Mačka je ulovila miša.
+choose|chose|chosen|izabrati|čuz|čouz|čouzen|I {chose} the red T-shirt.|Izabrao sam crvenu majicu.
+come|came|come|doći|kam|kejm|kam|My friends {came} to my party.|Prijatelji su došli na moju zabavu.
+cost|cost|cost|koštati||||The ticket {cost} ten euros.|Karta je koštala deset eura.
+cut|cut|cut|rezati|kat|kat|kat|Dad {cut} the bread.|Tata je narezao kruh.
+do|did|done|činiti, raditi|du||dan|I {did} my homework.|Napravio sam zadaću.
+draw|drew|drawn|crtati|đro|đru|đron|She {drew} a horse.|Nacrtala je konja.
+dream|dreamt/dreamed|dreamt/dreamed|sanjati|đrim|đremt/đrimd|đremt/đrimd|I {dreamt} about the sea.|Sanjao sam more.
+drink|drank|drunk|piti|đrink|đrenk|đrank|He {drank} a glass of milk.|Popio je čašu mlijeka.
+drive|drove|driven|voziti|đrajv|đrouv|đrivn|Dad {drove} us to school.|Tata nas je odvezao u školu.
+eat|ate|eaten|jesti|it|ejt|itn|We {ate} pizza for lunch.|Za ručak smo jeli pizzu.
+fall|fell|fallen|pasti|fol||folen|The apple {fell} from the tree.|Jabuka je pala sa stabla.
+feed|fed|fed|hraniti||||I {fed} the fish.|Nahranio sam ribice.
+feel|felt|felt|osjećati|fil|felt|felt|I {felt} tired after school.|Nakon škole osjećao sam se umorno.
+fight|fought|fought|boriti se|fajt|fot|fot|The two cats {fought} in the garden.|Dvije su se mačke tukle u vrtu.
+find|found|found|pronaći|fajnd|faund|faund|I {found} my keys.|Pronašao sam ključeve.
+fly|flew|flown|letjeti|flaj|flu|floun|We {flew} to London.|Letjeli smo u London.
+forget|forgot|forgotten|zaboraviti|forget|||I {forgot} my pencil case.|Zaboravio sam pernicu.
+forgive|forgave|forgiven|oprostiti|forgiv|forgejv||She {forgave} her brother.|Oprostila je bratu.
+freeze|froze|frozen|zamrznuti|friz|frouz|frouzen|The lake {froze} in winter.|Jezero se zimi zamrznulo.
+get|got|gotten/got|dobiti||||I {got} a present for my birthday.|Za rođendan sam dobio poklon.
+give|gave|given|dati|giv|gejv||Grandma {gave} me a book.|Baka mi je dala knjigu.
+go|went|gone|ići|gou|vent|gon|I {went} to school by bus.|Išao sam u školu autobusom.
+grow|grew|grown|rasti|grou|gru|groun|The plant {grew} very fast.|Biljka je rasla vrlo brzo.
+hang|hung/hanged|hung/hanged|vješati|heng|hang/hengd|hang/hengd|I {hung} my coat on the hook.|Objesio sam kaput na vješalicu.
+have|had|had|imati|hev|hed|hed|We {had} a lot of fun.|Jako smo se zabavili.
+hear|heard|heard|čuti|hir|hrd|hrd|I {heard} a strange noise.|Čuo sam čudan zvuk.
+hide|hid|hidden|sakriti|hajd|||The children {hid} behind the tree.|Djeca su se sakrila iza stabla.
+hit|hit|hit|udariti||||He {hit} the ball hard.|Snažno je udario loptu.
+hold|held|held|držati||||She {held} the baby.|Držala je bebu.
+hurt|hurt|hurt|ozlijediti|hrt|hrt|hrt|I {hurt} my knee.|Ozlijedio sam koljeno.
+keep|kept|kept|zadržati, čuvati|kip|kept|kept|She {kept} the secret.|Sačuvala je tajnu.
+know|knew|known|znati|nou|nju|noun|I {knew} the answer.|Znao sam odgovor.
+lead|led|led|voditi|lid|||The teacher {led} us to the museum.|Učiteljica nas je odvela u muzej.
+learn|learnt/learned|learnt/learned|učiti|lrn|lrnt/lrnd|lrnt/lrnd|I {learnt} a new song.|Naučio sam novu pjesmu.
+leave|left|left|napustiti, otići|liv|||We {left} the house at seven.|Izašli smo iz kuće u sedam.
+lend|lent|lent|posuditi (nekome)||||I {lent} him my bike.|Posudio sam mu bicikl.
+let|let|let|dopustiti||||Mum {let} me stay up late.|Mama mi je dopustila da ostanem dugo budan.
+lose|lost|lost|izgubiti|luz|||Our team {lost} the match.|Naša je ekipa izgubila utakmicu.
+make|made|made|napraviti|mejk|mejd|mejd|We {made} a cake.|Napravili smo tortu.
+mean|meant|meant|značiti|min|ment|ment|I didn't know what the word {meant}.|Nisam znao što ta riječ znači.
+meet|met|met|upoznati, sastati se|mit|||I {met} my friend in the park.|Sreo sam prijatelja u parku.
+pay|paid|paid|platiti|pej|pejd|pejd|Dad {paid} for the tickets.|Tata je platio karte.
+put|put|put|staviti||||I {put} the book on the table.|Stavio sam knjigu na stol.
+ride|rode|ridden|jahati, voziti (bicikl)|rajd|roud||She {rode} a horse.|Jahala je konja.
+ring|rang|rung|zvoniti|ring|reng|rang|The phone {rang} twice.|Telefon je zazvonio dvaput.
+rise|rose|risen|ustati, dizati se|rajz|rouz|rizen|The sun {rose} at six.|Sunce je izašlo u šest.
+run|ran|run|trčati|ran|ren|ran|I {ran} to the bus stop.|Otrčao sam do autobusne stanice.
+say|said|said|reći|sej|sed|sed|She {said} hello.|Rekla je bok.
+see|saw|seen|vidjeti|si|so|sin|I {saw} a rainbow.|Vidio sam dugu.
+sell|sold|sold|prodati||||They {sold} their old car.|Prodali su svoj stari auto.
+send|sent|sent|poslati||||I {sent} a message to Ana.|Poslao sam poruku Ani.
+set|set|set|namjestiti||||I {set} the alarm for seven.|Namjestio sam budilicu na sedam.
+shake|shook|shaken|protresti|šejk|šuk|šejkn|He {shook} the bottle.|Protresao je bocu.
+shine|shone|shone|sjati, sjajiti se|šajn|šoun|šoun|The sun {shone} all day.|Sunce je sjalo cijeli dan.
+shoot|shot|shot|pucati, šutirati|šut|šat|šat|He {shot} the ball into the goal.|Šutirao je loptu u gol.
+show|showed|shown/showed|pokazati|šou|šoud|šoun/šoud|She {showed} me her photos.|Pokazala mi je svoje fotografije.
+shrink|shrank|shrunk|smanjiti se|šrink|šrenk|šrank|My jumper {shrank} in the wash.|Džemper mi se smanjio u pranju.
+shut|shut|shut|zatvoriti|šat|šat|šat|He {shut} the door.|Zatvorio je vrata.
+sing|sang|sung|pjevati|sing|seng|sang|We {sang} a song.|Pjevali smo pjesmu.
+sink|sank|sunk|potonuti|sink|senk|sank|The Titanic {sank} in 1912.|Titanik je potonuo 1912.
+sit|sat|sat|sjediti|sit|set|set|I {sat} next to Luka.|Sjedio sam pokraj Luke.
+sleep|slept|slept|spavati|slip|||I {slept} for ten hours.|Spavao sam deset sati.
+smell|smelt/smelled|smelt/smelled|mirisati||smelt/smeld|smelt/smeld|The kitchen {smelt} of cookies.|Kuhinja je mirisala na kekse.
+speak|spoke|spoken|govoriti|spik|spouk|spouken|She {spoke} English very well.|Govorila je engleski vrlo dobro.
+spell|spelled/spelt|spelled/spelt|slovkati||speld/spelt|speld/spelt|He {spelled} his name.|Slovkao je svoje ime.
+spend|spent|spent|trošiti||||I {spent} all my money.|Potrošio sam sav novac.
+spill|spilled/spilt|spilled/spilt|prosuti||spild/spilt|spild/spilt|I {spilt} my juice.|Prolio sam sok.
+spread|spread|spread|proširiti, namazati|spred|spred|spred|She {spread} butter on the bread.|Namazala je maslac na kruh.
+stand|stood|stood|stajati|stend|stud|stud|We {stood} in a line.|Stajali smo u redu.
+steal|stole|stolen|ukrasti|stil|stoul|stoulen|Someone {stole} my bike.|Netko mi je ukrao bicikl.
+stick|stuck|stuck|zaglaviti, zalijepiti|stik|stak|stak|The key {stuck} in the lock.|Ključ je zapeo u bravi.
+strike|struck|struck|pogoditi, udariti|strajk|strak|strak|Lightning {struck} the tree.|Munja je pogodila stablo.
+swear|swore|sworn|opsovati, zakleti se|sver|svor|svorn|He {swore} to tell the truth.|Zakleo se da će reći istinu.
+sweep|swept|swept|mesti|svip|||I {swept} the floor.|Pomeo sam pod.
+swim|swam|swum|plivati||svem|svam|We {swam} in the sea.|Plivali smo u moru.
+swing|swung|swung|njihati se||svang|svang|The children {swung} on the swings.|Djeca su se njihala na ljuljačkama.
+take|took|taken|uzeti|tejk|tuk|tejkn|I {took} a photo.|Snimio sam fotografiju.
+teach|taught|taught|poučavati|tič|tot|tot|Mr Horvat {taught} us maths.|Gospodin Horvat učio nas je matematiku.
+tear|tore|torn|rastrgati|ter|tor||She {tore} the paper.|Rastrgala je papir.
+tell|told|told|reći, ispričati||||Grandpa {told} us a story.|Djed nam je ispričao priču.
+think|thought|thought|misliti||tot|tot|I {thought} about you.|Mislio sam na tebe.
+throw|threw|thrown|baciti|trou|tru|troun|He {threw} the ball to me.|Bacio mi je loptu.
+understand|understood|understood|razumjeti|anderstend|anderstud|anderstud|I {understood} the lesson.|Razumio sam lekciju.
+wake|woke|woken|probuditi se|vejk|vouk|vouken|I {woke} up at seven.|Probudio sam se u sedam.
+wear|wore|worn|nositi (odjeću)|ver|vor||She {wore} a blue dress.|Nosila je plavu haljinu.
+weep|wept|wept|jecati, plakati|vip|||The baby {wept} all night.|Beba je plakala cijelu noć.
+win|won|won|pobijediti||van|van|We {won} the game!|Pobijedili smo u igri!
+write|wrote|written|pisati|vrajt|vrout|vriten|I {wrote} a letter to my friend.|Napisao sam pismo prijatelju.`;
+const VERBS=RAW.trim().split("\n").map((l,i)=>{const[b,p,pp,hr,x1,x2,x3,s,shr]=l.split("|");return{i,b,p,pp,hr,pr:[x1,x2,x3],s,shr}});
+// grupe po 10 (zadnje dvije po 10–11)
+const GROUPS=[];(()=>{const n=Math.ceil(VERBS.length/10);let k=0;for(let g=0;g<n;g++){const size=Math.round((VERBS.length-k)/(n-g));GROUPS.push(VERBS.slice(k,k+size));k+=size}})();
+const FINAL=GROUPS.length; // indeks završnog testa
+const gname=g=>g===FINAL?"Veliki završni test":`Grupa ${g+1}: ${GROUPS[g][0].b} – ${GROUPS[g][GROUPS[g].length-1].b}`;
+
+/* ================= pomoćne ================= */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+const alts=f=>f.split("/").map(x=>x.trim().toLowerCase());
+const plain=s=>s.replace(/[{}]/g,"");
+const marked=s=>esc(s).replace(/\{(.+?)\}/,"<mark>$1</mark>");
+const fakeEd=b=>b.endsWith("e")?b+"d":b+"ed";
+
+/* ================= GOVOR ================= */
+const TTS="speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+const ICON_SPK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`;
+const ICON_STOP=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>`;
+let vEN=null,vHR=null,activeBtn=null;
+function pickVoices(){ if(!TTS)return; const vs=speechSynthesis.getVoices();
+ vEN=vs.find(v=>/^en[-_]GB/i.test(v.lang))||vs.find(v=>/^en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;
+ vHR=vs.find(v=>/^(hr|bs|sr)/i.test(v.lang))||null; }
+if(TTS){pickVoices(); try{speechSynthesis.onvoiceschanged=pickVoices}catch(e){}}
+function stopSpeak(){ if(TTS)speechSynthesis.cancel(); if(activeBtn){activeBtn.classList.remove("on");activeBtn.innerHTML=ICON_SPK} activeBtn=null; }
+// parts: [[tekst,"en"|"hr"],...]
+function say(parts,btn,rate){
+ if(!TTS){showHelp();return}
+ const was=btn&&btn===activeBtn; stopSpeak(); if(was)return;
+ if(!vEN)pickVoices();
+ if(btn){activeBtn=btn;btn.classList.add("on");btn.innerHTML=ICON_STOP}
+ parts.forEach(([t,l],k)=>{const u=new SpeechSynthesisUtterance(t); const v=l==="hr"?vHR:vEN;
+  u.lang=v?v.lang:(l==="hr"?"hr-HR":"en-GB"); if(v)u.voice=v; u.rate=rate||(l==="en"?.8:.9);
+  if(k===parts.length-1){u.onend=u.onerror=()=>{if(activeBtn===btn)stopSpeak()}} speechSynthesis.speak(u)});
+}
+const spk=(id,sm,label="Poslušaj")=>`<button class="spk${sm?" sm":""}" id="${id}" aria-label="${label}" title="${label}">${ICON_SPK}</button>`;
+function showHelp(){
+ let h=document.getElementById("help");
+ if(!h){h=document.createElement("div");h.id="help";h.className="help";h.setAttribute("role","dialog");document.body.appendChild(h)}
+ h.innerHTML=`<strong>Izgovor ovdje ne radi</strong><p>Aplikacija Claude otvara stranicu u pregledniku koji ne zna čitati naglas. Otvori stranicu u <b>Chromeu</b> ili <b>Safariju</b>: kopiraj poveznicu i zalijepi je u preglednik.</p><button class="btn" id="helpOk">U redu</button>`;
+ h.hidden=false; document.getElementById("helpOk").onclick=()=>{h.hidden=true};
+}
+// izgovor oblika: "burnt/burned" → "burnt, or burned"
+const sayForm=f=>alts(f).join(", or ");
+
+/* ================= ZVUK ================= */
+let actx=null, soundOn=true;
+try{soundOn=localStorage.getItem("en-zvuk")!=="0"}catch(e){}
+function ac(){ if(!soundOn)return null; try{ if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended")actx.resume(); return actx}catch(e){return null} }
+function tone(freqs,step=.09,len=.3,vol=.15){const c=ac(); if(!c)return; const t=c.currentTime;
+ freqs.forEach((f,k)=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;const s=t+k*step;
+  g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(vol,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+len);o.connect(g).connect(c.destination);o.start(s);o.stop(s+len+.02)})}
+const ding=()=>tone([660,880]);
+const bonk=()=>tone([220,165],.12,.25,.12);
+const fanfare=()=>tone([523,659,784,1047],.13,.45,.15);
+
+/* ================= STANJE ================= */
+let book={}; try{book=JSON.parse(localStorage.getItem("en-imenik")||"{}")}catch(e){book={}}
+const saveBook=()=>{try{localStorage.setItem("en-imenik",JSON.stringify(book))}catch(e){}};
+const app=document.getElementById("app");
+let P=null;
+const gradeOf=pct=>pct>=.9?5:pct>=.75?4:pct>=.6?3:2;
+const GNAME={5:"odličan",4:"vrlo dobar",3:"dobar",2:"dovoljan"};
+const grHTML=(g,cls="")=>`<span class="gr g${g} ${cls}" title="${GNAME[g]}">${g}</span>`;
+function avg(){const all=Object.values(book).flat();return all.length?(all.reduce((a,b)=>a+b,0)/all.length):null}
+
+/* ================= POČETNA ================= */
+function home(){
+ stopSpeak(); P=null;
+ const a=avg(), fives=Object.values(book).flat().filter(x=>x===5).length;
+ const rows=[...GROUPS.keys(),FINAL].map(g=>{const list=book[g]||[];
+  return `<div class="irow"><span class="nm">${esc(gname(g))}</span><span class="grades">${list.length?list.slice(-6).map(x=>grHTML(x)).join(""):`<span class="gr empty">–</span>`}</span></div>`}).join("");
+ app.innerHTML=`<header><h1>Irregular Verbs</h1><p class="sub">Engleski · nepravilni glagoli. Uči glagole, vježbaj i skupljaj ocjene u imenik!</p></header>
+ <section class="imenik" aria-label="Moj imenik">
+  <div class="head"><h2>Moj imenik</h2><span class="avg">${a?`Prosjek: ${a.toFixed(2).replace(".",",")}`:"Još nema ocjena"}${fives?` · petica: ${fives}`:""}</span></div>
+  ${rows}
+ </section>
+ <button class="toggle" id="snd" aria-pressed="${soundOn}"><span class="sw"></span><span><strong>Zvukovi</strong><br><span class="sub" style="font-size:.9rem">Kratki „ding“ za točan odgovor.</span></span></button>
+ <div class="groups">${GROUPS.map((G,g)=>`<div class="grp"><span class="txt"><span class="t">Grupa ${g+1}</span><span class="d">${G.map(v=>v.b).join(", ")}</span></span><span class="row"><button class="btn small ghost" data-learn="${g}">Uči</button><button class="btn small" data-test="${g}">Vježbaj</button></span></div>`).join("")}
+  <div class="grp final"><span class="txt"><span class="t">Veliki završni test</span><span class="d">15 nasumičnih glagola iz svih grupa</span></span><button class="btn small" data-test="${FINAL}">Kreni</button></div>
+ </div>
+ <p class="foot">Savjet: prvo „Uči“ (s izgovorom), pa „Vježbaj“. ${Object.keys(book).length?`<button class="linkbtn" id="reset">Obriši imenik</button>`:""}</p>`;
+ app.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>learn(+b.dataset.learn,0));
+ app.querySelectorAll("[data-test]").forEach(b=>b.onclick=()=>startTest(+b.dataset.test));
+ const sn=document.getElementById("snd"); sn.onclick=()=>{soundOn=!soundOn;sn.setAttribute("aria-pressed",soundOn);try{localStorage.setItem("en-zvuk",soundOn?"1":"0")}catch(e){} if(soundOn)ding()};
+ const r=document.getElementById("reset"); if(r)r.onclick=()=>{ if(r.dataset.sure){book={};saveBook();home()} else {r.dataset.sure=1;r.textContent="Sigurno? Dodirni opet za brisanje"} };
+ scrollTo(0,0);
+}
+
+/* ================= UČENJE (kartice) ================= */
+function learn(g,k){
+ stopSpeak();
+ const G=GROUPS[g], v=G[k], labs=["infinitive","past simple","past participle"], fs=[v.b,v.p,v.pp];
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag na početnu">✕</button><span class="counter">Grupa ${g+1} · ${k+1} / ${G.length}</span></div>
+ <div class="card verbcard">
+  <div class="vhead"><span class="vbase">${esc(v.b)}</span>${spk("sAll",false,"Poslušaj sva tri oblika")}</div>
+  <div class="forms">${fs.map((f,j)=>`<div class="form"><span class="lab">${labs[j]}</span><span class="w">${esc(f)}</span>${v.pr[j]?`<span class="pr">(${esc(v.pr[j])})</span>`:""}${spk("sF"+j,true,"Poslušaj: "+f)}</div>`).join("")}</div>
+  <button class="reveal" id="rTr" aria-expanded="false">👁 Dodirni za prijevod</button>
+  <div class="sent"><div class="en"><span>${marked(v.s)}</span>${spk("sS",true,"Poslušaj rečenicu")}</div>
+   <button class="reveal" id="rSt" aria-expanded="false">👁 Dodirni za prijevod rečenice</button></div>
+  <div class="dots" aria-hidden="true">${G.map((_,j)=>`<span class="dot ${j===k?"on":""}"></span>`).join("")}</div>
+  <div class="nav"><button class="btn ghost" id="prev" ${k===0?"disabled":""}>◀ Prethodni</button>${k<G.length-1?`<button class="btn" id="next">Sljedeći ▶</button>`:`<button class="btn" id="go">Vježbaj ovu grupu ▶</button>`}</div>
+ </div>`;
+ document.getElementById("back").onclick=home;
+ const sAll=document.getElementById("sAll"); sAll.onclick=()=>say([[`${v.b}. ${sayForm(v.p)}. ${sayForm(v.pp)}.`,"en"]],sAll,.75);
+ fs.forEach((f,j)=>{const b=document.getElementById("sF"+j); b.onclick=()=>say([[sayForm(f),"en"]],b,.75)});
+ const sS=document.getElementById("sS"); sS.onclick=()=>say([[plain(v.s),"en"]],sS);
+ const rv=(id,txt)=>{const b=document.getElementById(id); b.onclick=()=>{b.classList.add("open");b.textContent=txt;b.setAttribute("aria-expanded","true")}};
+ rv("rTr","🇭🇷 "+v.hr); rv("rSt","🇭🇷 "+v.shr);
+ document.getElementById("prev").onclick=()=>learn(g,k-1);
+ const n=document.getElementById("next"); if(n)n.onclick=()=>learn(g,k+1);
+ const go=document.getElementById("go"); if(go)go.onclick=()=>startTest(g);
+ scrollTo(0,0);
+}
+
+/* ================= VJEŽBA ================= */
+function makeQ(v,pool){
+ const type=pick(["p2","p3","tr","type","fill","rev","p2","fill"]);
+ const others=shuffle(pool.filter(x=>x!==v&&x.hr!==v.hr&&x.b!==v.b));
+ const opts3=(correct,cands)=>{const bad=new Set(alts(correct)); const out=[];
+  for(const c of cands){if(!c)continue; const l=c.toLowerCase(); if(!alts(c).some(x=>bad.has(x))&&!out.some(o=>o.toLowerCase()===l)&&c)out.push(c); if(out.length===2)break}
+  return shuffle([correct,...out])};
+ switch(type){
+  case"p2":{const o=opts3(v.p,[fakeEd(v.b),v.pp,v.b,...others.map(x=>x.p)]);return{t:"mc",v,html:`Koji je <b>past simple</b> od <span class="en">${esc(v.b)}</span>?`,say:[[v.b,"en"]],o,a:o.indexOf(v.p),ans:v.p}}
+  case"p3":{const o=opts3(v.pp,[v.p,fakeEd(v.b),v.b,...others.map(x=>x.pp)]);return{t:"mc",v,html:`Koji je <b>past participle</b> od <span class="en">${esc(v.b)}</span>?`,say:[[v.b,"en"]],o,a:o.indexOf(v.pp),ans:v.pp}}
+  case"tr":{const o=shuffle([v.hr,...others.slice(0,2).map(x=>x.hr)]);return{t:"mc",v,html:`Što znači <span class="en">${esc(v.b)}</span>?`,say:[[v.b,"en"]],o,a:o.indexOf(v.hr),ans:v.hr}}
+  case"rev":{const o=shuffle([v.b,...others.slice(0,2).map(x=>x.b)]);return{t:"mc",v,html:`Kako se na engleskom kaže „${esc(v.hr)}“?`,say:[["Kako se na engleskom kaže "+v.hr,"hr"]],o,a:o.indexOf(v.b),ans:v.b}}
+  case"fill":{const used=(v.s.match(/\{(.+?)\}/)||[])[1]; const o=opts3(used,[v.b,v.pp===used?fakeEd(v.b):v.pp,fakeEd(v.b),...others.map(x=>x.p)]);
+   return{t:"mc",v,html:`Dopuni rečenicu (<span class="en">${esc(v.b)}</span>):<br>${esc(v.s).replace(/\{.+?\}/,"_____")}`,say:[[v.s.replace(/\{.+?\}/,"...").replace(/[{}]/g,""),"en"]],o,a:o.indexOf(used),ans:used}}
+  default:return{t:"type",v,html:`Upiši <b>past simple</b> od <span class="en">${esc(v.b)}</span>.`,say:[[v.b,"en"]],ans:v.p}
+ }
+}
+function startTest(g){
+ const verbs=g===FINAL?shuffle(VERBS).slice(0,15):shuffle(GROUPS[g]);
+ const pool=g===FINAL?VERBS:GROUPS[g];
+ P={g,queue:verbs.map(v=>({q:makeQ(v,pool),first:true})),total:verbs.length,done:0,firstRight:0};
+ ask();
+}
+function ask(){
+ if(!P.queue.length)return finish();
+ stopSpeak();
+ const it=P.queue[0], q=it.q; it.tries=0;
+ let body="";
+ if(q.t==="mc") body=`<div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join("")}</div>`;
+ else body=`<div class="row"><input class="inp" id="inp" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Odgovor" placeholder="upiši ovdje"><button class="btn" id="chk">Provjeri</button></div><div class="msg" id="msg"></div>`;
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag na početnu">✕</button><span class="counter">${Math.min(P.done+1,P.total)} / ${P.total} · ${esc(gname(P.g))}</span></div>
+ <div class="progress" aria-hidden="true"><span style="width:${P.done/P.total*100}%"></span></div>
+ <div class="card"><div class="qhead"><p class="qtext">${q.html}</p>${spk("sQ",false)}</div>${body}<div id="fb"></div></div>`;
+ document.getElementById("back").onclick=home;
+ const sQ=document.getElementById("sQ"); sQ.onclick=()=>say(q.say,sQ);
+ if(q.t==="mc"){
+  const bs=[...app.querySelectorAll(".opt")];
+  bs.forEach(b=>b.onclick=()=>{const ok=+b.dataset.k===q.a; bs.forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add("right")}); if(!ok)b.classList.add("wrong"); result(ok)});
+ } else {
+  const inp=document.getElementById("inp"), chk=document.getElementById("chk"), msg=document.getElementById("msg");
+  inp.focus({preventScroll:true});
+  const go=()=>{const val=inp.value.trim().toLowerCase(); if(!val)return;
+   if(alts(q.ans).includes(val)){inp.disabled=true;inp.classList.add("ok");chk.remove();msg.textContent="";result(true);return}
+   it.tries++; bonk(); inp.classList.add("no");
+   if(it.tries<2){msg.textContent=`Nije još točno. Pomoć: počinje slovom „${alts(q.ans)[0][0]}“ i ima ${alts(q.ans)[0].length} slova.`;inp.select();return}
+   inp.disabled=true;chk.remove();msg.textContent="";result(false)};
+  chk.onclick=go; inp.onkeydown=e=>{if(e.key==="Enter")go()};
+ }
+}
+const PRAISE=["Bravo!","Točno!","Super!","Odlično!","Great job!","Well done!"];
+function result(ok){
+ const it=P.queue.shift(), q=it.q, v=q.v;
+ if(ok){P.done++; if(it.first&&!it.tries)P.firstRight++; ding()}
+ else {it.first=false; P.queue.push({q:makeQ(v,P.g===FINAL?VERBS:GROUPS[P.g]),first:false}); bonk()}
+ const fb=document.getElementById("fb");
+ fb.insertAdjacentHTML("afterbegin",`<div class="fb ${ok?"ok":"no"}"><div><b>${ok?PRAISE[Math.random()*PRAISE.length|0]:"Ne baš. Točno je: "+esc(q.ans)}</b>${esc(v.b)} – ${esc(v.p)} – ${esc(v.pp)}${ok?"":`<br><span style="color:var(--muted)">Ovaj glagol vratit će ti se na kraju.</span>`}</div>${spk("sF",true,"Poslušaj sva tri oblika")}</div>
+  <div class="actions"><button class="btn" id="nx">${P.queue.length?"Dalje →":"Pogledaj ocjenu"}</button></div>`);
+ const sF=document.getElementById("sF"); sF.onclick=()=>say([[`${v.b}. ${sayForm(v.p)}. ${sayForm(v.pp)}.`,"en"]],sF,.75);
+ const nx=document.getElementById("nx"); nx.focus({preventScroll:true}); nx.scrollIntoView({block:"nearest",behavior:"smooth"}); nx.onclick=ask;
+}
+function finish(){
+ const pct=P.firstRight/P.total, gr=gradeOf(pct);
+ (book[P.g]=book[P.g]||[]).push(gr); saveBook();
+ const msg={5:"Odlično! Petica ide u imenik!",4:"Vrlo dobro! Još malo do petice.",3:"Dobro! Ponovi grupu i ide bolja ocjena.",2:"Prolaz! Prvo ponovi kartice, pa probaj opet."}[gr];
+ app.innerHTML=`<div class="card reward"><p class="counter">${esc(gname(P.g))}</p><h2>Tvoja ocjena</h2>
+  ${grHTML(gr,"big")}<h3>${GNAME[gr]}</h3>
+  <p class="sub">Iz prve točno: ${P.firstRight} / ${P.total}</p><p>${msg}</p>
+  <div class="actions" style="justify-content:center">${gr<5?`<button class="btn" id="again">Pokušaj za bolju ocjenu</button>`:""}${P.g<FINAL&&gr===5&&P.g+1<FINAL?`<button class="btn" id="nextG">Sljedeća grupa</button>`:""}<button class="btn ghost" id="home">Imenik</button></div></div>`;
+ const g=P.g;
+ document.getElementById("home").onclick=home;
+ const ag=document.getElementById("again"); if(ag)ag.onclick=()=>g===FINAL?startTest(g):learn(g,0);
+ const ng=document.getElementById("nextG"); if(ng)ng.onclick=()=>learn(g+1,0);
+ if(gr>=4){fanfare(); confetti()} else ding();
+ scrollTo(0,0);
+}
+function confetti(){
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const cv=document.getElementById("confetti"), x=cv.getContext("2d"); cv.hidden=false; cv.width=innerWidth; cv.height=innerHeight;
+ const cols=["#1E8E4E","#2C7BD6","#F2B705","#D9622B","#8A3FD1"];
+ const Pp=Array.from({length:120},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,r:Math.random()*6,c:cols[Math.random()*5|0],a:Math.random()*6}));
+ let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);Pp.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-4,-2,8+p.r,5);x.restore()});if(++t<160)requestAnimationFrame(f);else cv.hidden=true})();
+}
+home();
+</script>
+
+</body></html>
