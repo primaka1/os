@@ -1,0 +1,1055 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Čitanje proze</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kartica u sredini, jedan zadatak odjednom, korak po korak; traka napretka; kolekcija osvojenih noktiju */
+:root{
+  --sea:#CFE6F2; --land:#F4EFE3; --landline:#C9BFA8; --route:#C2185B;
+  --bg:#EEF2F5; --card:#FFFFFF; --ink:#1C2630; --muted:#5C6B78; --line:#D5DDE3; --grid:#E3E9EE;
+  --asphalt:#2E3842; --lane:#F2B705; --accent:#1F6FD1; --accent-ink:#FFFFFF;
+  --good:#1E8E4E; --good-bg:#E3F5EA; --bad:#C2412D; --bad-bg:#FBE7E3; --chip:#E4EBF1;
+  --v1:#E0700F; --v2:#1F6FD1; --vres:#1E8E4E; --vsel:#8A3FD1; --hint-bg:#FFF6D6; --hint-line:#E8B400;
+  --c7a:#8EC5F0; --c7b:#24415E; --c7c:#F2B705; --eH:#1F6FD1; --eC:#1C2630; --eO:#C62E22; --eS:#9A6A00; --eNa:#7A3FC4; --eCl:#1E8E4E; --bH:#FFFFFF; --bC:#3A3F47; --bO:#E0453A; --bS:#F2C230; --bNa:#8E5BD6; --bCl:#3DBE5A; --tH:#1C2630; --tC:#FFFFFF; --tO:#FFFFFF; --tS:#1C2630; --tNa:#FFFFFF; --tCl:#FFFFFF;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+}
+:root[data-tint="krem"]{--bg:#F3ECDB;--card:#FBF6EA;--chip:#EEE5CF;--line:#DDD2B8}
+:root[data-tint="plava"]{--bg:#E3EEF7;--card:#F0F6FB;--chip:#DCE8F2;--line:#C7D7E5}
+:root[data-tint="zelena"]{--bg:#E4F1E6;--card:#F1F8F2;--chip:#DCEBDF;--line:#C5DBC9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141A20; --card:#1E262E; --ink:#E9EEF2; --muted:#9DABB7; --line:#33404B; --grid:#2A343D;
+  --asphalt:#0C1115; --lane:#F2C230; --accent:#5AA2F5; --accent-ink:#0B1520;
+  --good:#5BCB8A; --good-bg:#183526; --bad:#F08A76; --bad-bg:#3E1F1A; --chip:#2A343D;
+  --v1:#FF9B45; --v2:#5AA2F5; --vres:#5BCB8A; --vsel:#C08AF5; --hint-bg:#3A3215; --hint-line:#E8B400;
+  --c7a:#8EC5F0; --c7b:#C7D3DE; --c7c:#F2B705; --eH:#7FB2FF; --eC:#E9EEF2; --eO:#FF8A7A; --eS:#F2C230; --eNa:#C49BFF; --eCl:#6EDB8C; --bC:#6B7480; --sea:#173447; --land:#2A2E2A; --landline:#4D5246; --route:#F06292; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141A20; --card:#1E262E; --ink:#E9EEF2; --muted:#9DABB7; --line:#33404B; --grid:#2A343D;
+  --asphalt:#0C1115; --lane:#F2C230; --accent:#5AA2F5; --accent-ink:#0B1520;
+  --good:#5BCB8A; --good-bg:#183526; --bad:#F08A76; --bad-bg:#3E1F1A; --chip:#2A343D;
+  --v1:#FF9B45; --v2:#5AA2F5; --vres:#5BCB8A; --vsel:#C08AF5; --hint-bg:#3A3215; --hint-line:#E8B400;
+  --c7a:#8EC5F0; --c7b:#C7D3DE; --c7c:#F2B705; --eH:#7FB2FF; --eC:#E9EEF2; --eO:#FF8A7A; --eS:#F2C230; --eNa:#C49BFF; --eCl:#6EDB8C; --bC:#6B7480; --sea:#173447; --land:#2A2E2A; --landline:#4D5246; --route:#F06292; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;letter-spacing:.02em;word-spacing:.08em;font-variant-numeric:tabular-nums}
+html.big body{font-size:22px}
+.fx{font-weight:800;letter-spacing:.04em}
+.artab{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.arc{background:var(--chip);border-radius:12px;padding:8px;text-align:center;display:grid}
+.arc .sym{font-size:1.6rem;font-weight:800}.arc .nm{font-size:.8rem;color:var(--muted)}.arc .val{font-weight:700}
+.calcfab{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:15;width:60px;height:60px;border-radius:50%;border:0;background:var(--accent);font-size:1.7rem;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.calc{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:15;width:min(300px,calc(100vw - 28px));background:var(--card);border:2px solid var(--accent);border-radius:18px;padding:12px;display:grid;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.cdisp{background:var(--chip);border-radius:10px;padding:10px 12px;text-align:right;font-size:1.6rem;font-weight:800;min-height:56px;overflow-x:auto;white-space:nowrap}
+.ckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ckeys button{min-height:50px;border:0;border-radius:10px;background:var(--chip);font-size:1.3rem;font-weight:700}
+.ckeys button.op{background:var(--line)}
+.ckeys button.eq{background:var(--accent);color:var(--accent-ink);grid-column:span 2}
+.wrap{padding-bottom:40px}
+.tx{background:var(--chip);border-radius:12px;padding:10px 14px}
+.tx summary{cursor:pointer;font-weight:700;min-height:32px}
+.txt p{margin:0 0 12px;line-height:1.75;max-width:62ch}
+.txt.open{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.quote{margin:0;background:var(--chip);border-left:6px solid var(--accent);border-radius:10px;padding:12px 16px;font-size:1.15rem;line-height:1.6}
+.ta{width:100%;font:inherit;font-size:1.05rem;line-height:1.6;padding:12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);resize:vertical}
+.chk{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.gbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;max-height:46vh;overflow-y:auto}
+.gt{font-weight:800;margin-bottom:6px}
+.gbox .txt p{margin:0 0 10px}
+.show-ev .ev{background:var(--hint-bg);outline:3px solid var(--hint-line);border-radius:4px;padding:0 2px}
+.stepk{display:inline-block;font-size:.85rem;font-weight:800;letter-spacing:.03em;color:var(--accent);background:var(--chip);border-radius:999px;padding:2px 10px;margin-bottom:4px}
+i{font-style:normal;background:var(--chip);border-radius:5px;padding:0 4px}
+.garage h3{text-transform:none!important;letter-spacing:0!important}
+.txt p{line-height:1.9;letter-spacing:.03em;word-spacing:.14em;cursor:pointer;border-radius:8px;padding:2px 4px;transition:opacity .2s}
+.txt.focusing p:not(.focus){opacity:.3}
+.txt p.focus{background:var(--chip)}
+.txt .w.on{background:var(--hint-line);color:#1C2630;border-radius:4px}
+.readhint{font-size:.9rem;color:var(--muted)}
+.opt{line-height:1.5}
+.quote{line-height:1.8;letter-spacing:.03em;word-spacing:.12em}
+.tints{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tint{width:46px;height:46px;border-radius:50%;border:3px solid var(--line)}
+.tint[aria-pressed="true"]{border-color:var(--accent)}
+@media (prefers-reduced-motion: reduce){.txt p{transition:none}}
+.anbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.anbar button{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.95rem;font-weight:700;min-height:42px}
+.anbar button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.anwrap{position:relative}
+.ancv{position:absolute;left:0;top:0;pointer-events:none;touch-action:auto}
+.anwrap.drawing .ancv{pointer-events:auto;touch-action:none;cursor:crosshair}
+.mapcard{padding:14px}
+.mapcard .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.next{font-weight:700}
+.legs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.leg{font-size:.8rem;border-radius:999px;padding:3px 10px;background:var(--chip);color:var(--muted)}
+.leg.done{background:var(--good-bg);color:var(--good);font-weight:700}
+.leg.cur{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.mapa{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.mroot{grid-column:1/-1;text-align:center;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:10px;font-family:var(--display);font-weight:800;letter-spacing:.04em}
+.mbr{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;min-height:64px}
+.mbr[aria-expanded="true"]{border-color:var(--good);background:var(--good-bg)}
+.mh{font-weight:800}.mq{color:var(--muted);font-size:.85rem}
+.mc{display:flex;flex-wrap:wrap;gap:4px}.mtag{background:var(--chip);border-radius:999px;padding:2px 8px;font-size:.88rem}
+.gl{font-size:.9rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+body.calc-open .wrap{padding-bottom:480px}
+[hidden]{display:none!important}
+.wrap{max-width:660px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.45rem;font-weight:800}
+.sub{color:var(--muted);margin:4px 0 0}
+sup{font-size:.68em;line-height:0}
+b,strong{font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:1.05rem;min-height:52px}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.95rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.vec{position:relative;display:inline-block;padding-top:.32em;line-height:1;letter-spacing:.02em}
+.vec::before{content:"";position:absolute;left:1px;right:2px;top:.12em;border-top:2px solid currentColor}
+.vec::after{content:"";position:absolute;right:1px;top:-.03em;width:.28em;height:.28em;border:solid currentColor;border-width:2px 2px 0 0;transform:rotate(45deg)}
+
+/* izbornik */
+.sections{display:grid;gap:12px}
+.secrow{display:flex;gap:10px;align-items:center}
+.sec{flex:1;min-width:0;display:flex;align-items:center;gap:14px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.sec .num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.2rem}
+.sec.done .num{background:var(--good-bg);color:var(--good)}
+.sec .txt{flex:1;min-width:0}
+.sec .t{font-weight:700;display:block}
+.sec .d{color:var(--muted);font-size:.9rem}
+.sec .mini{flex:none;width:36px}
+
+.garage{background:#4A2545;border-radius:18px;padding:14px 14px 10px;color:#fff}
+.garage h3{font-size:1rem;color:#fff;opacity:.9;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{border:2px dashed rgba(255,255,255,.25);border-radius:10px;aspect-ratio:1/1;display:grid;place-items:center;max-width:100%}
+.slot.full{border-style:solid;border-color:#F8BBD0}
+.slot svg{height:88%;width:auto}
+.slot .qm{opacity:.35;font-family:var(--display);font-size:1.4rem}
+
+.toggle{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;width:100%;text-align:left}
+.toggle .sw{flex:none;width:52px;height:30px;border-radius:15px;background:var(--line);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--good)}
+.toggle[aria-pressed="true"] .sw::after{left:25px}
+.toggles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+
+.road{position:relative;height:48px;background:linear-gradient(90deg,#F8BBD0,#B39DDB);border-radius:12px;overflow:hidden}
+.road::after{content:none}
+.road .carIcon{position:absolute;top:3px;height:42px;width:34px;transition:left .5s ease;z-index:1}
+.road .flag{position:absolute;right:8px;top:8px;font-size:1.3rem;z-index:1}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.counter{color:var(--muted);font-size:.95rem;margin:0}
+
+/* zadatak */
+.qhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.qtext{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.35;margin:0 0 14px}
+.fig{margin:0 0 14px;overflow-x:auto}
+.fig svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.opts{display:grid;gap:10px}
+.opts.pics{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.opt{text-align:left;background:var(--chip);border:2px solid transparent;border-radius:14px;padding:12px 16px;min-height:56px;font-size:1.1rem;width:100%}
+.opt.pic{padding:8px;text-align:center}
+.opt.pic svg{width:100%;height:auto;max-height:240px;display:block}
+.tool .btn.ghost{background:var(--card)}
+.opt.pic .lbl{font-weight:700;font-size:.95rem}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--vsel);background:var(--card)}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.hint{color:var(--muted);font-size:.95rem;margin:-6px 0 12px}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.inp{font:inherit;font-size:1.5rem;font-weight:700;width:150px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center;font-variant-numeric:tabular-nums}
+.inp.sm{width:74px}
+.inp.ok{border-color:var(--good);background:var(--good-bg)}
+.inp.no{border-color:var(--bad);background:var(--bad-bg)}
+.unit{font-size:1.25rem;font-weight:700}
+.sign{flex:none;width:44px;height:48px;border-radius:12px;border:2px solid var(--line);background:var(--chip);font-size:1.5rem;font-weight:700;line-height:1}
+.pow{display:inline-flex;align-items:flex-start;gap:4px}
+.pow .ten{font-size:1.5rem;font-weight:700;padding-top:14px}
+.pow .ex{display:flex;gap:4px;align-items:center;transform:translateY(-6px)}
+.dot{font-size:1.5rem;font-weight:700}
+
+.helpbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hints{display:grid;gap:8px;margin-top:10px}
+.hintbox{background:var(--hint-bg);border-left:6px solid var(--hint-line);border-radius:10px;padding:10px 14px;font-size:1rem}
+.msg{margin-top:10px;font-weight:700;color:var(--bad)}
+.steps{display:grid;gap:14px}
+.step{border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
+.step.done{border-color:var(--good);background:var(--good-bg)}
+.step.failed{border-color:var(--bad)}
+.slabel{font-size:1.15rem;font-weight:700}
+.step .opts{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}
+.step .opt{text-align:center;font-weight:700;font-size:1.2rem}
+
+.fb{margin-top:16px;border-radius:14px;padding:14px 16px;font-size:1rem}
+.fb.ok{background:var(--good-bg);border-left:6px solid var(--good)}
+.fb.no{background:var(--bad-bg);border-left:6px solid var(--bad)}
+.fb b{display:block;margin-bottom:2px}
+.fbhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* pomagalo s točkom */
+.tool{background:var(--chip);border-radius:14px;padding:14px;margin-top:12px;display:grid;gap:10px}
+.tool .goal{font-size:.98rem}
+.cellsWrap{overflow-x:auto;padding:4px 0 2px}
+.cells{--cw:26px;position:relative;display:flex;margin:0 auto;width:max-content;padding:0 4px 18px}
+.cell{width:var(--cw);text-align:center;font-size:1.6rem;font-weight:700}
+.cell.pad{opacity:.28}
+.neg{font-size:1.6rem;font-weight:700;padding-right:4px}
+.ptr{position:absolute;bottom:0;width:14px;height:14px;margin-left:-3px;border-radius:50%;background:var(--bad);transition:left .25s ease}
+.ptr::before{content:"";position:absolute;left:5px;bottom:14px;width:4px;height:26px;background:var(--bad);opacity:.35;border-radius:2px}
+@media (prefers-reduced-motion: reduce){.ptr{transition:none}}
+.tool .res{font-size:1.4rem;font-weight:700;text-align:center}
+.tool .jumps{text-align:center;color:var(--muted)}
+.tool .okline{text-align:center;color:var(--good);font-weight:700}
+
+/* lekcija */
+.facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.facts li{background:var(--chip);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.facts li span{flex:1;min-width:0}
+.facts li strong,.facts li b{color:var(--accent)}
+.extra{margin-top:16px;display:grid;gap:10px}
+.extra h3{font-size:1.1rem}
+.stairs{display:grid;gap:8px}
+.stair{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:var(--chip);border-radius:12px;padding:10px 12px;text-align:center}
+.stair .u{font-size:1.4rem;font-weight:800}
+.stair .arr{font-size:.9rem;line-height:1.3}
+.stair .arr .m{color:var(--good);font-weight:700}
+.stair .arr .d{color:var(--v1);font-weight:700}
+.pbar{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.pcell{border:2px solid var(--line);background:var(--card);border-radius:8px;padding:8px 0;text-align:center;font-weight:700;font-size:.95rem;min-height:44px}
+.pcell.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.cap{font-size:1.15rem;font-weight:700;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chipbtn{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-size:1rem;min-height:44px}
+.chipbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700}
+.emrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--chip);border-radius:12px;padding:8px 12px}
+.clips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;min-height:40px;padding:6px}
+.clip{width:14px;height:34px;border:3px solid var(--muted);border-radius:7px}
+.demoTxt{font-size:1.05rem;min-height:3em}
+
+.spk{flex:none;display:inline-grid;place-items:center;width:48px;height:48px;border-radius:50%;border:0;background:var(--chip);color:var(--accent)}
+.spk svg{width:24px;height:24px}
+.spk.on{background:var(--accent);color:var(--accent-ink);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.spk.sm{width:38px;height:38px}.spk.sm svg{width:19px;height:19px}
+.note{background:var(--chip);border-radius:12px;padding:10px 14px;font-size:.92rem;color:var(--muted)}
+.help{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;max-width:560px;margin:0 auto;background:var(--card);color:var(--ink);border:2px solid var(--accent);border-radius:16px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.help p{margin:6px 0 12px;font-size:.98rem}
+
+.reward{text-align:center}
+.bigcar{width:min(170px,60%);margin:6px auto 0;display:block;animation:pop .8s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.2) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.stars{font-family:var(--display);font-size:1.1rem;margin:10px 0 0}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:5}
+@media (prefers-reduced-motion: reduce){.bigcar,.spk.on{animation:none}.road .carIcon{transition:none}}
+.foot{color:var(--muted);font-size:.85rem;text-align:center}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.9rem;padding:6px}
+svg text{font-family:var(--body)}
+</style>
+
+<div class="wrap" id="app"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<script>
+/* ================= AUTIĆI ================= */
+const CARS=[
+ {name:"Ružičasti sa srcima"},{name:"Plavi sa zvjezdicama"},{name:"Francuska manikura"},
+ {name:"Duga"},{name:"Točkice"},{name:"Cvjetić"},{name:"Munja"},{name:"Ombre"},{name:"Šljokice"},
+ {name:"Zebra"},{name:"Lubenica"},{name:"Galaksija"},{name:"Leptir"},{name:"Zlatni vrh"},{name:"Jagoda"}
+];
+let nailUid=0;
+function carSVG(i){
+ const id="nl"+(nailUid++), N="M26 100 L26 42 Q26 14 50 14 Q74 14 74 42 L74 100 Q50 108 26 100 Z";
+ const heart=(x,y,r,c)=>`<path d="M${x} ${y+r*.9} C${x-r*1.6} ${y-r*.2} ${x-r*.7} ${y-r*1.3} ${x} ${y-r*.4} C${x+r*.7} ${y-r*1.3} ${x+r*1.6} ${y-r*.2} ${x} ${y+r*.9}Z" fill="${c}"/>`;
+ const star=(x,y,r,c)=>{let p="";for(let k=0;k<10;k++){const a=Math.PI/5*k-Math.PI/2,rr=k%2?r*.45:r;p+=`${(x+rr*Math.cos(a)).toFixed(1)},${(y+rr*Math.sin(a)).toFixed(1)} `}return `<polygon points="${p}" fill="${c}"/>`};
+ let d="", defs="";
+ switch(i){
+  case 0:d=`<rect width="100" height="120" fill="#F48FB1"/>${heart(42,40,9,"#fff")}${heart(60,62,7,"#fff")}${heart(40,82,8,"#fff")}`;break;
+  case 1:d=`<rect width="100" height="120" fill="#3949AB"/>${star(40,38,9,"#FFD54F")}${star(62,60,7,"#FFD54F")}${star(42,84,8,"#FFD54F")}<circle cx="60" cy="30" r="2" fill="#fff"/><circle cx="34" cy="62" r="2" fill="#fff"/>`;break;
+  case 2:d=`<rect width="100" height="120" fill="#FBE3E8"/><path d="M20 38 Q50 50 80 38 L80 0 L20 0Z" fill="#FFFFFF"/><path d="M20 38 Q50 50 80 38" stroke="#E8C7CF" stroke-width="1.5" fill="none"/>`;break;
+  case 3:d=["#E53935","#FB8C00","#FDD835","#43A047","#1E88E5","#8E24AA"].map((c,k)=>`<rect y="${10+k*16}" width="100" height="16" fill="${c}"/>`).join("");break;
+  case 4:d=`<rect width="100" height="120" fill="#26A69A"/>`+[[38,30],[60,40],[40,56],[62,70],[38,84],[58,94]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#fff"/>`).join("");break;
+  case 5:d=`<rect width="100" height="120" fill="#FFF59D"/>`+[0,72,144,216,288].map(a=>`<ellipse cx="50" cy="48" rx="7" ry="12" fill="#F06292" transform="rotate(${a} 50 60)"/>`).join("")+`<circle cx="50" cy="60" r="6" fill="#FFB300"/><path d="M50 72 Q46 88 52 100" stroke="#43A047" stroke-width="3" fill="none"/>`;break;
+  case 6:d=`<rect width="100" height="120" fill="#212121"/><polygon points="56,18 34,62 48,62 40,100 68,50 53,50 62,18" fill="#FFD600"/>`;break;
+  case 7:defs=`<linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E57C2"/><stop offset="1" stop-color="#F8BBD0"/></linearGradient>`;d=`<rect width="100" height="120" fill="url(#${id}g)"/>`;break;
+  case 8:d=`<rect width="100" height="120" fill="#B39DDB"/>`+Array.from({length:26},(_,k)=>`<circle cx="${28+(k*37)%46}" cy="${18+(k*23)%84}" r="${1.5+(k%3)}" fill="${k%2?"#FFD54F":"#FFFFFF"}"/>`).join("");break;
+  case 9:d=`<rect width="100" height="120" fill="#FFFFFF"/>`+[20,40,60,80,100].map((y,k)=>`<path d="M20 ${y} Q40 ${y-8} 50 ${y+2} Q62 ${y+12} 80 ${y-4}" stroke="#212121" stroke-width="${5+k%2*2}" fill="none"/>`).join("");break;
+  case 10:d=`<rect width="100" height="120" fill="#EF5350"/><rect width="100" height="30" fill="#43A047"/><rect y="28" width="100" height="5" fill="#C8E6C9"/>`+[[40,50],[58,58],[44,72],[60,82],[48,92]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="2.5" ry="4" fill="#212121"/>`).join("");break;
+  case 11:d=`<rect width="100" height="120" fill="#1A237E"/><circle cx="40" cy="50" r="16" fill="#7E57C2" opacity=".6"/><circle cx="60" cy="80" r="18" fill="#EC407A" opacity=".45"/>`+Array.from({length:18},(_,k)=>`<circle cx="${28+(k*29)%46}" cy="${18+(k*41)%84}" r="${k%4?1.2:2.2}" fill="#FFFFFF"/>`).join("");break;
+  case 12:d=`<rect width="100" height="120" fill="#B3E5FC"/><ellipse cx="41" cy="52" rx="10" ry="13" fill="#F06292"/><ellipse cx="59" cy="52" rx="10" ry="13" fill="#F06292"/><ellipse cx="43" cy="72" rx="7" ry="9" fill="#BA68C8"/><ellipse cx="57" cy="72" rx="7" ry="9" fill="#BA68C8"/><rect x="48" y="44" width="4" height="36" rx="2" fill="#4E342E"/>`;break;
+  case 13:d=`<rect width="100" height="120" fill="#F8D9C8"/><path d="M20 40 Q50 52 80 40 L80 0 L20 0Z" fill="#E6B422"/><circle cx="40" cy="58" r="3" fill="#E6B422"/><circle cx="50" cy="62" r="3.5" fill="#FFFFFF"/><circle cx="60" cy="58" r="3" fill="#E6B422"/>`;break;
+  case 14:d=`<rect width="100" height="120" fill="#FCE4EC"/><path d="M50 98 Q28 80 30 58 Q34 44 50 46 Q66 44 70 58 Q72 80 50 98Z" fill="#E53935"/><path d="M40 44 L50 34 L60 44 Q50 50 40 44Z" fill="#43A047"/>`+[[42,60],[56,62],[48,74],[58,80],[44,84]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.6" ry="2.4" fill="#FFF59D"/>`).join("");break;
+ }
+ return `<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${CARS[i].name}"><defs><clipPath id="${id}"><path d="${N}"/></clipPath>${defs}</defs>
+ <path d="M16 130 L16 46 Q16 4 50 4 Q84 4 84 46 L84 130Z" fill="#F2C9A8"/><path d="M16 130 L16 46 Q16 4 50 4 Q84 4 84 46 L84 130Z" fill="none" stroke="#D9A887" stroke-width="2"/>
+ <g clip-path="url(#${id})">${d}</g><path d="${N}" fill="none" stroke="#C98F72" stroke-width="2"/><path d="M33 30 Q36 22 44 20" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".55"/></svg>`;
+}
+
+/* ================= PISANJE MATEMATIKE ================= */
+// [AB] = vektor AB, 10^-3 = potencija
+function fmt(s){
+ return String(s)
+  .replace(/\[([A-Z]'?[A-Z]'?)\]/g,'<span class="vec">$1</span>')
+  .replace(/10\^\(?(-?\d+)\)?/g,(m,e)=>`10<sup>${e.replace("-","−")}</sup>`)
+  .replace(/(^|[\s(=:])-(?=\d)/g,"$1−");
+}
+function sayText(s){
+ return String(s)
+  .replace(/<sup>(−|-)?(\d+)<\/sup>/g,(m,a,b)=>" na "+(a?"minus ":"")+b)
+  .replace(/\[([A-Z])'?([A-Z])'?\]/g,"vektor $1 $2")
+  .replace(/10\^\(?(-?)(\d+)\)?/g,(m,a,b)=>"10 na "+(a?"minus ":"")+b)
+  .replace(/<[^>]+>/g," ")
+  .replace(/[„“"]/g,"")
+  .replace(/(^|[\s(=])[-−](?=\s?\d)/g,"$1minus ")
+  .replace(/\s[−-]\s/g," minus ")
+  .replace(/(\d)\.(\d)/g,"$1 zarez $2")
+  .replace(/·/g," puta ").replace(/\s:\s/g," podijeljeno sa ")
+  .replace(/=/g," jednako ").replace(/%/g," posto").replace(/€/g," eura")
+  .replace(/→/g,", pa ").replace(/[✅🏁⭐🏆💡🔎✓]/g,"")
+  .replace(/\s+/g," ").trim();
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function showNum(n){return String(n).replace("-","−")}
+function parseNum(str,neg){
+ let s=String(str).replace(/\s/g,"").replace(/,/g,".").replace(/−/g,"-");
+ if(s===""||s==="-")return null;
+ if(neg) s="-"+s.replace(/^-/,"");
+ const n=Number(s); return isNaN(n)?null:n;
+}
+const same=(a,b)=>Math.abs(a-b)<1e-9;
+
+/* ================= HRVATSKI 8: PROZA ================= */
+const TEXTS={
+ kisobran:{n:"Kišobran",p:[
+  "Kiša je padala kao da je netko gore prevrnuo kantu. Tomislav je stajao pod nadstrešnicom autobusne stanice i brojio minute do autobusa. Pokraj njega stajala je starica u izblijedjelom kaputu, s vrećicom punom jabuka. Činila mu se namrgođenom i čudnom, pa se odmaknuo korak dalje.",
+  "Kad je autobus napokon stigao, vrećica se poderala. Jabuke su se otkotrljale po mokrom pločniku poput crvenih kuglica. Ljudi su žurno ulazili u autobus, ne osvrćući se. Tomislav je zastao. „Ako se sada sagnem, zakasnit ću na trening“, pomislio je. „Ali ako se ne sagnem, tko će?“",
+  "Spustio je torbu na pločnik i počeo skupljati jabuke. Autobus je zatvorio vrata i otišao.",
+  "„Hvala ti, sine“, rekla je starica i nasmiješila se. Lice joj se odjednom učinilo toplim i blagim. „Moj unuk je tvojih godina. Ne viđam ga često.“",
+  "Ispod njezina kišobrana čekali su sljedeći autobus i razgovarali o nogometu, o jabukama iz njezina vrta i o tome kako je nekad kiša bila toplija. Tomislav je zakasnio na trening. Trener ga je ukorio, ali Tomislav se cijelu večer smiješio."]},
+ kesten:{n:"Kesten na igralištu",p:[
+  "Hodnik nove škole bio je dug i tih, a vrata učionica gledala su me hladnim, sivim očima. Stisnula sam remen ruksaka tako jako da su mi prsti pobijeljeli. U staroj školi znala sam svaki kutak, svaku napuklu pločicu. Ovdje nisam poznavala nikoga.",
+  "Ušla sam u razred i sjela u zadnju klupu, uz prozor. Kroz staklo se vidjelo igralište i jedno usamljeno stablo kestena. Pomislila sam: i ono je samo, baš kao ja.",
+  "Na velikom odmoru izvadila sam sendvič i pravila se da čitam knjigu. Tada je do mene sjela djevojčica s dvije kratke pletenice i flasterom na koljenu.",
+  "– Je li to knjiga o konjima? – upitala je i nagnula se prema meni.",
+  "– Nije. Priče o moru – rekla sam tiho.",
+  "– Ja sam s mora! Iz Zadra – rekla je, a oči su joj zasjale. – Zovem se Mia.",
+  "Do kraja odmora pričale smo o valovima, galebovima i sladoledu od smokve. Kad je zazvonilo, kesten na igralištu više mi se nije činio usamljenim."]},
+ camac:{n:"Djedov čamac",p:[
+  "Stojim na molu i gledam stari plavi čamac. Boja se ljušti, a na pramcu se još jedva vidi ime koje je djed sam napisao: Vala.",
+  "Sjećam se ljeta kad sam imao deset godina. Djed bi me probudio prije zore, šapnuo „Ajmo, mali, ribe nas čekaju“ i dao mi šalicu toplog mlijeka. More je još spavalo, mirno i srebrno, a čamac je tiho škripao kao da se i on budi.",
+  "Djed je imao velike, ispucale ruke i smijeh koji se čuo do druge uvale. Nikad nije vikao. Kad bih zapleo udicu, samo bi rekao: „Polako. More ne voli žurbu.“",
+  "Ove zime djeda više nema. Mama kaže da ćemo čamac prodati jer ga nema tko voziti.",
+  "Spuštam ruku na hladno drvo. – Ja ću ga voziti – kažem naglas, iako me nitko ne čuje. Sutra ću oprati čamac i ispočetka obojiti njegovo ime."]},
+ badnjak:{n:"Badnjak kod bake",p:[
+  "Snijeg je padao u velikim, mekim pahuljama kad smo stigli u bakino selo u Zagorju. Stara drvena kuća stajala je na brijegu, a iz dimnjaka se dizao tanak, sivi dim.",
+  "Baka je stajala na pragu, umotana u debeli vuneni rubac. – Kaj ste tak dugo? Dojdite v hižu, bute se smrznuli! – viknula je i već nas grlila.",
+  "U kuhinji je mirisalo na orahnjaču i suho granje. Baka je na stol stavila zdjelu s jabukama i orasima, a ispod stola prostrla čistu, žutu slamu. – Denes je Badnjak, dete moje – rekla mi je. – Navečer bumo svi skupa sedeli i čakali polnoćku.",
+  "Sjeo sam na slamu i slušao kako pucketa vatra u peći. Vani je vjetar tiho fijukao, a ja sam se osjećao kao da sam u nekoj staroj priči."],
+  gl:"Rječnik: kaj = što · tak = tako · dojdite = dođite · v hižu = u kuću · bute = bit ćete · denes = danas · dete = dijete · bumo = ćemo · sedeli = sjedili · čakali = čekali · polnoćka = misa u ponoć"},
+ lana:{n:"Lana",p:[
+  "Lana je u naš razred došla u listopadu. Nosila je očev stari kaput s velikim gumbima i zelene tenisice kakve nitko nije imao. Pola razreda odmah ju je prozvalo „baka Lana“. U našem razredu bila je prava bijela vrana.",
+  "Na satu povijesti nastavnik je rekao da je njezin referat „previše maštovit“. Svi smo šutjeli, a Lana je ustala. – Oprostite, ali svi su podaci točni. Mogu vam pokazati izvore – rekla je mirno. Razred je zanijemio. Nitko se dotad nije usudio tako razgovarati s nastavnikom.",
+  "– Brate, ona je ful hrabra – šapnuo mi je Dino. – Ili luda, lol.",
+  "Meni se činila savršenom. Kad me na odmoru pitala volim li stare filmove, rekao sam da ih obožavam. Nikad nisam pogledao nijedan crno-bijeli film. Navečer sam do dva ujutro gledao jedan za drugim, samo da sutra imam što reći."]}
+};
+const textHTML=(id,ev)=>{const T=TEXTS[id];let done=false;
+ return T.p.map(x=>{let h=x; if(ev&&!done&&h.includes(ev)){h=h.replace(ev,`<span class="ev">${ev}</span>`);done=true} return `<p>${h}</p>`}).join("")+(T.gl?`<p class="gl">${T.gl}</p>`:"")};
+function figHTML(f){
+ if(!f)return "";
+ if(f.type==="g"){const key=f.id+"-q";return `<div class="gt">📖 „${TEXTS[f.id].n}“</div>${anbarHTML(key)}<div class="gbox"><div class="anwrap" data-key="${key}"><div class="txt">${textHTML(f.id,f.ev)}</div><canvas class="ancv"></canvas></div></div>`}
+ if(f.type==="quote")return `<blockquote class="quote">${f.s}</blockquote>`;
+ return "";
+}
+const G=(id,ev)=>({type:"g",id,ev}), QU=s=>({type:"quote",s});
+// vođeni korak: k = naziv koraka, tip = kako se traži
+const step=(id,k,q,o,ev,tip,e)=>({t:"mc",q:`<span class="stepk">${k}</span><br>${q}`,fig:G(id,ev),o,a:0,hints:[tip],e});
+
+const SECTIONS=[
+{title:"Umna mapa i plan čitanja",desc:"pripovjedni tekst: sve na jednom mjestu",extra:"mapa",
+ facts:["<b>1.</b> Pročitaj <b>naslov i cijeli tekst</b> polako. Ne preskači.",
+  "<b>2. Gdje i kada?</b> Podcrtaj mjesto i vrijeme radnje.",
+  "<b>3. Tko?</b> Zaokruži likove. Tko je glavni lik? Kakav je?",
+  "<b>4. Tko priča?</b> Ja, mi = pripovjedač u <b>1. licu</b>. On, ona = u <b>3. licu</b>.",
+  "<b>5. Kako je napisano?</b> Pronađi pripovijedanje, opisivanje, dijalog i monolog.",
+  "<b>6. Kojim redom?</b> Kronološki (redom) ili retrospektivno (vraća se u prošlost)?",
+  "<b>7. O čemu i što uči?</b> Tema = nekoliko riječi. <b>Osnovna misao</b> (ideja) = cijela rečenica.",
+  "<b>8.</b> Odgovaraj <b>punom rečenicom</b> i dodaj primjer iz teksta."],
+ qs:[
+ {t:"mc",q:"Što ćeš napraviti prvo na testu?",o:["pročitati naslov i cijeli tekst polako","odmah odgovarati na pitanja","pročitati samo zadnji odlomak"],a:0},
+ {t:"mc",q:"Kako najbrže prepoznaješ pripovjedača u 1. licu?",o:["po riječima ja, mi, sjela sam, sjećam se","po naslovu","po duljini teksta"],a:0},
+ {t:"mc",q:"Po čemu prepoznaješ dijalog?",o:["po crticama ili navodnicima i riječima rekao, upitala","po rimi","po brojevima"],a:0},
+ {t:"mc",q:"Riječi „sjećam se“, „tada sam imao deset godina“ znače da je tijek radnje...",o:["retrospektivan","kronološki"],a:0},
+ {t:"mc",q:"Kako pišeš osnovnu misao (ideju) teksta?",o:["cijelom rečenicom s porukom","jednom riječi","popisom likova"],a:0},
+ {t:"mc",q:"Kako odgovaraš na pitanje u testu?",o:["punom rečenicom i s primjerom iz teksta","jednom riječi","crtežom"],a:0}
+ ]},
+{title:"Pripovjedni postupci",desc:"pripovijedanje, opisivanje, dijalog, monolog",
+ facts:["<b>Pripovijedanje</b>: niže događaje redom. Puno glagola radnje: <i>ušao je, uzeo, potrčao</i>.",
+  "<b>Opisivanje</b>: kako nešto izgleda (lik, prostor, priroda). Puno pridjeva: <i>stara drvena kuća</i>.",
+  "<b>Dijalog</b>: razgovor dvaju ili više likova. Prepoznaješ ga po crticama (–) ili navodnicima („ “).",
+  "<b>Monolog</b>: lik govori sam, naglas, a nitko mu ne odgovara.",
+  "<b>Unutarnji monolog</b>: misli lika, govor u sebi: <i>pomislio je</i>.",
+  "Pisac miješa postupke: dijalogom prikazuje <b>odnose likova</b> i ubrzava radnju, a opisivanjem dočarava izgled i ugođaj."],
+ qs:[
+ {t:"mc",q:"Koji je ovo pripovjedni postupak?",fig:QU("– Kamo ideš? – upitala je mama.<br>– Van, kod Ivana – odgovorio je."),o:["dijalog","opisivanje","monolog"],a:0},
+ {t:"mc",q:"Koji je ovo pripovjedni postupak?",fig:QU("Soba je bila mala, s jednim prozorom i starim drvenim ormarom."),o:["opisivanje","dijalog","pripovijedanje"],a:0},
+ {t:"mc",q:"Koji je ovo pripovjedni postupak?",fig:QU("Ustao je, uzeo torbu, zalupio vratima i potrčao prema stanici."),o:["pripovijedanje","opisivanje","dijalog"],a:0},
+ {t:"mc",q:"Koji je ovo pripovjedni postupak?",fig:QU("– Opet sam sam. Nitko me ne sluša – govorio je djed naglas praznoj sobi."),o:["monolog","dijalog","opisivanje"],a:0},
+ {t:"mc",q:"Koji je ovo pripovjedni postupak?",fig:QU("Što ako me ne prime u momčad? – mislio je Luka."),o:["unutarnji monolog","dijalog","opisivanje"],a:0},
+ {t:"mc",q:"Zašto pisac koristi dijalog?",o:["da prikaže odnos likova i ubrza radnju","da opiše prirodu","da tekst bude u stihovima"],a:0}
+ ]},
+{title:"Pripovjedač i tijek radnje",desc:"1. ili 3. lice · kronološki ili retrospektivno",
+ facts:["<b>Pripovjedač u 1. licu</b> (ja, mi) je lik u priči i priča što mu se dogodilo: <i>Ušla sam u razred...</i>",
+  "<b>Pripovjedač u 3. licu</b> (on, ona) nije lik. <b>Sveznajući</b> pripovjedač zna misli svih likova.",
+  "Na pitanje „Tko je pripovjedač?“ napiši i <b>ime</b> ako ga znaš: <i>Pripovjedač je Vjeran, priča u 1. licu jednine.</i>",
+  "<b>Kronološki tijek radnje</b>: događaji idu redom, kako su se dogodili.",
+  "<b>Retrospektivni tijek radnje</b>: pripovjedač se vraća u prošlost i prisjeća se (<i>sjećam se, nekad, tada</i>)."],
+ qs:[
+ {t:"mc",q:"U kojem je licu pripovjedač?",fig:QU("Probudio sam se rano i odmah pogledao kroz prozor."),o:["u 1. licu jednine","u 3. licu"],a:0},
+ {t:"mc",q:"U kojem je licu pripovjedač?",fig:QU("Ana je otvorila pismo. Ruke su joj drhtale."),o:["u 3. licu","u 1. licu"],a:0},
+ {t:"mc",q:"Kakav je tijek radnje?",fig:QU("Sjećam se zime kad sam imala šest godina i prvi put vidjela snijeg."),o:["retrospektivan","kronološki"],a:0},
+ {t:"mc",q:"Kakav je tijek radnje?",fig:QU("Ujutro je otišao u školu. Poslije škole igrao je nogomet. Navečer je napisao zadaću."),o:["kronološki","retrospektivan"],a:0},
+ {t:"mc",q:"Što zna sveznajući pripovjedač?",o:["misli i osjećaje svih likova","samo ono što vidi jedan lik","ništa o likovima"],a:0},
+ {t:"mc",q:"Kako je najbolje odgovoriti: „Tko pripovijeda?“",o:["Pripovijeda Vjeran, u 1. licu jednine.","Vjeran.","Prvi."],a:0,e:"Puna rečenica s imenom i osobom."}
+ ]},
+{title:"Likovi i karakterizacija",desc:"5 vrsta karakterizacije",
+ facts:["<b>Glavni lik</b> je najvažniji, o njemu se najviše govori. <b>Sporedni likovi</b> su manje važni.",
+  "<b>Fizička</b>: vanjski opis lika: izgled, boja očiju i kose, dob, građa, odjeća.",
+  "<b>Psihološka</b>: prikazivanje osjećaja, misli i raspoloženja lika (što lik osjeća i misli).",
+  "<b>Etička</b>: ponašanje lika i njegov odnos prema drugima: razlikuje li dobro od zla i ponaša li se u skladu s općeljudskim vrijednostima.",
+  "<b>Socijalna</b>: otkriva društveno podrijetlo lika (bogat, siromašan, selo, grad) i kako sredina utječe na njegove postupke i stavove.",
+  "<b>Govorna</b>: govor lika upućuje na njegove osobine, obrazovanje i podrijetlo (narječje, sleng, način govora).",
+  "<b>Idealizirati</b> nekoga znači vidjeti ga savršenim. Tko idealizira, ponekad se pretvara ili laže da bi se svidio."],
+ qs:[
+ {t:"mc",q:"Koja je ovo karakterizacija?",fig:QU("Nosila je očev stari kaput s velikim gumbima."),o:["fizička","govorna","socijalna"],a:0},
+ {t:"mc",q:"Koja je ovo karakterizacija?",fig:QU("Bojala se da je u novom razredu nitko neće voljeti."),o:["psihološka","fizička","govorna"],a:0},
+ {t:"mc",q:"Koja je ovo karakterizacija?",fig:QU("– E, bome, nisam ja od jučer! – govorio je djed."),o:["govorna","socijalna","fizička"],a:0},
+ {t:"mc",q:"Koja je ovo karakterizacija?",fig:QU("Otac mu je bio siromašni ribar i jedva su imali za kruh."),o:["socijalna","psihološka","govorna"],a:0},
+ {t:"mc",q:"Koja je ovo karakterizacija?",fig:QU("Vratio je novčanik koji je pronašao, iako mu je novac jako trebao."),o:["etička","fizička","govorna"],a:0},
+ {t:"mc",q:"Koja karakterizacija opisuje izgled, boju očiju i kose, dob, građu i odjeću?",o:["fizička","etička","socijalna"],a:0},
+ {t:"mc",q:"Koja karakterizacija prikazuje osjećaje, misli i raspoloženja lika?",o:["psihološka","fizička","govorna"],a:0},
+ {t:"mc",q:"Koja karakterizacija pokazuje razlikuje li lik dobro od zla i kako se odnosi prema drugima?",o:["etička","psihološka","fizička"],a:0},
+ {t:"mc",q:"Koja karakterizacija otkriva društveno podrijetlo lika i utjecaj sredine?",o:["socijalna","govorna","fizička"],a:0},
+ {t:"mc",q:"Koja karakterizacija se vidi iz govora lika (obrazovanje, podrijetlo, osobine)?",o:["govorna","etička","fizička"],a:0},
+ {t:"mc",q:"Što znači da lik nekoga idealizira?",o:["vidi ga savršenim, bez mana","ne voli ga","ne poznaje ga"],a:0},
+ {t:"mc",q:"Lik ustupi mjesto starijoj gospođi u tramvaju. Kako saznajemo kakav je?",o:["iz postupka: neizravna karakterizacija","pripovjedač nam izravno kaže","nikako"],a:0}
+ ]},
+{title:"Govor likova: narječja i sleng",desc:"kaj, ča, što · brate, ful, lol",
+ facts:["Hrvatski jezik ima tri narječja: <b>kajkavsko</b> (kaj), <b>čakavsko</b> (ča) i <b>štokavsko</b> (što).",
+  "<b>Kajkavsko</b>: Zagorje, Zagreb, Međimurje. <i>Kaj delaš? Dojdi v hižu.</i> (Što radiš? Dođi u kuću.)",
+  "<b>Čakavsko</b>: Istra, otoci, dio Dalmacije. <i>Ča ćeš? Ki je to?</i> (Što ćeš? Tko je to?)",
+  "<b>Sleng (žargon)</b> je govor mladih: <i>brate, ful, lol, kul, spaljen</i>.",
+  "Pisac stavlja narječje ili sleng u govor likova da bi likovi bili <b>stvarniji (autentični)</b> i da pokaže odakle su i kakvi su. To je <b>govorna karakterizacija</b>."],
+ qs:[
+ {t:"mc",q:"Kojim je narječjem rečeno?",fig:QU("– Kaj ste tak dugo? Dojdite v hižu!"),o:["kajkavskim","čakavskim","štokavskim"],a:0,e:"Riječ „kaj“."},
+ {t:"mc",q:"Kojim je narječjem rečeno?",fig:QU("– Ča ćeš, sinko? Ki ti je to rekal?"),o:["čakavskim","kajkavskim","štokavskim"],a:0,e:"Riječ „ča“."},
+ {t:"mc",q:"Što znači kajkavska riječ „hiža“?",o:["kuća","hlače","šuma"],a:0},
+ {t:"mc",q:"Što znači kajkavsko „denes“?",o:["danas","sutra","jučer"],a:0},
+ {t:"mc",q:"Zašto pisac stavlja sleng (brate, ful, lol) u govor tinejdžera?",o:["da likovi budu stvarniji, autentični","da tekst bude teži","jer ne zna standardni jezik"],a:0},
+ {t:"mc",q:"Kad lik govori narječjem, to je koja karakterizacija?",o:["govorna","fizička","etička"],a:0}
+ ]},
+{title:"Događaj, tema i osnovna misao",desc:"uvod, zaplet, vrhunac, rasplet",
+ facts:["<b>Tema</b>: o čemu tekst govori (nekoliko riječi). <b>Osnovna misao</b> (ideja): što nas tekst uči (cijela rečenica).",
+  "<b>Motivi</b>: manji dijelovi teksta (likovi, predmeti, događaji, osjećaji, priroda).",
+  "<b>Događaj (fabula)</b> ima dijelove: <b>uvod → zaplet → vrhunac → rasplet</b>.",
+  "<b>Uvod</b>: likovi, mjesto, vrijeme. <b>Zaplet</b>: pojavi se problem. <b>Vrhunac</b>: najnapetiji trenutak. <b>Rasplet</b>: napetost popušta i radnja završava."],
+ qs:[
+ {t:"mc",q:"Što je od ovoga zapisano kao OSNOVNA MISAO (ideja)?",o:["Nikad ne treba suditi o ljudima po izgledu.","dječak i starica","autobusna stanica"],a:0},
+ {t:"mc",q:"Što je od ovoga zapisano kao TEMA?",o:["prijateljstvo","Prijatelji si uvijek trebaju pomagati.","Mia je iz Zadra."],a:0},
+ {t:"mc",q:"Koji je pravilan redoslijed dijelova fabule?",o:["uvod → zaplet → vrhunac → rasplet","uvod → vrhunac → zaplet → rasplet","zaplet → uvod → rasplet → vrhunac"],a:0},
+ {t:"mc",q:"U kojem dijelu fabule napetost popušta i radnja završava?",o:["u raspletu","u zapletu","u uvodu"],a:0},
+ {t:"mc",q:"Kako se zove najnapetiji dio priče?",o:["vrhunac","uvod","rasplet"],a:0},
+ {t:"mc",q:"Što su motivi?",o:["manji dijelovi teksta: likovi, predmeti, događaji, osjećaji","samo naslov teksta","imena pisaca"],a:0}
+ ]},
+{title:"Stilska izražajna sredstva",desc:"usporedba, metafora, personifikacija...",
+ facts:["<b>Usporedba</b>: s riječima <b>kao, poput</b>: <i>oči kao zvijezde</i>.",
+  "<b>Metafora</b>: usporedba bez riječi kao: <i>On je pravi lav na terenu.</i>",
+  "<b>Personifikacija</b>: neživo se ponaša kao živo: <i>More je spavalo.</i>",
+  "<b>Epitet</b>: pridjev koji ističe osobinu: <i>meke pahulje, čista slama</i>.",
+  "<b>Hiperbola</b>: pretjerivanje: <i>Rekao sam ti tisuću puta!</i> <b>Onomatopeja</b>: riječ oponaša zvuk: <i>pucketa, fijuče, bum</i>."],
+ qs:[
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("Oči su joj sjale kao zvijezde."),o:["usporedba","metafora","onomatopeja"],a:0},
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("Stara kuća umorno je uzdisala."),o:["personifikacija","usporedba","epitet"],a:0},
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("Čekao sam te cijelu vječnost!"),o:["hiperbola","personifikacija","epitet"],a:0},
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("On je pravi lav na terenu."),o:["metafora","usporedba","onomatopeja"],a:0},
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("Snijeg je padao u velikim, mekim pahuljama."),o:["epitet","hiperbola","personifikacija"],a:0},
+ {t:"mc",q:"Koje je ovo stilsko sredstvo?",fig:QU("Vatra je pucketala u peći."),o:["onomatopeja","metafora","hiperbola"],a:0}
+ ]},
+{title:"Frazemi",desc:"bijela vrana, pasti s Marsa...",
+ facts:["<b>Frazem</b> je ustaljena skupina riječi koja ima <b>preneseno značenje</b>. Ne shvaćamo ga doslovno.",
+  "<i>Biti bijela vrana</i> = razlikovati se od drugih. <i>Pasti s Marsa</i> = ne znati što se događa.",
+  "<i>Imati zlatne ruke</i> = biti jako spretan. <i>Biti na sedmom nebu</i> = biti jako sretan.",
+  "<i>Držati fige</i> = željeti nekome sreću. <i>Baciti koplje u trnje</i> = odustati.",
+  "<i>Praviti se Englez</i> = pretvarati se da ništa ne znaš. <i>Objesiti nos</i> = postati tužan.",
+  "<i>Ići kao po loju</i> = ići lako, bez problema. <i>Pasti u vodu</i> = propasti (plan, izlet).",
+  "Pisac koristi frazeme da tekst bude <b>živ i slikovit</b>, kao svakodnevni govor."],
+ qs:[
+ {t:"mc",q:"Što je frazem?",o:["ustaljena skupina riječi s prenesenim značenjem","jedna nova riječ","rečenica u stihu"],a:0},
+ {t:"mc",q:"Što znači „biti bijela vrana“?",o:["razlikovati se od drugih","biti bolestan","voljeti ptice"],a:0},
+ {t:"mc",q:"Što znači „pasti s Marsa“?",o:["ne znati što se događa","pasti s bicikla","biti astronaut"],a:0},
+ {t:"mc",q:"Što znači „imati zlatne ruke“?",o:["biti jako spretan","imati prstenje","biti bogat"],a:0},
+ {t:"mc",q:"Što znači „biti na sedmom nebu“?",o:["biti jako sretan","letjeti avionom","biti umoran"],a:0},
+ {t:"mc",q:"Što znači „baciti koplje u trnje“?",o:["odustati","pobijediti","trenirati atletiku"],a:0},
+ {t:"mc",q:"Što znači „držati nekome fige“?",o:["željeti mu sreću","ljutiti se na njega","jesti smokve"],a:0},
+ {t:"mc",q:"Koji je frazem u rečenici?",fig:QU("Kad je vidio ocjenu, Ivan je objesio nos i šutio cijeli dan."),o:["objesio nos","vidio ocjenu","šutio cijeli dan"],a:0,e:"Objesiti nos = postati tužan."},
+ {t:"mc",q:"Koji je frazem u rečenici?",fig:QU("Izlet je pao u vodu jer je cijeli dan padala kiša."),o:["pao u vodu","padala kiša","cijeli dan"],a:0,e:"Pasti u vodu = propasti."},
+ {t:"mc",q:"Zašto pisac koristi frazeme?",o:["da tekst bude živ i slikovit, kao svakodnevni govor","da tekst bude kraći","da bude u stihovima"],a:0}
+ ]},
+{title:"Prozne književne vrste",desc:"kratka priča, pripovijetka, novela, roman",
+ facts:["<b>Proza</b> je pisana u rečenicama i odlomcima, a ne u stihovima.",
+  "<b>Kratka priča</b>: kratka, jedan događaj iz svakodnevice, malo likova. Kraj je često otvoren, pa sami razmišljamo.",
+  "<b>Pripovijetka</b>: kraća priča s jednim ili više događaja.",
+  "<b>Novela</b>: kratka i napeta, s neočekivanim obratom na kraju.",
+  "<b>Roman</b>: najduža vrsta, mnogo likova i događaja, poglavlja. Vrste: pustolovni, povijesni, socijalni, psihološki, znanstvenofantastični, roman za mlade."],
+ qs:[
+ {t:"mc",q:"Kratka prozna vrsta s jednim događajem iz svakodnevice i malo likova je...",o:["kratka priča","roman","pjesma"],a:0},
+ {t:"mc",q:"Koja je najduža prozna vrsta?",o:["roman","kratka priča","novela"],a:0},
+ {t:"mc",q:"Kratka, napeta priča s neočekivanim obratom na kraju je...",o:["novela","roman","basna"],a:0},
+ {t:"mc",q:"Po čemu prepoznajemo prozu?",o:["pisana je u rečenicama i odlomcima","pisana je u stihovima","ima rimu"],a:0},
+ {t:"mc",q:"Što znači da kratka priča ima otvoren kraj?",o:["ne kaže se točno kako je sve završilo, sami razmišljamo","priča nema naslov","priča je bez likova"],a:0}
+ ]},
+{title:"Vođeno: „Kišobran“",desc:"3. lice · kronološki",text:"kisobran",
+ facts:["Pročitaj tekst. Možeš ga i poslušati 🔊.","Zatim idemo korak po korak. Tekst je uvijek ispred tebe.","Ako ne znaš, dodirni 💡: dobit ćeš savjet i označeno mjesto u tekstu."],
+ qs:[
+ step("kisobran","Korak 1 · Mjesto i vrijeme","Gdje se odvija radnja i kakvo je vrijeme?",["na autobusnoj stanici, po jakoj kiši","u školi, za sunčana dana","u parku, po snijegu"],"stajao pod nadstrešnicom autobusne stanice","Mjesto i vrijeme su gotovo uvijek u prvom odlomku."),
+ step("kisobran","Korak 2 · Likovi","Tko je glavni lik?",["Tomislav","starica","trener"],"Tomislav je stajao","Glavni lik je onaj o kome se najviše govori i koji donosi odluku."),
+ step("kisobran","Korak 3 · Pripovjedač","Tko priča priču?",["pripovjedač u 3. licu, zna i Tomislavove misli","Tomislav u 1. licu","starica u 1. licu"],"pomislio je","Traži glagole: piše „pomislio je“ (on), a ne „pomislio sam“ (ja)."),
+ step("kisobran","Korak 4 · Postupak","Koji je ovo postupak: „Ako se sada sagnem, zakasnit ću na trening“?",["unutarnji monolog","dijalog","opisivanje"],"„Ako se sada sagnem, zakasnit ću na trening“, pomislio je.","Riječ „pomislio“ znači da su to misli lika."),
+ step("kisobran","Korak 5 · Stilsko sredstvo","Koje je stilsko sredstvo u označenom dijelu?",["usporedba","personifikacija","onomatopeja"],"poput crvenih kuglica","Traži riječi „kao“ ili „poput“."),
+ step("kisobran","Korak 6 · Karakterizacija","Kako se mijenja Tomislavovo mišljenje o starici?",["isprva mu je čudna, a poslije topla i blaga","isprva mu je draga, a poslije čudna","ne mijenja se"],"Lice joj se odjednom učinilo toplim i blagim.","Usporedi prvi i četvrti odlomak."),
+ step("kisobran","Korak 7 · Vrhunac","Koji je vrhunac priče?",["Tomislav odlučuje hoće li pomoći ili ući u autobus","Tomislav dolazi na stanicu","trener ga ukori"],"Tomislav je zastao.","Vrhunac je najnapetiji trenutak, kad lik mora odlučiti."),
+ step("kisobran","Korak 8 · Osnovna misao","Koja je osnovna misao (ideja) teksta?",["Prvi dojam može prevariti, a dobro djelo usrećuje.","Uvijek treba stići na vrijeme.","Kiša je dosadna."],null,"Pitaj se: što nas ova priča uči? Odgovor je cijela rečenica."),
+ {t:"open",q:"<span class=\"stepk\">Korak 9 · Moje mišljenje</span><br>Što misliš o Tomislavovoj odluci? Odgovori u 2–3 rečenice.",fig:G("kisobran"),model:"Mislim da je Tomislav dobro postupio jer je pomogao starici kad joj nitko drugi nije htio pomoći. Zakasnio je na trening, ali je dobio nešto vrjednije: novo poznanstvo i dobar osjećaj.",check:["Napisao/la sam svoje mišljenje.","Objasnio/la sam ZAŠTO (jer...).","Spomenuo/la sam nešto iz teksta."]}
+ ]},
+{title:"Vođeno: „Kesten na igralištu“",desc:"1. lice · osjećaji lika",text:"kesten",
+ facts:["Pročitaj tekst. Možeš ga i poslušati 🔊.","Pazi tko priča i kako se osjeća na početku, a kako na kraju."],
+ qs:[
+ step("kesten","Korak 1 · Pripovjedač","Tko priča priču?",["djevojčica koja je došla u novu školu, u 1. licu","Mia, u 1. licu","sveznajući pripovjedač, u 3. licu"],"Stisnula sam remen ruksaka","„Stisnula sam“, „ušla sam“: to je ja-pripovjedač, 1. lice."),
+ step("kesten","Korak 2 · Mjesto","Gdje se radnja odvija?",["u novoj školi","na moru","kod kuće"],"Hodnik nove škole","Pogledaj prve riječi teksta."),
+ step("kesten","Korak 3 · Osjećaji","Kako se pripovjedačica osjeća na početku?",["usamljeno i nesigurno","veselo","ljutito"],"Ovdje nisam poznavala nikoga.","Osjećaj često saznajemo iz postupka: steže ruksak, nikoga ne poznaje."),
+ step("kesten","Korak 4 · Stilsko sredstvo","Koje je stilsko sredstvo u označenom dijelu?",["personifikacija","onomatopeja","hiperbola"],"vrata učionica gledala su me","Mogu li vrata gledati? Ne, to rade živa bića."),
+ step("kesten","Korak 5 · Karakterizacija","Opis Mije u označenom dijelu je koja karakterizacija?",["fizička","socijalna","govorna"],"s dvije kratke pletenice i flasterom na koljenu","Opisuje se izgled."),
+ step("kesten","Korak 6 · Postupak","Koji se postupak koristi kad djevojčice razgovaraju?",["dijalog","monolog","opisivanje"],"– Je li to knjiga o konjima? – upitala je","Crtice na početku retka = dijalog."),
+ step("kesten","Korak 7 · Motiv","Što znači usamljeni kesten?",["usamljenost same pripovjedačice","jesen","igralište"],"i ono je samo, baš kao ja","Pripovjedačica sama kaže: „baš kao ja“."),
+ step("kesten","Korak 8 · Kraj","Zašto se kesten na kraju „više nije činio usamljenim“?",["jer ni pripovjedačica više nije usamljena","jer je posađeno još jedno stablo","jer je pala kiša"],"kesten na igralištu više mi se nije činio usamljenim","Kesten se nije promijenio. Promijenio se njezin osjećaj."),
+ {t:"open",q:"<span class=\"stepk\">Korak 9 · Moj odgovor</span><br>Opiši kako se pripovjedačica osjeća na početku, a kako na kraju. Napiši 2–3 rečenice.",fig:G("kesten"),model:"Na početku se pripovjedačica osjeća usamljeno i nesigurno jer u novoj školi nikoga ne poznaje. To vidimo kad steže remen ruksaka i kad se uspoređuje s usamljenim kestenom. Na kraju je sretna jer je upoznala Miju.",check:["Napisao/la sam osjećaj na POČETKU.","Napisao/la sam osjećaj na KRAJU.","Naveo/la sam primjer iz teksta."]}
+ ]},
+{title:"Vođeno: „Djedov čamac“",desc:"retrospektivni tijek · monolog",text:"camac",
+ facts:["Pročitaj tekst. Možeš ga i poslušati 🔊.","Pazi: pripovjedač je sada na molu, ali se prisjeća prošlosti."],
+ qs:[
+ step("camac","Korak 1 · Pripovjedač","Tko priča priču?",["dječak, djedov unuk, u 1. licu jednine","djed, u 1. licu","pripovjedač u 3. licu"],"Stojim na molu","„Stojim“, „sjećam se“: ja-pripovjedač."),
+ step("camac","Korak 2 · Tijek radnje","Kakav je tijek radnje?",["retrospektivan: prisjeća se ljeta s djedom","kronološki: sve ide redom"],"Sjećam se ljeta kad sam imao deset godina.","Riječi „sjećam se“ vraćaju nas u prošlost."),
+ step("camac","Korak 3 · Stilsko sredstvo","Koje je stilsko sredstvo u označenom dijelu?",["personifikacija","hiperbola","onomatopeja"],"More je još spavalo","More ne može spavati kao čovjek."),
+ step("camac","Korak 4 · Karakterizacija","Označeni opis djeda je koja karakterizacija?",["fizička","socijalna","govorna"],"velike, ispucale ruke","Opisuje kako djed izgleda."),
+ step("camac","Korak 5 · Lik","Kakav je djed bio?",["strpljiv i blag","ljutit i nervozan","lijen"],"Nikad nije vikao.","Što djed kaže kad unuk zaplete udicu?"),
+ step("camac","Korak 6 · Postupak","Koji je postupak u označenom dijelu?",["monolog","dijalog","opisivanje"],"– Ja ću ga voziti – kažem naglas, iako me nitko ne čuje.","Govori naglas, ali nitko mu ne odgovara."),
+ step("camac","Korak 7 · Zaplet","Koji je problem (zaplet) u priči?",["mama želi prodati djedov čamac","čamac je potonuo","djed je izgubio udicu"],"Mama kaže da ćemo čamac prodati","Što prijeti čamcu?"),
+ step("camac","Korak 8 · Osnovna misao","Koja je osnovna misao (ideja) teksta?",["Ljubav prema dragim ljudima živi u uspomenama i u onome što nastavimo.","Čamce treba prodati zimi.","Ribolov je dosadan."],null,"Zašto dječak želi sačuvati čamac?"),
+ {t:"open",q:"<span class=\"stepk\">Korak 9 · Moj odgovor</span><br>Zašto dječak želi sam voziti čamac? Napiši 2–3 rečenice.",fig:G("camac"),model:"Dječak želi voziti čamac jer ga podsjeća na djeda i lijepa ljeta koja su proveli zajedno. Ne želi da ga prodaju jer bi tako izgubio dio uspomena. Kad će ga voziti, djed će na neki način biti s njim.",check:["Napisao/la sam razlog (uspomene na djeda).","Spomenuo/la sam nešto iz teksta (ljeto, ribe, ime čamca).","Odgovorio/la sam punim rečenicama."]}
+ ]},
+{title:"Vođeno: „Badnjak kod bake“",desc:"kajkavski govor · običaji",text:"badnjak",
+ facts:["Pročitaj tekst. Baka govori kajkavski, a ispod teksta je rječnik.","Pazi na običaje, opise i bakin govor."],
+ qs:[
+ step("badnjak","Korak 1 · Pripovjedač","Tko priča priču?",["unuk, u 1. licu jednine","baka, u 1. licu","pripovjedač u 3. licu"],"Sjeo sam na slamu","„Sjeo sam“, „stigli smo“: 1. lice."),
+ step("badnjak","Korak 2 · Mjesto i vrijeme","Gdje i kada se radnja odvija?",["u bakinoj kući u Zagorju, na Badnjak","u Zagrebu, na Uskrs","na moru, ljeti"],"u bakino selo u Zagorju","Mjesto je u prvom odlomku, a dan baka sama kaže."),
+ step("badnjak","Korak 3 · Narječje","Kojim narječjem govori baka?",["kajkavskim","čakavskim","štokavskim"],"Kaj ste tak dugo?","Riječ „kaj“ znači da je to kajkavsko narječje."),
+ step("badnjak","Korak 4 · Zašto narječje?","Zašto pisac stavlja kajkavski u bakin govor?",["da lik bude stvaran (autentičan) i da pokaže odakle je baka","da tekst bude teži","jer je to greška"],"Denes je Badnjak, dete moje","Govor pokazuje kraj iz kojeg je lik: to je govorna karakterizacija."),
+ step("badnjak","Korak 5 · Opisivanje","Koje je stilsko sredstvo „velikim, mekim pahuljama“?",["epitet","onomatopeja","metafora"],"velikim, mekim pahuljama","Pridjevi koji ističu kakve su pahulje."),
+ step("badnjak","Korak 6 · Običaji","Koji se badnjački običaj spominje?",["slama ispod stola i jabuke s orasima na stolu","kićenje palme","bojanje jaja"],"ispod stola prostrla čistu, žutu slamu","Pogledaj što baka stavlja na stol i ispod stola."),
+ step("badnjak","Korak 7 · Zvukovi","Riječi „pucketa“ i „fijukao“ su...",["onomatopeja","hiperbola","personifikacija"],"pucketa vatra","Te riječi oponašaju zvuk."),
+ step("badnjak","Korak 8 · Lik","Kakva je baka?",["topla i brižna","stroga i hladna","ljutita"],"već nas grlila","Što baka radi kad stignu?"),
+ {t:"open",q:"<span class=\"stepk\">Korak 9 · Moj odgovor</span><br>Kakav je ugođaj u bakinoj kući? Napiši 2–3 rečenice s primjerom iz teksta.",fig:G("badnjak"),model:"U bakinoj kući je topao i miran blagdanski ugođaj. Miriše na orahnjaču, vatra pucketa u peći, a ispod stola je čista slama. Pripovjedač se osjeća kao da je u staroj priči.",check:["Napisao/la sam kakav je ugođaj (topao, miran, blagdanski).","Naveo/la sam primjer iz teksta (miris, vatra, slama).","Odgovorio/la sam punim rečenicama."]}
+ ]},
+{title:"Vođeno: „Lana“",desc:"sleng · idealizacija lika",text:"lana",
+ facts:["Pročitaj tekst. Možeš ga i poslušati 🔊.","Pazi kako se Lana razlikuje od drugih i kako se ponaša pripovjedač."],
+ qs:[
+ step("lana","Korak 1 · Pripovjedač","Tko priča priču?",["dječak iz Lanina razreda, u 1. licu","Lana, u 1. licu","nastavnik"],"Meni se činila savršenom.","„Meni“, „rekao sam“: pripovjedač je ja-lik, dječak iz razreda."),
+ step("lana","Korak 2 · Upoznajemo lik","Kada prvi put upoznajemo Lanu?",["kad dođe u razred u listopadu, u neobičnoj odjeći","na satu tjelesnog","na kraju priče"],"Lana je u naš razred došla u listopadu.","Prva rečenica teksta."),
+ step("lana","Korak 3 · Izgled","Po čemu se Lana izgledom razlikuje od drugih?",["nosi očev stari kaput i neobične zelene tenisice","nosi školsku uniformu","ima novi mobitel"],"Nosila je očev stari kaput","Ovo je fizička karakterizacija."),
+ step("lana","Korak 4 · Ponašanje","Po čemu se Lana još razlikuje od drugih učenika?",["ne boji se mirno reći svoje mišljenje nastavniku","viče na sve","nikad ne govori"],"Oprostite, ali svi su podaci točni.","Što Lana radi kad svi ostali šute?"),
+ step("lana","Korak 5 · Frazem","Što znači frazem u označenom dijelu?",["Lana se razlikuje od drugih","Lana voli ptice","Lana je bolesna"],"bila je prava bijela vrana","Frazem ne shvaćamo doslovno. Bijela vrana je ona koja nije kao druge vrane."),
+ step("lana","Korak 6 · Sleng","Zašto Dino govori „brate“, „ful“, „lol“?",["da govor bude kao u stvarnih tinejdžera (autentičnost)","jer je pisac pogriješio","da tekst bude smiješan učiteljima"],"Brate, ona je ful hrabra","Sleng je govor mladih i lik čini stvarnim."),
+ step("lana","Korak 7 · Postupak","Koji su postupci u tekstu?",["pripovijedanje i dijalog","samo opisivanje","samo monolog"],"– Brate, ona je ful hrabra – šapnuo mi je Dino.","Ima događaja (pripovijedanje) i razgovora (dijalog)."),
+ step("lana","Korak 8 · Idealizacija","Kako pripovjedač doživljava Lanu?",["idealizira je, čini mu se savršenom","ne podnosi je","ne primjećuje je"],"Meni se činila savršenom.","Idealizirati = vidjeti nekoga savršenim."),
+ step("lana","Korak 9 · Posljedica","Što pripovjedač napravi zbog toga?",["slaže da voli stare filmove i gleda ih do dva ujutro","prestane razgovarati s njom","prijavi je nastavniku"],"rekao sam da ih obožavam","Što kaže na odmoru, a što je istina?"),
+ {t:"open",q:"<span class=\"stepk\">Korak 10 · Moje mišljenje</span><br>Je li dobro što se pripovjedač pretvara da voli stare filmove? Napiši 2–3 rečenice.",fig:G("lana"),model:"Mislim da nije dobro što se pretvara jer bi Lana trebala upoznati pravog njega. Lana je hrabra i ostaje svoja, pa bi i on mogao biti iskren. Ipak, lijepo je što se trudi bolje je upoznati.",check:["Napisao/la sam svoje mišljenje.","Objasnio/la sam zašto.","Spomenuo/la sam nešto iz teksta (filmovi, Lana je svoja)."]}
+ ]},
+{title:"Veliki završni krug",desc:"miješano iz svih dijelova",mix:true,
+ facts:["Ovo je mješavina pitanja iz svih dijelova.","Ako nešto ne znaš, ništa zato: pitanje će se vratiti na kraju."],qs:[]}
+];
+
+/* ---------- dodaci lekcija ---------- */
+const MAPA=[["Događaj (fabula)",["uvod","zaplet","vrhunac","rasplet"]],["Osnovna misao",["ono što nas tekst uči (cijela rečenica)"]],["Pripovjedne tehnike",["pripovijedanje","opisivanje","dijalog","monolog"]],["Likovi",["glavni","sporedni"]],["Karakterizacija likova",["fizička","psihološka","etička","socijalna","govorna"]],["Pripovjedač",["1. lice (ja)","3. lice (on, ona)"]]];
+function extraHTML(s){
+ if(s.extra==="mapa")return `<div class="extra"><h3>Umna mapa: pripovjedni tekst</h3><p class="sub" style="font-size:.95rem">Sjeti se što ide u svaku granu, pa je dodirni i provjeri.</p><div class="mapa"><div class="mroot">Pripovjedni tekst</div>${MAPA.map(([h,c],i)=>`<button class="mbr" data-m="${i}" aria-expanded="false"><span class="mh">${h}</span><span class="mc" hidden>${c.map(x=>`<span class="mtag">${x}</span>`).join("")}</span><span class="mq">? dodirni</span></button>`).join("")}</div><div class="row" style="margin-top:8px"><button class="btn small ghost" id="mall">Otvori sve</button><button class="btn small ghost" id="mnone">Zatvori sve</button></div></div>`;
+ if(s.text)return `<div class="extra"><div class="qhead"><h3>„${TEXTS[s.text].n}“</h3>${spkBtn("spkTxt")}</div><p class="readhint">Dodirni odlomak: pročitat će se naglas, a riječ koja se čita bit će označena.</p>${anbarHTML(s.text+"-l")}<div class="anwrap" data-key="${s.text}-l"><div class="txt open">${textHTML(s.text)}</div><canvas class="ancv"></canvas></div></div>`;
+ return "";
+}
+function wireExtra(s){
+ if(s.extra==="mapa"){const set=(b,on)=>{b.querySelector(".mc").hidden=!on;b.querySelector(".mq").hidden=on;b.setAttribute("aria-expanded",on)};
+  const all=[...document.querySelectorAll(".mbr")]; all.forEach(b=>b.onclick=()=>{const on=b.getAttribute("aria-expanded")!=="true";set(b,on);if(on&&TTS)speak(b.querySelector(".mh").textContent+": "+[...b.querySelectorAll(".mtag")].map(t=>t.textContent).join(", "))});
+  document.getElementById("mall").onclick=()=>all.forEach(b=>set(b,true)); document.getElementById("mnone").onclick=()=>all.forEach(b=>set(b,false)); return;}
+ if(!s.text)return;
+ setupAnnot(app); const b=document.getElementById("spkTxt"); b.onclick=()=>speak(TEXTS[s.text].n+". "+TEXTS[s.text].p.join(" "),b);
+}
+
+/* ================= ČITANJE NAGLAS ================= */
+const TTS="speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+const ICON_SPK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>`;
+const ICON_STOP=`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>`;
+let voice=null, activeBtn=null;
+function pickVoice(){ if(!TTS)return null; const vs=speechSynthesis.getVoices();
+ for(const l of ["hr","bs","sr","sl"]){const v=vs.find(v=>v.lang.toLowerCase().startsWith(l));if(v)return v} return null; }
+if(TTS){voice=pickVoice(); try{speechSynthesis.onvoiceschanged=()=>{voice=pickVoice()}}catch(e){}}
+function stopSpeak(){ if(TTS)speechSynthesis.cancel(); if(activeBtn){activeBtn.classList.remove("on");activeBtn.innerHTML=ICON_SPK;activeBtn.setAttribute("aria-label","Poslušaj")} activeBtn=null; }
+function speak(text,btn){
+ if(!TTS){showHelp();return}
+ const was=btn&&btn===activeBtn; stopSpeak(); if(was)return;
+ if(!voice)voice=pickVoice();
+ if(!voice){const n=document.getElementById("voicenote");if(n)n.hidden=false}
+ const parts=sayText(text).replace(/([.!?:])\s+(?=[A-ZČĆŽŠĐ0-9])/g,"$1|").split("|").filter(Boolean);
+ if(btn){activeBtn=btn;btn.classList.add("on");btn.innerHTML=ICON_STOP;btn.setAttribute("aria-label","Zaustavi")}
+ parts.forEach((p,k)=>{const u=new SpeechSynthesisUtterance(p); u.lang=voice?voice.lang:"hr-HR"; if(voice)u.voice=voice; u.rate=.85;
+  if(k===parts.length-1){u.onend=u.onerror=()=>{if(activeBtn===btn)stopSpeak()}} speechSynthesis.speak(u);});
+}
+function spkBtn(id,small){return `<button class="spk${small?" sm":""}" id="${id}" aria-label="Poslušaj" title="Poslušaj">${ICON_SPK}</button>`}
+function showHelp(){
+ let h=document.getElementById("help");
+ if(!h){h=document.createElement("div");h.id="help";h.className="help";h.setAttribute("role","dialog");document.body.appendChild(h)}
+ h.innerHTML=`<strong>Čitanje naglas ovdje ne radi</strong><p>Aplikacija Claude otvara stranicu u pregledniku koji ne zna čitati naglas. Otvori stranicu u <b>Chromeu</b> ili <b>Safariju</b>: kopiraj poveznicu i zalijepi je u preglednik.</p><button class="btn" id="helpOk">U redu</button>`;
+ h.hidden=false; document.getElementById("helpOk").onclick=()=>{h.hidden=true};
+}
+const VOICE_NOTE=`<p class="note" id="voicenote" hidden>Ovaj uređaj nema hrvatski glas pa čitanje može zvučati čudno. Na Androidu: Postavke → Pretvaranje teksta u govor → preuzmi hrvatski. Na iPhoneu: Postavke → Pristupačnost → Izgovoreni sadržaj → Glasovi → Hrvatski.</p>`;
+
+
+
+/* ---------- pisanje po tekstu (olovka, marker) ---------- */
+const ANN={}; try{Object.assign(ANN,JSON.parse(localStorage.getItem("hrv8-ann")||"{}"))}catch(e){}
+const annSave=()=>{try{localStorage.setItem("hrv8-ann",JSON.stringify(ANN))}catch(e){}};
+const anTool={};
+function anbarHTML(key){return `<div class="anbar" data-key="${key}" role="toolbar" aria-label="Alati za pisanje"><button data-tool="off" aria-pressed="true">👆 Čitanje</button><button data-tool="pen" aria-pressed="false">✏️ Olovka</button><button data-tool="hl" aria-pressed="false">🖍 Marker</button><button data-tool="clear">🧽 Obriši</button></div>`}
+function annDraw(cv,key){
+ const ctx=cv.getContext("2d"), dpr=window.devicePixelRatio||1, W=cv.width/dpr;
+ ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,cv.width,cv.height);
+ (ANN[key]||[]).forEach(st=>{ if(st.p.length<1)return; const k=W/(st.w||W);
+  ctx.globalCompositeOperation=st.t==="hl"?"multiply":"source-over";
+  ctx.strokeStyle=st.t==="hl"?"rgba(255,214,0,.55)":"#D32F2F"; ctx.lineWidth=st.t==="hl"?16:3; ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.beginPath(); st.p.forEach(([x,y],i)=>i?ctx.lineTo(x*k,y*k):ctx.moveTo(x*k,y*k)); if(st.p.length===1)ctx.lineTo(st.p[0][0]*k+.1,st.p[0][1]*k); ctx.stroke()});
+ ctx.globalCompositeOperation="source-over";
+}
+function setupAnnot(root){
+ root.querySelectorAll(".anwrap").forEach(wrap=>{
+  if(wrap.dataset.ready)return; wrap.dataset.ready=1;
+  const key=wrap.dataset.key, cv=wrap.querySelector(".ancv"), bar=root.querySelector(`.anbar[data-key="${key}"]`);
+  const size=()=>{const dpr=window.devicePixelRatio||1, w=wrap.offsetWidth, h=wrap.offsetHeight; cv.style.width=w+"px"; cv.style.height=h+"px"; cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); annDraw(cv,key)};
+  size(); if(window.ResizeObserver)new ResizeObserver(size).observe(wrap); if(document.fonts)document.fonts.ready.then(size);
+  const setTool=t=>{anTool[key]=t; wrap.classList.toggle("drawing",t==="pen"||t==="hl"); if(bar)bar.querySelectorAll("[data-tool]").forEach(b=>{if(b.dataset.tool!=="clear")b.setAttribute("aria-pressed",b.dataset.tool===t)})};
+  setTool(anTool[key]||"off");
+  if(bar)bar.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{ if(b.dataset.tool==="clear"){ if(b.dataset.sure){ANN[key]=[];annSave();annDraw(cv,key);b.dataset.sure="";b.textContent="🧽 Obriši"} else {b.dataset.sure=1;b.textContent="🧽 Sigurno?";setTimeout(()=>{b.dataset.sure="";b.textContent="🧽 Obriši"},2500)} return;} setTool(b.dataset.tool); stopSpeak()});
+  let cur=null;
+  const pt=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
+  cv.addEventListener("pointerdown",e=>{const t=anTool[key]; if(t!=="pen"&&t!=="hl")return; e.preventDefault(); cv.setPointerCapture(e.pointerId); cur={t,w:wrap.offsetWidth,p:[pt(e)]}; (ANN[key]=ANN[key]||[]).push(cur); annDraw(cv,key)});
+  cv.addEventListener("pointermove",e=>{if(!cur)return; e.preventDefault(); const ev=e.getCoalescedEvents?e.getCoalescedEvents():[e]; ev.forEach(x=>cur.p.push(pt(x))); annDraw(cv,key)});
+  const end=()=>{if(cur){cur=null;annSave()}}; cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+ });
+}
+/* ---------- čitanje odlomka s označavanjem riječi ---------- */
+function wrapWords(p){
+ if(p.dataset.wrapped)return; let off=0;
+ const walk=n=>{[...n.childNodes].forEach(c=>{
+  if(c.nodeType===3){const frag=document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(part=>{
+    if(!part)return; if(/^\s+$/.test(part)){frag.append(part)} else {const sp=document.createElement("span");sp.className="w";sp.dataset.o=off;sp.textContent=part;frag.append(sp)} off+=part.length});
+   c.replaceWith(frag)}
+  else if(c.nodeType===1&&!c.classList.contains("w"))walk(c)})};
+ walk(p); p.dataset.wrapped=1;
+}
+function readPara(p){
+ stopSpeak(); const box=p.closest(".txt");
+ document.querySelectorAll(".txt p.focus").forEach(x=>x.classList.remove("focus")); document.querySelectorAll(".txt .w.on").forEach(x=>x.classList.remove("on"));
+ p.classList.add("focus"); if(box)box.classList.add("focusing");
+ if(!TTS)return;
+ wrapWords(p); const ws=[...p.querySelectorAll(".w")], text=p.textContent;
+ if(!voice)voice=pickVoice();
+ const u=new SpeechSynthesisUtterance(text); u.lang=voice?voice.lang:"hr-HR"; if(voice)u.voice=voice; u.rate=.8;
+ u.onboundary=e=>{if(e.name&&e.name!=="word")return; let cur=null; for(const w of ws){if(+w.dataset.o<=e.charIndex)cur=w; else break} ws.forEach(w=>w.classList.toggle("on",w===cur))};
+ u.onend=u.onerror=()=>ws.forEach(w=>w.classList.remove("on"));
+ speechSynthesis.speak(u);
+}
+document.addEventListener("click",e=>{const p=e.target.closest&&e.target.closest(".txt p"); if(p&&!p.classList.contains("gl"))readPara(p)});
+/* ================= ZVUK ================= */
+let actx=null, soundOn=true;
+try{soundOn=localStorage.getItem("hrv8-zvuk")!=="0"}catch(e){}
+function ac(){ if(!soundOn)return null;
+ try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); return actx; }catch(e){return null} }
+let motorLoading=null;
+function loadMotor(c){
+ if(motorLoading)return motorLoading;
+ motorLoading=new Promise(res=>{ try{const bin=atob(document.getElementById("motor").textContent.trim()),u=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
+   c.decodeAudioData(u.buffer,b=>res(b),()=>res(null));}catch(e){res(null)} });
+ return motorLoading;
+}
+function engine(dur=2){
+ const c=ac(); if(!c)return;
+ loadMotor(c).then(b=>{ if(!b)return; const len=Math.min(dur,b.duration), t=c.currentTime;
+  const src=c.createBufferSource(), g=c.createGain(); src.buffer=b;
+  g.gain.setValueAtTime(1,t); g.gain.setValueAtTime(1,t+Math.max(0,len-.4)); g.gain.linearRampToValueAtTime(0,t+len);
+  src.connect(g).connect(c.destination); src.start(t,0,len+.05); });
+}
+function bump(){ const c=ac(); if(!c)return; const t=c.currentTime;
+ const o=c.createOscillator(), g=c.createGain(); o.type="sine";
+ o.frequency.setValueAtTime(260,t); o.frequency.exponentialRampToValueAtTime(150,t+.2);
+ g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+.25);
+ o.connect(g).connect(c.destination); o.start(t); o.stop(t+.3); }
+function ding(){ const c=ac(); if(!c)return; const t=c.currentTime;
+ [660,880].forEach((f,k)=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t+k*.09);g.gain.linearRampToValueAtTime(.15,t+k*.09+.02);g.gain.exponentialRampToValueAtTime(.001,t+k*.09+.3);
+  o.connect(g).connect(c.destination);o.start(t+k*.09);o.stop(t+k*.09+.32)}); }
+
+/* ================= POMAGALO S TOČKOM ================= */
+function pointTool(el,cfg){
+ const [ip,fp=""]=cfg.num.split("."); const digits=ip+fp;
+ const L=Math.max(2,cfg.mode==="std"&&cfg.exp<0?-cfg.exp+1:2), R=Math.max(2,cfg.mode==="std"&&cfg.exp>0?cfg.exp-fp.length+1:2);
+ const chars=("0".repeat(L)+digits+"0".repeat(R)).split("");
+ const start=L+ip.length; let idx=start;
+ const trim=()=>{let a=chars.slice(0,idx).join("").replace(/^0+/,"")||"0"; let b=chars.slice(idx).join("").replace(/0+$/,""); return b?a+"."+b:a};
+ const neg=cfg.neg?"−":"";
+ const goal=cfg.mode==="sci"
+  ?`Pomiči crvenu točku dok <b>ispred nje</b> ne ostane <b>samo jedna znamenka</b> (koja nije 0).`
+  :`Eksponent je <b>${showNum(cfg.exp)}</b> → točka skače <b>${Math.abs(cfg.exp)} ${cfg.exp>0?"udesno":"ulijevo"}</b>.`;
+ function draw(){
+  const moved=start-idx, t=trim(), intPart=t.split(".")[0];
+  let res,ok;
+  if(cfg.mode==="sci"){ ok=intPart.length===1&&intPart!=="0"; res=`${neg}${t} · 10<sup>${showNum(moved)}</sup>`; }
+  else { ok=(idx-start)===cfg.exp; res=`${neg}${t}`; }
+  el.innerHTML=`<div class="goal">${goal}</div>
+   <div class="cellsWrap"><div class="cells">${neg?`<span class="neg">−</span>`:""}<span style="position:relative;display:flex">${chars.map((c,i)=>`<span class="cell ${i<L||i>=L+digits.length?"pad":""}">${c}</span>`).join("")}<span class="ptr" style="left:calc(${idx} * var(--cw))"></span></span></div></div>
+   <div class="row" style="justify-content:center"><button class="btn small ghost" data-d="-1">◀ ulijevo</button><button class="btn small ghost" data-d="1">udesno ▶</button><button class="btn small ghost" data-d="0">ispočetka</button></div>
+   <div class="jumps">Skokova: <b>${Math.abs(moved)}</b> ${moved>0?"ulijevo":moved<0?"udesno":""}</div>
+   <div class="res">${res}</div>
+   ${ok?`<div class="okline">✓ Gotovo! ${cfg.mode==="sci"?"Ispred točke je jedna znamenka.":"Točka je skočila koliko treba."}</div>`:""}`;
+  el.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{const d=+b.dataset.d; if(d===0)idx=start; else idx=Math.max(1,Math.min(chars.length-1,idx+d)); draw(); const nb=el.querySelector(`[data-d="${d}"]`); if(nb)nb.focus()});
+ }
+ draw();
+}
+
+/* ================= STANJE ================= */
+let tint="krem"; try{const t=localStorage.getItem("hrv8-tint"); if(t!==null)tint=t}catch(e){}
+function applyTint(){if(tint)document.documentElement.setAttribute("data-tint",tint);else document.documentElement.removeAttribute("data-tint")} applyTint();
+let bigText=false; try{bigText=localStorage.getItem("hrv8-big")==="1"}catch(e){}
+function applyBig(){document.documentElement.classList.toggle("big",bigText)} applyBig();
+let autoRead=false; try{autoRead=localStorage.getItem("hrv8-citaj")==="1"}catch(e){}
+let won=[]; try{won=JSON.parse(localStorage.getItem("hrv8-garaza")||"[]")}catch(e){won=[]}
+function save(){try{localStorage.setItem("hrv8-garaza",JSON.stringify(won))}catch(e){}}
+const app=document.getElementById("app");
+let S=null;
+const N=SECTIONS.length;
+
+function garageHTML(){
+ const d=Math.min(won.length,STOPS.length-1), nx=STOPS[d+1];
+ return `<section class="card mapcard"><div class="head"><h2>${d>=STOPS.length-1?"Stigla si u Edinburgh! 🏰":`Sada si u: ${STOPS[d].n}`}</h2>${nx?`<span class="next">Sljedeće: ${nx.n} · ${nx.how}</span>`:""}</div>
+ <div class="fig" id="map">${mapSVG(d)}</div>
+ <p class="sub" style="font-size:.95rem">Svaki riješeni dio vodi te jedan grad dalje. Dionica: ${d} / ${STOPS.length-1}</p>
+ <div class="legs">${STOPS.slice(1).map((st,i)=>`<span class="leg ${i<d?"done":i===d?"cur":""}">${i<d?"✓ ":""}${st.n}</span>`).join("")}</div></section>`;
+}
+const STOPS=[
+ {n:"Sesvete",lon:16.11,lat:45.83,dx:-22,dy:-10,f:"Kreće se od kuće!"},
+ {n:"Zagreb",lon:15.98,lat:45.81,dx:-30,dy:24,how:"🚆 vlak",km:12,f:"Glavni grad Hrvatske. Kupi kartu za Ljubljanu!"},
+ {n:"Ljubljana",lon:14.51,lat:46.06,dx:-70,dy:8,how:"🚆 vlak",km:140,f:"Glavni grad Slovenije. Na Zmajskom mostu čuvaju ga četiri zmaja."},
+ {n:"Villach",lon:13.85,lat:46.61,dx:-54,dy:-4,how:"🚆 vlak kroz tunel ispod Karavanki",km:90,f:"Austrijski grad na rijeci Dravi, istoj koja teče kroz Hrvatsku."},
+ {n:"Salzburg",lon:13.04,lat:47.81,dx:8,dy:-6,how:"🚆 vlak kroz Alpe",km:190,f:"Ovdje je rođen skladatelj Mozart."},
+ {n:"München",lon:11.58,lat:48.14,dx:-12,dy:22,how:"🚆 vlak",km:145,f:"Najveći grad njemačke pokrajine Bavarske."},
+ {n:"Stuttgart",lon:9.18,lat:48.78,dx:4,dy:-9,how:"🚆 vlak",km:220,f:"Grad automobila: ovdje su muzeji Mercedesa i Porschea."},
+ {n:"Strasbourg",lon:7.75,lat:48.58,dx:-36,dy:24,how:"🚌 autobus preko Rajne",km:150,f:"Ovdje zasjeda Europski parlament."},
+ {n:"Pariz",lon:2.35,lat:48.86,dx:-20,dy:22,how:"🚄 brzi vlak TGV",km:490,f:"Grad Eiffelova tornja."},
+ {n:"Lille",lon:3.06,lat:50.63,dx:9,dy:16,how:"🚄 brzi vlak",km:225,f:"Veliki grad na sjeveru Francuske."},
+ {n:"Calais",lon:1.86,lat:50.95,dx:-8,dy:18,how:"🚆 vlak",km:110,f:"Luka iz koje se za vedra dana vidi Engleska."},
+ {n:"Dover",lon:1.31,lat:51.13,dx:6,dy:-8,how:"⛴️ trajekt preko La Manchea",km:40,f:"Dočekuju te poznate bijele litice!"},
+ {n:"London",lon:-0.13,lat:51.51,dx:-52,dy:-6,how:"🚆 vlak",km:125,f:"Pozdravi Big Ben i Tower Bridge."},
+ {n:"York",lon:-1.08,lat:53.96,dx:8,dy:6,how:"🚆 vlak",km:330,f:"Grad sa starim zidinama oko središta."},
+ {n:"Newcastle",lon:-1.61,lat:54.97,dx:8,dy:6,how:"🚆 vlak",km:130,f:"Grad mnogih mostova na rijeci Tyne."},
+ {n:"Edinburgh",lon:-3.19,lat:55.95,dx:-40,dy:-12,how:"🚆 vlak uz more",km:170,f:"CILJ! Glavni grad Škotske s dvorcem na stijeni. Spreman/spremna si za test!"}
+];
+const MX=lon=>(lon+7)*19, MY=lat=>(57.8-lat)*29.5;
+const poly=pts=>pts.map(([a,b])=>`${MX(a).toFixed(1)},${MY(b).toFixed(1)}`).join(" ");
+const GB=[[-5.7,50.05],[-4.2,50.4],[-3.4,50.6],[-2.0,50.6],[-0.8,50.75],[0.3,50.8],[1.4,51.15],[1.0,51.8],[1.75,52.5],[1.7,52.9],[0.3,53.1],[0.1,53.6],[-0.4,54.1],[-1.2,54.6],[-1.6,55.3],[-2.0,55.8],[-2.6,56.0],[-3.0,56.25],[-2.6,56.55],[-2.0,57.1],[-1.8,57.6],[-2.2,57.8],[-5.0,57.8],[-5.7,57.3],[-5.8,56.5],[-5.5,56.0],[-5.0,55.7],[-5.1,55.0],[-4.4,54.7],[-3.4,54.9],[-3.0,54.2],[-3.0,53.4],[-4.5,53.3],[-4.2,52.8],[-4.1,52.3],[-5.1,51.85],[-4.2,51.6],[-3.2,51.45],[-4.0,51.2],[-4.6,51.0]];
+const IE=[[-7,52.0],[-6.3,52.2],[-6.0,53.0],[-6.2,53.9],[-5.6,54.6],[-6.0,55.2],[-7,55.3]];
+const EU=[[18.5,57.8],[18.5,43.8],[-1.4,43.8],[-1.2,44.6],[-1.2,45.8],[-2.2,47.1],[-2.8,47.5],[-4.4,47.8],[-4.8,48.4],[-3.5,48.8],[-2.0,48.6],[-1.5,48.7],[-1.9,49.7],[-1.2,49.4],[0.2,49.5],[1.0,49.9],[1.6,50.2],[1.6,50.9],[2.5,51.1],[3.6,51.4],[4.2,51.9],[4.6,52.5],[4.8,53.0],[5.5,53.4],[7.0,53.6],[8.3,53.6],[8.6,54.0],[8.6,54.9],[8.2,55.5],[8.1,56.5],[8.6,57.1],[9.6,57.5],[10.4,57.8]];
+const BALT=[[10.6,57.8],[10.5,57.2],[10.3,56.6],[10.9,56.3],[10.0,55.6],[9.9,55.0],[10.0,54.5],[10.9,54.1],[11.7,54.15],[12.5,54.4],[13.5,54.2],[14.3,53.9],[16.0,54.3],[18.0,54.8],[18.5,54.9],[18.5,57.8]];
+const SWE=[[12.5,57.8],[12.0,57.5],[12.9,56.5],[12.6,56.2],[13.0,55.4],[14.3,55.55],[14.4,56.0],[15.9,56.1],[16.5,56.7],[16.9,57.8]];
+const ADR=[[12.2,43.8],[12.3,45.3],[13.0,45.75],[13.7,45.75],[13.6,45.1],[14.3,45.3],[14.9,44.9],[15.5,43.8]];
+const LIG=[[7.5,43.8],[8.2,44.0],[8.9,44.4],[9.8,44.1],[10.3,43.8]];
+function mapSVG(done,mark){ done=Math.min(done,STOPS.length-1); // done = broj prijeđenih dionica; mark = [x,y] položaj putnika
+ const pts=STOPS.map(s=>[MX(s.lon),MY(s.lat)]);
+ let s=`<svg viewBox="0 0 488 414" width="488" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karta puta od Sesveta do Edinburgha">`;
+ s+=`<rect width="488" height="414" rx="14" style="fill:var(--sea)"/>`;
+ [EU,GB,IE].forEach(p=>s+=`<polygon points="${poly(p)}" style="fill:var(--land);stroke:var(--landline)" stroke-width="1.5" stroke-linejoin="round"/>`);
+ [BALT,ADR,LIG].forEach(p=>s+=`<polygon points="${poly(p)}" style="fill:var(--sea);stroke:var(--landline)" stroke-width="1.5" stroke-linejoin="round"/>`);
+ s+=`<polygon points="${poly(SWE)}" style="fill:var(--land);stroke:var(--landline)" stroke-width="1.5"/>`;
+ s+=`<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" style="stroke:var(--muted)" stroke-width="3" stroke-dasharray="6 6"/>`;
+ if(done>0)s+=`<polyline points="${pts.slice(0,done+1).map(p=>p.join(",")).join(" ")}" fill="none" style="stroke:var(--route)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+ STOPS.forEach((st,i)=>{const [x,y]=pts[i],vis=i<=done;
+  s+=`<circle cx="${x}" cy="${y}" r="${i===STOPS.length-1?8:5.5}" style="fill:${vis?"var(--route)":"var(--card)"};stroke:var(--route)" stroke-width="2.5"/>`;
+  if(i!==1||done>=1)s+=`<text x="${x+st.dx}" y="${y+st.dy}" font-size="13" font-weight="${vis?800:500}" style="fill:var(--ink);paint-order:stroke;stroke:var(--land);stroke-width:3px">${st.n}</text>`;});
+ const [mx,my]=mark||pts[done];
+ s+=`<g id="traveller" transform="translate(${mx},${my})"><circle r="15" style="fill:var(--accent)" opacity=".2"/><text y="-12" text-anchor="middle" font-size="22">🧳</text></g>`;
+ s+=`<text x="${MX(-6.3)}" y="${MY(55.9)}" font-size="20">🏰</text>`;
+ return s+`</svg>`;
+}
+function travel(a,b){
+ const pa=[MX(STOPS[a].lon),MY(STOPS[a].lat)], pb=[MX(STOPS[b].lon),MY(STOPS[b].lat)];
+ const box=document.getElementById("map"); const t0=performance.now(), dur=matchMedia("(prefers-reduced-motion: reduce)").matches?1:2200;
+ (function f(t){const k=Math.min(1,(t-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+  const x=pa[0]+(pb[0]-pa[0])*e, y=pa[1]+(pb[1]-pa[1])*e;
+  if(k<1){const g=box.querySelector("#traveller"); if(g)g.setAttribute("transform",`translate(${x},${y})`); requestAnimationFrame(f)} else box.innerHTML=mapSVG(b)})(t0);
+}
+
+function home(){
+ if(window.closeCalc)closeCalc();
+ S=null; stopSpeak();
+ app.innerHTML=`<header><h1>Čitanje proze</h1><p class="sub">Hrvatski jezik, 8. razred · Čitanje književnoga teksta s razumijevanjem. Riješi dio i putuj od Sesveta do Edinburgha!</p></header>
+ ${garageHTML()}
+ <div class="toggles">
+  <button class="toggle" id="auto" aria-pressed="${autoRead}"><span class="sw"></span><span><strong>Čitaj zadatke naglas</strong><br><span class="sub" style="font-size:.9rem">Svaki zadatak pročita se sam.</span></span></button>
+  <button class="toggle" id="snd" aria-pressed="${soundOn}"><span class="sw"></span><span><strong>Zvukovi</strong><br><span class="sub" style="font-size:.9rem">Kratki „ding“ za točan odgovor.</span></span></button>
+  <div class="toggle" style="cursor:default"><span><strong>Boja papira</strong><br><span class="tints" id="tints">${[["","#FFFFFF","bijela"],["krem","#FBF6EA","krem"],["plava","#F0F6FB","plava"],["zelena","#F1F8F2","zelena"]].map(([k,c,n])=>`<button class="tint" data-tint="${k}" style="background:${c}" aria-label="${n}" title="${n}" aria-pressed="${tint===k}"></button>`).join("")}</span></span></div>
+  <button class="toggle" id="bigt" aria-pressed="${bigText}"><span class="sw"></span><span><strong>Veća slova</strong><br><span class="sub" style="font-size:.9rem">Lakše čitanje.</span></span></button>
+ </div>
+ <div class="sections">${SECTIONS.map((s,i)=>`<div class="secrow"><button class="sec ${won.includes(i)?"done":""}" data-i="${i}"><span class="num">${won.includes(i)?"✓":i+1}</span><span class="txt"><span class="t">${s.title}</span><span class="d">${fmt(s.desc)} · ${s.mix?10:s.qs.length} zad.</span></span></button><button class="spk secspk" data-i="${i}" aria-label="Poslušaj lekciju: ${s.title}" title="Poslušaj lekciju">${ICON_SPK}</button></div>`).join("")}</div>
+ <p class="foot">Savjet: jedan dio, pa kratka pauza. ${won.length?`<button class="linkbtn" id="reset">Kreni ispočetka iz Sesveta</button>`:""}</p>`;
+ app.querySelectorAll(".sec").forEach(b=>b.onclick=()=>intro(+b.dataset.i));
+ app.querySelectorAll(".secspk").forEach(b=>b.onclick=()=>{const s=SECTIONS[+b.dataset.i];speak(s.title+". "+s.facts.join(". "),b)});
+ const r=document.getElementById("reset"); if(r) r.onclick=()=>{won=[];save();home()};
+ const au=document.getElementById("auto");
+ au.onclick=()=>{autoRead=!autoRead;au.setAttribute("aria-pressed",autoRead);try{localStorage.setItem("hrv8-citaj",autoRead?"1":"0")}catch(e){} if(autoRead) speak("Uključeno. Zadatke ću čitati naglas.");};
+ document.querySelectorAll("#tints .tint").forEach(b=>b.onclick=()=>{tint=b.dataset.tint;applyTint();try{localStorage.setItem("hrv8-tint",tint)}catch(e){};document.querySelectorAll("#tints .tint").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+ const bt=document.getElementById("bigt"); bt.onclick=()=>{bigText=!bigText;bt.setAttribute("aria-pressed",bigText);applyBig();try{localStorage.setItem("hrv8-big",bigText?"1":"0")}catch(e){}};
+ const sn=document.getElementById("snd");
+ sn.onclick=()=>{soundOn=!soundOn;sn.setAttribute("aria-pressed",soundOn);try{localStorage.setItem("hrv8-zvuk",soundOn?"1":"0")}catch(e){} if(soundOn)ding()};
+ scrollTo(0,0);
+}
+
+function intro(i){
+ if(window.closeCalc)closeCalc();
+ const s=SECTIONS[i]; stopSpeak();
+ app.innerHTML=`<div class="card"><p class="counter">Dio ${i+1} od ${N} · ${s.title}</p><div class="qhead"><h2>Prvo zapamti</h2>${spkBtn("spkAll")}</div>
+ ${VOICE_NOTE}
+ <ul class="facts">${s.facts.map((f,k)=>`<li><span>${fmt(f)}</span>${spkBtn("spk"+k,true)}</li>`).join("")}</ul>
+ ${extraHTML(s)}
+ <div class="actions"><button class="btn" id="go">Krećemo! 🧳</button><button class="btn ghost" id="back">Natrag</button></div></div>`;
+ const all=document.getElementById("spkAll"); all.onclick=()=>speak("Prvo zapamti. "+s.facts.join(". "),all);
+ s.facts.forEach((f,k)=>{const b=document.getElementById("spk"+k);b.onclick=()=>speak(f,b)});
+ wireExtra(s);
+ document.getElementById("go").onclick=()=>{stopSpeak();start(i)};
+ document.getElementById("back").onclick=home;
+ scrollTo(0,0);
+}
+
+function start(i){
+ const qs=SECTIONS[i].mix?shuffle(SECTIONS.filter(x=>!x.mix).flatMap(x=>x.qs)).slice(0,10):SECTIONS[i].qs.slice();
+ S={i,queue:qs.map(q=>({q,first:true})),total:qs.length,done:0,firstRight:0};
+ ask();
+}
+
+/* ---------- prikaz zadatka ---------- */
+function vecPts(o){const m=o.match(/\[([A-Z])([A-Z])\]/);return m?[m[1],m[2]]:null}
+function ansHTML(signed,id,cls=""){
+ return `${signed?`<button class="sign" data-for="${id}" aria-label="Predznak plus ili minus" title="Promijeni predznak">+</button>`:""}<input class="inp ${cls}" id="${id}" inputmode="decimal" autocomplete="off" aria-label="Odgovor">`;
+}
+function wireSigns(root){ root.querySelectorAll(".sign").forEach(b=>b.onclick=()=>{b.textContent=b.textContent==="+"?"−":"+";b.setAttribute("aria-pressed",b.textContent==="−")}); }
+const isNeg=id=>{const b=app.querySelector(`.sign[data-for="${id}"]`);return b&&b.textContent==="−"};
+
+function questionSay(q){
+ let t=q.q+" "; if(q.fig&&q.fig.s)t+=q.fig.s.replace(/<br>/g," ")+" ";
+ if(q.t==="mc"||q.t==="multi")t+="Ponuđeno: "+[...app.querySelectorAll(".opts .opt")].map(b=>b.textContent.trim()+".").join(" ");
+ if(q.t==="pic")t+="Ponuđene su tri slike. Odaberi točnu.";
+ if(q.t==="steps")t+="Riješi korak po korak. "+q.steps[0].l;
+ if(q.t==="sci")t+="Upiši broj i eksponent.";
+ return t;
+}
+
+function ask(){
+ if(window.closeCalc)closeCalc();
+ if(!S.queue.length) return reward();
+ stopSpeak();
+ const item=S.queue[0], q=item.q; item.tries=0; item.failed=false;
+ const pct=S.done/S.total;
+ let body="";
+ const fig=q.fig||(q.ref?{type:"rect",arrows:[[q.ref[0],q.ref[1],"o"]].concat(q.ref2?[[q.ref2[0],q.ref2[1],"b"]]:[])}:null);
+ if(q.t==="mc"||q.t==="multi"){
+  const order=shuffle(q.o.map((_,k)=>k));
+  body=`${q.t==="multi"?`<p class="hint">Dodirni ${q.a.length} odgovora, pa „Provjeri“.</p>`:""}<div class="opts">${order.map(k=>`<button class="opt" data-k="${k}">${fmt(q.o[k])}</button>`).join("")}</div>${q.t==="multi"?`<div class="actions"><button class="btn" id="check" disabled>Provjeri</button></div>`:""}`;
+ } else if(q.t==="pic"){
+  const order=shuffle(q.o.map((_,k)=>k));
+  body=`<div class="opts pics">${order.map((k,n)=>`<button class="opt pic" data-k="${k}"><span class="lbl">Slika ${n+1}</span>${q.o[k]}</button>`).join("")}</div>`;
+ } else if(q.t==="num"){
+  body=`<div class="ans">${ansHTML(q.signed,"in0")}${q.unit?`<span class="unit">${q.unit}</span>`:""}<button class="btn" id="check">Provjeri</button></div><div class="msg" id="msg"></div>`;
+ } else if(q.t==="sci"){
+  body=`<div class="ans"><input class="inp" id="inM" inputmode="decimal" autocomplete="off" aria-label="Broj ispred puta" style="width:120px"><span class="dot">·</span><span class="pow"><span class="ten">10</span><span class="ex">${ansHTML(true,"inX","sm")}</span></span><button class="btn" id="check">Provjeri</button></div><div class="msg" id="msg"></div>`;
+ } else if(q.t==="steps"){
+  body=`<div class="steps">${q.steps.map((s,k)=>`<div class="step" id="st${k}" ${k?"hidden":""}><div class="slabel">${fmt(s.l)}</div>
+   ${s.o?`<div class="opts">${shuffle(s.o.map((_,j)=>j)).map(j=>`<button class="opt" data-s="${k}" data-k="${j}">${fmt(s.o[j])}</button>`).join("")}</div>`
+        :`<div class="ans">${ansHTML(false,"sin"+k)}${s.unit?`<span class="unit">${s.unit}</span>`:""}<button class="btn" data-check="${k}">Provjeri</button></div>`}
+   ${s.hint?`<div><button class="btn small ghost" data-sh="${k}">💡 Pomoć</button></div><div class="hintbox" id="sh${k}" hidden>${fmt(s.hint)}</div>`:""}
+   <div class="msg" id="sm${k}"></div></div>`).join("")}</div>`;
+ }
+ if(q.t==="open") body=`<textarea class="ta" id="ta" rows="5" placeholder="Napiši odgovor ovdje..." aria-label="Tvoj odgovor"></textarea>
+  <div class="actions"><button class="btn" id="cmp">Usporedi s primjerom</button><button class="btn ghost" id="oral">🗣 Odgovorit ću naglas</button></div>
+  <div id="model" hidden><div class="hintbox"><b>Primjer dobrog odgovora:</b><br>${fmt(q.model)}</div>
+  <p style="margin:12px 0 6px"><b>Provjeri: ima li tvoj odgovor ovo?</b></p><ul class="chk">${q.check.map(c=>`<li>${c}</li>`).join("")}</ul>
+  <div class="actions"><button class="btn" id="yes">✔ Da, imam sve</button><button class="btn ghost" id="no">Nemam sve, ponovit ću</button></div></div>`;
+ const helpbar=(q.hints||q.tool)?`<div class="helpbar">${q.hints?`<button class="btn small ghost" id="hbtn">💡 Pomoć (0/${q.hints.length})</button>`:""}${q.tool?`<button class="btn small ghost" id="tbtn">🔎 Pomagalo s točkom</button>`:""}</div><div class="hints" id="hints"></div>${q.tool?`<div class="tool" id="qtool" hidden></div>`:""}`:"";
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag na izbornik">✕</button><span class="counter">${Math.min(S.done+1,S.total)} / ${S.total}</span></div>
+ <div class="road" aria-hidden="true"><div class="carIcon" style="left:calc(${pct} * (100% - 80px) + 8px)"><span style="font-size:28px;line-height:42px">🧳</span></div><span class="flag">🏰</span></div>
+ <div class="card"><div class="qhead"><p class="qtext">${fmt(q.q)}</p>${spkBtn("spkQ")}</div>${VOICE_NOTE}
+ ${fig?`<div class="fig" id="qfig">${figHTML(fig)}</div>`:""}
+ ${body}${helpbar}<div id="fb"></div></div>`;
+ document.getElementById("back").onclick=home;
+ const sq=document.getElementById("spkQ"); sq.onclick=()=>speak(questionSay(q),sq); if(autoRead&&TTS) speak(questionSay(q),sq);
+ wireSigns(app);
+ const figEl=document.getElementById("qfig");
+ setupAnnot(app);
+ const showEv=()=>{if(!figEl)return;figEl.classList.add("show-ev");const e=figEl.querySelector(".ev");if(e)e.scrollIntoView({block:"nearest",behavior:"smooth"})};
+ const redraw=extra=>{};
+
+ // pomoć
+ let hn=0; const hb=document.getElementById("hbtn");
+ const nextHint=()=>{ if(!q.hints||hn>=q.hints.length)return; document.getElementById("hints").insertAdjacentHTML("beforeend",`<div class="hintbox">${fmt(q.hints[hn])}</div>`); hn++; if(hb){hb.textContent=`💡 Pomoć (${hn}/${q.hints.length})`; if(hn>=q.hints.length)hb.disabled=true} };
+ if(hb) hb.onclick=()=>{nextHint();showEv()};
+ const tb=document.getElementById("tbtn");
+ if(tb){const box=document.getElementById("qtool"); let made=false; tb.onclick=()=>{box.hidden=!box.hidden; if(!made){pointTool(box,q.tool);made=true}}}
+
+ if(q.t==="mc"||q.t==="pic"){
+  const opts=[...app.querySelectorAll(".opts .opt")];
+  opts.forEach(b=>b.onclick=()=>{
+   const ok=+b.dataset.k===q.a;
+   opts.forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add("right")}); if(figEl)figEl.classList.add("show-ev");
+   if(!ok)b.classList.add("wrong");
+   if(q.res) redraw([[q.res[0],q.res[1],"g"]]);
+   else if(fig&&fig.type==="rect"){const v=vecPts(q.o[q.a]); if(v)redraw([[v[0],v[1],"g"]])}
+   result(ok,q.t==="pic"?"pogledaj zelenu sliku":q.o[q.a]);
+  });
+ } else if(q.t==="multi"){
+  const sel=new Set(), chk=document.getElementById("check"), opts=[...app.querySelectorAll(".opts .opt")];
+  const show=()=>redraw([...sel].map(k=>{const v=vecPts(q.o[k]);return v&&[v[0],v[1],"p"]}));
+  opts.forEach(b=>b.onclick=()=>{const k=+b.dataset.k; sel.has(k)?sel.delete(k):sel.add(k); b.classList.toggle("sel"); chk.disabled=sel.size!==q.a.length; show()});
+  chk.onclick=()=>{
+   const ok=q.a.every(k=>sel.has(k));
+   opts.forEach(x=>{x.disabled=true;const k=+x.dataset.k;x.classList.remove("sel");if(q.a.includes(k))x.classList.add("right");else if(sel.has(k))x.classList.add("wrong")});
+   redraw(q.a.map(k=>{const v=vecPts(q.o[k]);return v&&[v[0],v[1],"g"]}));
+   chk.remove(); result(ok,q.a.map(k=>q.o[k]).join(", "));
+  };
+ } else if(q.t==="num"||q.t==="sci"){
+  const chk=document.getElementById("check"), msg=document.getElementById("msg");
+  const inputs=q.t==="num"?["in0"]:["inM","inX"];
+  inputs.forEach(id=>{const el=document.getElementById(id); el.onkeydown=e=>{if(e.key==="Enter")go()}});
+  document.getElementById(inputs[0]).focus({preventScroll:true});
+  const answerText=q.t==="num"?showNum(q.a)+(q.unit?" "+q.unit:""):`${q.m} · 10^${q.x}`;
+  function go(){
+   let ok, partial="";
+   if(q.t==="num"){const v=parseNum(document.getElementById("in0").value,isNeg("in0")); if(v===null)return; ok=same(v,q.a);
+    if(!ok&&same(Math.abs(v),Math.abs(q.a))) partial="Broj je dobar, ali provjeri predznak (+ ili −).";}
+   else {const m=parseNum(document.getElementById("inM").value), x=parseNum(document.getElementById("inX").value,isNeg("inX")); if(m===null||x===null)return;
+    ok=same(m,q.m)&&x===q.x;
+    if(!ok&&same(m,q.m)) partial="Broj ispred je točan! Provjeri eksponent: broji skokove i pazi na minus.";
+    else if(!ok&&x===q.x) partial="Eksponent je točan! Provjeri broj ispred točke.";
+    document.getElementById("inM").classList.toggle("ok",same(m,q.m)); document.getElementById("inX").classList.toggle("ok",x===q.x);}
+   if(ok){ inputs.forEach(id=>{const el=document.getElementById(id);el.disabled=true;el.classList.remove("no");el.classList.add("ok")}); chk.remove(); msg.textContent=""; result(true,answerText); return; }
+   item.tries++; bump();
+   if(item.tries<2){ msg.textContent=(partial||"Nije još točno.")+" Pogledaj pomoć 💡 i pokušaj ponovo."; nextHint(); if(q.tool){const box=document.getElementById("qtool"); if(box.hidden)document.getElementById("tbtn").click()} return; }
+   inputs.forEach(id=>{const el=document.getElementById(id);el.disabled=true;if(!el.classList.contains("ok"))el.classList.add("no")}); chk.remove(); msg.textContent="";
+   result(false,answerText);
+  }
+  chk.onclick=go;
+ } else if(q.t==="steps"){
+  let cur=0;
+  const finishStep=(k,good)=>{
+   const st=document.getElementById("st"+k); st.classList.add(good?"done":"failed");
+   if(!good)item.failed=true;
+   if(good)ding();
+   if(k+1<q.steps.length){ cur=k+1; const nx=document.getElementById("st"+cur); nx.hidden=false; const inp=document.getElementById("sin"+cur); if(inp)inp.focus({preventScroll:true}); nx.scrollIntoView({block:"nearest",behavior:"smooth"});
+    if(autoRead&&TTS) speak(q.steps[cur].l); }
+   else { const last=q.steps[q.steps.length-1]; result(!item.failed, showNum(last.a)+(last.unit?" "+last.unit:""), true); }
+  };
+  app.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>{document.getElementById("sh"+b.dataset.sh).hidden=false;b.remove()});
+  app.querySelectorAll(".step .opt").forEach(b=>b.onclick=()=>{
+   const k=+b.dataset.s, s=q.steps[k], ok=+b.dataset.k===s.a;
+   const sib=[...document.querySelectorAll(`#st${k} .opt`)];
+   if(ok){sib.forEach(x=>{x.disabled=true;if(+x.dataset.k===s.a)x.classList.add("right")}); document.getElementById("sm"+k).textContent=""; finishStep(k,true);}
+   else{ bump(); b.classList.add("wrong"); b.disabled=true; item.tries++;
+    const left=sib.filter(x=>!x.disabled);
+    if(left.length===1){left[0].classList.add("right");left[0].disabled=true; finishStep(k,false);}
+    else document.getElementById("sm"+k).textContent="Pokušaj ponovo."; }
+  });
+  app.querySelectorAll("[data-check]").forEach(btn=>{
+   const k=+btn.dataset.check, s=q.steps[k], inp=document.getElementById("sin"+k), m=document.getElementById("sm"+k); let tries=0;
+   const go=()=>{ const v=parseNum(inp.value); if(v===null)return;
+    if(Math.abs(v-s.a)<=(s.tol||1e-9)){inp.disabled=true;inp.classList.remove("no");inp.classList.add("ok");btn.remove();m.textContent="";finishStep(k,true);return}
+    tries++; bump(); inp.classList.add("no");
+    if(tries<2){ m.textContent="Nije još točno. Pokušaj ponovo."; const hbx=document.getElementById("sh"+k); if(hbx){hbx.hidden=false; const hb2=app.querySelector(`[data-sh="${k}"]`); if(hb2)hb2.remove()} return; }
+    inp.value=showNum(s.a); inp.disabled=true; btn.remove(); m.style.color="var(--muted)"; m.textContent="Točan broj je upisan. Pogledaj ga i idemo dalje."; finishStep(k,false);
+   };
+   btn.onclick=go; inp.onkeydown=e=>{if(e.key==="Enter")go()};
+  });
+  const i0=document.getElementById("sin0"); if(i0)i0.focus({preventScroll:true});
+ } else if(q.t==="open"){
+  const ta=document.getElementById("ta"), model=document.getElementById("model");
+  const oral=document.getElementById("oral"); if(oral)oral.onclick=()=>document.getElementById("cmp").click();
+  document.getElementById("cmp").onclick=()=>{model.hidden=false; document.getElementById("cmp").remove(); const o2=document.getElementById("oral"); if(o2)o2.remove(); ta.readOnly=true; if(autoRead&&TTS)speak("Primjer dobrog odgovora. "+q.model); model.scrollIntoView({block:"nearest",behavior:"smooth"})};
+  document.getElementById("yes").onclick=()=>{model.querySelector(".actions").remove(); result(true,"",true)};
+  document.getElementById("no").onclick=()=>{model.querySelector(".actions").remove(); result(false,"",true)};
+ }
+}
+
+const PRAISE=["Bravo!","Točno!","Super!","Odlično!","Tako je!","Pogodak!"];
+function result(ok,correct,isSteps){
+ const item=S.queue.shift(), q=item.q;
+ if(ok){S.done++; if(item.first&&!item.tries)S.firstRight++;}
+ else {item.first=false; S.queue.push(item);}
+ stopSpeak();
+ if(ok) ding(); else bump();
+ const fb=document.getElementById("fb");
+ const praise=PRAISE[Math.random()*PRAISE.length|0];
+ const head=ok?`${praise} ✅`:(isSteps?"Dobro je, idemo dalje.":`Ne baš. Točno je: ${fmt(correct)}`);
+ const tail=ok?"":(isSteps?"Ovaj zadatak ponovit ćemo još jednom na kraju.":"Ovaj zadatak vratit će ti se na kraju.");
+ const sayIt=`${head}. ${q.e||""} ${tail}`;
+ fb.innerHTML=`<div class="fb ${ok?"ok":"no"}"><div class="fbhead"><div><b>${head}</b>${q.e?fmt(q.e):""}${tail?`<br><span style="color:var(--muted)">${tail}</span>`:""}</div>${spkBtn("spkF",true)}</div></div>
+ <div class="actions"><button class="btn" id="next">${S.queue.length?"Dalje →":"Do cilja! 🏰"}</button></div>`;
+ const sf=document.getElementById("spkF"); sf.onclick=()=>speak(sayIt,sf); if(autoRead&&TTS&&!ok) setTimeout(()=>speak(sayIt,sf),350);
+ const n=document.getElementById("next"); n.focus({preventScroll:true}); n.scrollIntoView({block:"nearest",behavior:"smooth"});
+ n.onclick=ask;
+}
+
+function reward(){
+ const i=S.i, first=!won.includes(i), from=Math.min(won.length,STOPS.length-1);
+ if(first){won.push(i);save();}
+ const to=Math.min(won.length,STOPS.length-1), moved=first&&to>from, st=STOPS[to];
+ app.innerHTML=`<div class="card reward"><p class="counter">Dio ${i+1} riješen!</p>
+ ${moved?`<h2>Putuješ u ${st.n}! ${st.how}</h2><p class="sub">oko ${st.km} km · ${st.f}</p>`:`<h2>Opet do cilja!</h2><p class="sub">Ovaj dio je već prijeđen. Riješi novi dio za sljedeći grad.</p>`}
+ <div class="fig" id="map">${mapSVG(moved?from:to)}</div>
+ <p class="stars">Iz prve točno: ${S.firstRight} / ${S.total} ${"⭐".repeat(Math.max(1,Math.round(S.firstRight/S.total*3)))}</p>
+ ${to>=STOPS.length-1?`<p><strong>Stigla si u Edinburgh! Spremna si za test. 🏆</strong></p>`:`<p class="sub">Popij vode, protegni se 1 minutu, pa idemo dalje.</p>`}
+ <div class="actions" style="justify-content:center">${i<N-1?`<button class="btn" id="nextSec">Sljedeći dio</button>`:""}<button class="btn ghost" id="home">Karta</button></div></div>`;
+ document.getElementById("home").onclick=home;
+ const ns=document.getElementById("nextSec"); if(ns) ns.onclick=()=>intro(i+1);
+ stopSpeak(); ding(); setTimeout(ding,350); setTimeout(ding,700); confetti(); scrollTo(0,0);
+ if(moved)travel(from,to);
+}
+
+
+function confetti(){
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const cv=document.getElementById("confetti"), x=cv.getContext("2d");
+ cv.hidden=false; cv.width=innerWidth; cv.height=innerHeight;
+ const cols=["#F2B705","#D8432F","#2E9D5B","#2F7BE0","#EE7A1E","#7E4FD1"];
+ const P=Array.from({length:120},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,r:Math.random()*6,c:cols[Math.random()*6|0],a:Math.random()*6}));
+ let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-4,-2,8+p.r,5);x.restore()});if(++t<160)requestAnimationFrame(f);else cv.hidden=true})();
+}
+
+home();
+</script>
+
+</body></html>
