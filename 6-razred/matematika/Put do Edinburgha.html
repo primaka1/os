@@ -1,0 +1,521 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Put do Edinburgha</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: putna karta Sesvete → Edinburgh gore, ispod lekcije; lekcija = slikovite kartice + primjer korak po korak; test = jedan zadatak na zaslonu */
+:root{
+  --bg:#EEF2F4; --card:#FFFFFF; --ink:#18242C; --muted:#5A6A74; --line:#D3DCE1; --chip:#E4EBEF;
+  --accent:#C2185B; --accent-ink:#FFFFFF; --route:#C2185B; --sea:#CFE6F2; --land:#F4EFE3; --landline:#C9BFA8;
+  --good:#1E8E4E; --good-bg:#E2F4E8; --bad:#C2412D; --bad-bg:#FBE6E2; --hint-bg:#FFF5D1; --hint-line:#E3AE00;
+  --v1:#E0700F; --v2:#2364C8; --zero1:#2364C8; --zero2:#E0700F;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif; --body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12181D; --card:#1C252C; --ink:#E8EEF1; --muted:#9DB0BA; --line:#33424C; --chip:#26323A;
+  --accent:#F06292; --accent-ink:#1A0D13; --route:#F06292; --sea:#173447; --land:#2A2E2A; --landline:#4D5246;
+  --good:#5BCB8A; --good-bg:#163324; --bad:#F08A76; --bad-bg:#3D1F1A; --hint-bg:#3A3215; --hint-line:#E3AE00;
+  --v1:#FF9B45; --v2:#6EA2F5; --zero1:#6EA2F5; --zero2:#FF9B45; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12181D; --card:#1C252C; --ink:#E8EEF1; --muted:#9DB0BA; --line:#33424C; --chip:#26323A;
+  --accent:#F06292; --accent-ink:#1A0D13; --route:#F06292; --sea:#173447; --land:#2A2E2A; --landline:#4D5246;
+  --good:#5BCB8A; --good-bg:#163324; --bad:#F08A76; --bad-bg:#3D1F1A; --hint-bg:#3A3215; --hint-line:#E3AE00;
+  --v1:#FF9B45; --v2:#6EA2F5; --zero1:#6EA2F5; --zero2:#FF9B45; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.5;font-variant-numeric:tabular-nums}
+.wrap{max-width:680px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:2rem;font-weight:800}h2{font-size:1.4rem;font-weight:800}h3{font-size:1.1rem}
+.sub{color:var(--muted);margin:4px 0 0}
+sup{font-size:.68em;line-height:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:12px 20px;font-weight:700;font-size:1.05rem;min-height:52px}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.95rem}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.counter{color:var(--muted);font-size:.95rem;margin:0}
+.fig{overflow-x:auto}.fig svg{display:block;max-width:100%;height:auto;margin:0 auto}
+
+/* karta */
+.mapcard{padding:14px}
+.mapcard .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.next{font-weight:700}
+.legs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.leg{font-size:.8rem;border-radius:999px;padding:3px 10px;background:var(--chip);color:var(--muted)}
+.leg.done{background:var(--good-bg);color:var(--good);font-weight:700}
+.leg.cur{background:var(--accent);color:var(--accent-ink);font-weight:700}
+
+/* lekcije */
+.lessons{display:grid;gap:10px}
+.les{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.les .num{flex:none;width:42px;height:42px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-family:var(--display);font-weight:800}
+.les .txt{flex:1;min-width:160px}.les .t{font-weight:700;display:block}.les .d{color:var(--muted);font-size:.9rem}
+.block{display:grid;gap:10px}
+.rule{background:var(--hint-bg);border-left:6px solid var(--hint-line);border-radius:12px;padding:12px 14px}
+.rule b{color:var(--accent)}
+.ex{font-size:1.25rem;font-weight:700;letter-spacing:.02em}
+.var{display:inline-block;background:var(--v2);color:#fff;border-radius:8px;padding:0 8px;font-weight:800}
+.val{display:inline-block;background:var(--v1);color:#fff;border-radius:8px;padding:0 8px;font-weight:800}
+.signs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sg{background:var(--chip);border-radius:12px;padding:10px;text-align:center;font-size:1.2rem;font-weight:800}
+.sg .r{display:block;font-size:.85rem;font-weight:700;color:var(--muted)}
+.plus{color:var(--good)}.minus{color:var(--bad)}
+.demo{border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:6px}
+.demo .ln{font-size:1.2rem;font-weight:700;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s}
+.demo .ln.on{opacity:1;transform:none}
+.demo .why{font-size:.9rem;color:var(--muted);font-weight:400}
+.apples{font-size:1.5rem;letter-spacing:.05em;line-height:1.6}
+.apples .x{opacity:.25;text-decoration:line-through}
+.tbl{width:100%;border-collapse:collapse;font-size:1rem}
+.tbl td,.tbl th{border:1px solid var(--line);padding:6px 8px;text-align:left}
+.tbl th{background:var(--chip)}
+.z1{color:var(--zero1);font-weight:800}.z2{color:var(--zero2);font-weight:800}
+.tblwrap{overflow-x:auto}
+
+/* zadatak */
+.progress{height:12px;background:var(--chip);border-radius:6px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);transition:width .4s}
+.qtext{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.4;margin:0 0 6px}
+.qexpr{font-size:1.45rem;font-weight:800;margin:6px 0 14px;overflow-wrap:anywhere}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:1.4rem;font-weight:800}
+.inp{font:inherit;font-size:1.4rem;font-weight:800;width:100px;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center}
+.inp.exp{width:64px;font-size:1.05rem;padding:4px 6px;transform:translateY(-14px)}
+.inp.ok{border-color:var(--good);background:var(--good-bg)}.inp.no{border-color:var(--bad);background:var(--bad-bg)}
+.pm{width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--chip);font-size:1.2rem;font-weight:800}
+.pm.exp{width:36px;height:36px;font-size:1rem;transform:translateY(-14px)}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--chip);border:2px solid transparent;border-radius:14px;padding:12px 16px;min-height:54px;font-size:1.2rem;font-weight:700;width:100%}
+.opt.right{background:var(--good-bg);border-color:var(--good)}.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.steps{display:grid;gap:6px;margin-top:12px}
+.step{background:var(--hint-bg);border-left:6px solid var(--hint-line);border-radius:10px;padding:8px 12px;font-size:1.05rem}
+.msg{margin-top:10px;font-weight:700;color:var(--bad)}
+.fb{margin-top:16px;border-radius:14px;padding:14px 16px}
+.fb.ok{background:var(--good-bg);border-left:6px solid var(--good)}.fb.no{background:var(--bad-bg);border-left:6px solid var(--bad)}
+.actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.big{font-family:var(--display);font-size:3rem;font-weight:800;text-align:center;margin:6px 0}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:5}
+.foot{color:var(--muted);font-size:.85rem;text-align:center}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.9rem;padding:6px}
+@media (prefers-reduced-motion: reduce){.demo .ln,.progress span{transition:none}}
+</style>
+
+<div class="wrap" id="app"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<script>
+/* ================= pomoćne ================= */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnz=(a,b)=>{let x;do{x=ri(a,b)}while(x===0);return x};
+const pick=a=>a[Math.random()*a.length|0];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const m=n=>n<0?"−"+Math.abs(n):String(n);                 // broj s pravim minusom
+const par=n=>n<0?`(${m(n)})`:m(n);                          // negativan broj u zagradi
+const sg=n=>n<0?"−":"+";                                     // predznak između članova
+const big=n=>{const s=String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ");return (n<0?"−":"")+s};
+const P=(e,base="10")=>`${base}<sup>${m(e)}</sup>`;
+const coefTxt=(c,first)=>{const a=Math.abs(c);const core=a===1?"":String(a);return first?(c<0?"−":"")+core:` ${sg(c)} ${core}`};
+const chain=(ts)=>ts.map((t,i)=>i===0?m(t):` ${sg(t)} ${Math.abs(t)}`).join("");
+
+/* ================= GENERATORI ZADATAKA =================
+ svaki vraća {t:naslov, q:pitanje, x:izraz, inputs:[{pre,post,exp,ans}], steps:[...]} */
+const GEN={
+ A1(){ // vrijednost izraza s jednom varijablom
+  const L=pick(["a","x","b"]), a=rnz(-9,-1), p=ri(2,20), q=ri(1,9), f=ri(0,1);
+  if(f===0){const v=p+a-q;
+   return{t:"Vrijednost izraza",q:`Ako je ${L} = ${m(a)}, izračunaj:`,x:`${p} + ${L} − ${q}`,inputs:[{ans:v}],steps:[
+    `Umjesto slova ${L} upiši broj u zagradi: <b>${p} + ${par(a)} − ${q}</b>`,
+    `Plus i minus daju minus: + (−) = −. Dobiješ <b>${p} − ${Math.abs(a)} − ${q}</b>`,
+    `Računaj slijeva nadesno: ${p} − ${Math.abs(a)} = ${m(p+a)}, pa ${m(p+a)} − ${q} = <b>${m(v)}</b>`]};}
+  const v=-p-a+q;
+  return{t:"Vrijednost izraza",q:`Ako je ${L} = ${m(a)}, izračunaj:`,x:`−${p} − ${L} + ${q}`,inputs:[{ans:v}],steps:[
+   `Umjesto slova ${L} upiši broj u zagradi: <b>−${p} − ${par(a)} + ${q}</b>`,
+   `Minus i minus daju plus: − (−) = +. Dobiješ <b>−${p} + ${Math.abs(a)} + ${q}</b>`,
+   `Računaj slijeva nadesno: −${p} + ${Math.abs(a)} = ${m(-p-a)}, pa ${m(-p-a)} + ${q} = <b>${m(v)}</b>`]};
+ },
+ A2(){ // a − b + c
+  const a=rnz(-9,9),b=rnz(-9,9),c=rnz(-9,9),v=a-b+c;
+  return{t:"Vrijednost izraza",q:`Izračunaj a − b + c ako je a = ${m(a)}, b = ${m(b)}, c = ${m(c)}.`,x:`a − b + c`,inputs:[{ans:v}],steps:[
+   `Upiši brojeve u zagradama: <b>${par(a)} − ${par(b)} + ${par(c)}</b>`,
+   `Riješi predznake (− (−) = +, + (−) = −): <b>${chain([a,-b,c])}</b>`,
+   `${m(a)} ${sg(-b)} ${Math.abs(b)} = ${m(a-b)}, pa ${m(a-b)} ${sg(c)} ${Math.abs(c)} = <b>${m(v)}</b>`]};
+ },
+ A3(){ // apsolutna vrijednost
+  const a=rnz(-9,9),b=rnz(-9,9),c=rnz(-9,9),f=ri(0,2);
+  const pre=`Ako je a = ${m(a)}, b = ${m(b)}, c = ${m(c)}, izračunaj:`;
+  if(f===0){const v=Math.abs(a)+Math.abs(b)-Math.abs(c);
+   return{t:"Apsolutna vrijednost",q:pre,x:`|a| + |b| − |c|`,inputs:[{ans:v}],steps:[
+    `Upiši brojeve: <b>|${m(a)}| + |${m(b)}| − |${m(c)}|</b>`,
+    `Apsolutna vrijednost je udaljenost od nule, uvijek bez minusa: <b>${Math.abs(a)} + ${Math.abs(b)} − ${Math.abs(c)}</b>`,
+    `${Math.abs(a)} + ${Math.abs(b)} = ${Math.abs(a)+Math.abs(b)}, pa − ${Math.abs(c)} = <b>${m(v)}</b>`]};}
+  if(f===1){const v=-Math.abs(a)-b+c;
+   return{t:"Apsolutna vrijednost",q:pre,x:`−|a| − b + c`,inputs:[{ans:v}],steps:[
+    `Upiši brojeve: <b>−|${m(a)}| − ${par(b)} + ${par(c)}</b>`,
+    `|${m(a)}| = ${Math.abs(a)}, a minus ispred ostaje: <b>${chain([-Math.abs(a),-b,c])}</b>`,
+    `${m(-Math.abs(a))} ${sg(-b)} ${Math.abs(b)} = ${m(-Math.abs(a)-b)}, pa ${sg(c)} ${Math.abs(c)} = <b>${m(v)}</b>`]};}
+  const inner=a-b-c, v=Math.abs(inner);
+  return{t:"Apsolutna vrijednost",q:pre,x:`|a − b − c|`,inputs:[{ans:v}],steps:[
+   `Upiši brojeve: <b>|${m(a)} − ${par(b)} − ${par(c)}|</b>`,
+   `Prvo izračunaj ono unutar crta: <b>|${chain([a,-b,-c])}| = |${m(inner)}|</b>`,
+   `Udaljenost od nule je bez minusa: |${m(inner)}| = <b>${v}</b>`]};
+ },
+ A4(){ // pojednostavni, jedno slovo
+  const L=pick(["x","y","z","a","b"]); let cs,s;
+  do{cs=[ri(2,9),...Array.from({length:ri(2,4)},()=>rnz(-9,9))]; s=cs.reduce((x,y)=>x+y,0)}while(s===0);
+  const ex=cs.map((c,i)=>coefTxt(c,i===0)+L).join("");
+  return{t:"Pojednostavni izraz",q:`Pojednostavni izraz:`,x:ex,inputs:[{post:L,ans:s}],steps:[
+   `Slovo ${L} je kao jabuka 🍎: brojimo koliko jabuka imamo.`,
+   `Izluči ${L}: <b>(${cs.map((c,i)=>i===0?m(c):` ${sg(c)} ${Math.abs(c)}`).join("")}) · ${L}</b>`,
+   `Izračunaj zagradu: <b>${m(s)} · ${L} = ${s===1?"":s===-1?"−":m(s)}${L}</b>${Math.abs(s)===1?` (u polje upiši ${m(s)})`:""}`]};
+ },
+ A5(){ // pojednostavni, dva slova
+  const [L1,L2]=pick([["a","b"],["x","y"],["m","n"]]);
+  const a1=ri(2,9),b1=rnz(-9,9),a2=rnz(-9,9),b2=rnz(-9,9); const A=a1+a2,B=b1+b2;
+  if(A===0||B===0)return GEN.A5();
+  const ex=`${coefTxt(a1,true)}${L1}${coefTxt(b1)}${L2}${coefTxt(a2)}${L1}${coefTxt(b2)}${L2}`;
+  return{t:"Pojednostavni izraz",q:`Pojednostavni izraz (posebno ${L1}, posebno ${L2}):`,x:ex,inputs:[{post:`${L1} +`,ans:A},{post:L2,ans:B}],steps:[
+   `Skupi iste: sve uz ${L1} zajedno, sve uz ${L2} zajedno.`,
+   `${L1}: ${m(a1)} ${sg(a2)} ${Math.abs(a2)} = <b>${m(A)}</b>`,
+   `${L2}: ${m(b1)} ${sg(b2)} ${Math.abs(b2)} = <b>${m(B)}</b>`,
+   `Rezultat: <b>${m(A)}${L1} ${sg(B)} ${Math.abs(B)}${L2}</b>. U drugo polje upiši ${m(B)}.`]};
+ },
+ A6(){ // množenje
+  const c1=rnz(-6,6),c2=rnz(-6,6); const [L1,L2]=pick([["x","y"],["a","b"],["a","c"],["x","z"]]); const p=c1*c2;
+  const f1=`${c1===1?"":c1===-1?"−":m(c1)}${L1}`, f2=c2<0?`(${c2===-1?"−":m(c2)}${L2})`:`${c2===1?"":c2}${L2}`;
+  return{t:"Množenje",q:`Pojednostavni:`,x:`${f1} · ${f2}`,inputs:[{post:L1+L2,ans:p}],steps:[
+   `Pomnoži brojeve: ${par(c1)} · ${par(c2)} = <b>${m(p)}</b> (minus · minus = plus, minus · plus = minus)`,
+   `Slova samo prepiši jedno do drugog: ${L1} · ${L2} = <b>${L1}${L2}</b>`,
+   `Rezultat: <b>${p===1?"":p===-1?"−":m(p)}${L1}${L2}</b>${Math.abs(p)===1?` (upiši ${m(p)})`:""}`]};
+ },
+ P1(){ // vrijednost potencije
+  const n=ri(0,7), v=10**n;
+  return{t:"Potencija s bazom 10",q:`Koliko je:`,x:P(n),inputs:[{ans:v}],steps:n===0?[`Svaka potencija s eksponentom 0 jednaka je 1: <b>10<sup>0</sup> = 1</b>`]:[
+   `Eksponent ${n} kaže: napiši 1 i iza nje <b>${n} ${n===1?"nulu":n<5?"nule":"nula"}</b>.`,
+   `${P(n)} = ${Array(n).fill("10").join(" · ")} = <b>${big(v)}</b>`]};
+ },
+ P2(){ // zapiši kao potenciju
+  const W=[[2,"sto"],[3,"tisuću"],[4,"deset tisuća"],[5,"sto tisuća"],[6,"milijun"],[9,"milijardu"]];
+  const f=ri(0,2);
+  if(f===0){const n=ri(2,7);return{t:"Zapiši kao potenciju",q:`Zapiši kao potenciju s bazom 10:`,x:big(10**n),inputs:[{pre:"10",exp:1,ans:n}],steps:[
+   `Prebroji nule: ${big(10**n)} ima <b>${n}</b> nula.`,`Broj nula je eksponent: <b>${P(n)}</b>`]};}
+  if(f===1){const n=ri(2,6);return{t:"Zapiši kao potenciju",q:`Zapiši kao potenciju:`,x:Array(n).fill("10").join(" · "),inputs:[{pre:"10",exp:1,ans:n}],steps:[
+   `Prebroji koliko puta se množi 10: <b>${n} puta</b>.`,`To je eksponent: <b>${P(n)}</b>`]};}
+  const [n,w]=pick(W);return{t:"Zapiši kao potenciju",q:`Zapiši broj „${w}“ kao potenciju s bazom 10:`,x:w,inputs:[{pre:"10",exp:1,ans:n}],steps:[
+   `Napiši broj znamenkama: ${w} = <b>${big(10**n)}</b>`,`Prebroji nule: ${n}. Dakle <b>${P(n)}</b>`]};
+ },
+ P3(){ // negativna baza
+  const n=ri(2,5),f=ri(0,1);
+  if(f===0){const v=(-10)**n;return{t:"Potencija s negativnom bazom",q:`Izračunaj:`,x:`(−10)<sup>${n}</sup>`,inputs:[{ans:v}],steps:[
+   `Minus je <b>u zagradi</b>, pa se množi ${n} puta: ${Array(n).fill("(−10)").join(" · ")}`,
+   `Eksponent ${n} je <b>${n%2?"neparan → rezultat je negativan":"paran → rezultat je pozitivan"}</b>.`,
+   `1 i ${n} nula, ${n%2?"s minusom":"bez minusa"}: <b>${big(v)}</b>`]};}
+  const v=-(10**n);return{t:"Potencija s negativnom bazom",q:`Izračunaj:`,x:`−10<sup>${n}</sup>`,inputs:[{ans:v}],steps:[
+   `Ovdje <b>nema zagrade</b>: minus je ispred cijele potencije. −10<sup>${n}</sup> = −(10<sup>${n}</sup>)`,
+   `10<sup>${n}</sup> = ${big(10**n)}, pa je rezultat <b>${big(v)}</b> (uvijek negativan).`]};
+ },
+ P4(){ // zbrajanje potencija
+  const n=ri(2,9),a=ri(2,15),b=ri(1,12),c=ri(1,9),f=ri(0,1),R=f?a+b-c:a-b+c;
+  const ex=f?`${a} · ${P(n)} + ${b} · ${P(n)} − ${c} · ${P(n)}`:`${a} · ${P(n)} − ${b} · ${P(n)} + ${c} · ${P(n)}`;
+  return{t:"Zbrajanje potencija",q:`Pojednostavni:`,x:ex,inputs:[{post:`· ${P(n)}`,ans:R}],steps:[
+   `Sve potencije su iste (${P(n)}). Zato zbrajamo i oduzimamo samo <b>koeficijente</b> (brojeve ispred).`,
+   `${f?`${a} + ${b} − ${c}`:`${a} − ${b} + ${c}`} = <b>${m(R)}</b>`,
+   `Potenciju prepiši: <b>${m(R)} · ${P(n)}</b>`]};
+ },
+ P5(){ // množenje i dijeljenje potencija
+  const f=ri(0,2);
+  if(f===0){const a=ri(1,9),b=ri(1,9);return{t:"Množenje potencija",q:`Zapiši kao jednu potenciju:`,x:`${P(a)} · ${P(b)}`,inputs:[{pre:"10",exp:1,ans:a+b}],steps:[
+   `Kod <b>množenja</b> bazu prepišemo, a eksponente <b>zbrojimo</b>.`,`${a} + ${b} = ${a+b}, dakle <b>${P(a+b)}</b>`]};}
+  if(f===1){const a=ri(4,15),b=ri(1,a);return{t:"Dijeljenje potencija",q:`Zapiši kao jednu potenciju:`,x:`${P(a)} : ${P(b)}`,inputs:[{pre:"10",exp:1,ans:a-b}],steps:[
+   `Kod <b>dijeljenja</b> bazu prepišemo, a eksponente <b>oduzmemo</b>.`,`${a} − ${b} = ${a-b}, dakle <b>${P(a-b)}</b>${a===b?" = 1":""}`]};}
+  const a=ri(1,6),b=ri(1,6),c=ri(1,6);return{t:"Množenje potencija",q:`Zapiši kao jednu potenciju:`,x:`${P(a)} · ${P(b)} · ${P(c)}`,inputs:[{pre:"10",exp:1,ans:a+b+c}],steps:[
+   `Množenje: eksponente <b>zbrojimo</b>.`,`${a} + ${b} + ${c} = ${a+b+c}, dakle <b>${P(a+b+c)}</b>`]};
+ },
+ P6(){ // koeficijenti
+  const c1=ri(2,9),c2=ri(2,9),a=ri(1,8),b=ri(1,8);
+  return{t:"Množenje potencija",q:`Izračunaj:`,x:`${c1} · ${P(a)} · ${c2} · ${P(b)}`,inputs:[{post:"·",ans:c1*c2},{pre:"10",exp:1,ans:a+b}],steps:[
+   `Pomnoži <b>brojeve</b>: ${c1} · ${c2} = <b>${c1*c2}</b>`,
+   `Pomnoži <b>potencije</b> (eksponente zbroji): ${P(a)} · ${P(b)} = ${P(a+b)}`,
+   `Rezultat: <b>${c1*c2} · ${P(a+b)}</b>`]};
+ },
+ P7(){ // dekadski zapis
+  const d=[ri(1,9),ri(0,9),ri(1,9),ri(0,9)], v=d[0]*1000+d[1]*100+d[2]*10+d[3];
+  const parts=[`${d[0]} · ${P(3)}`,d[1]?`${d[1]} · ${P(2)}`:null,`${d[2]} · 10`,d[3]?`${d[3]}`:null].filter(Boolean);
+  return{t:"Dekadski zapis",q:`Izračunaj:`,x:parts.join(" + "),inputs:[{ans:v}],steps:[
+   `${d[0]} · ${P(3)} = ${d[0]} · 1000 = ${big(d[0]*1000)}`+(d[1]?`, ${d[1]} · ${P(2)} = ${d[1]*100}`:"")+`, ${d[2]} · 10 = ${d[2]*10}`,
+   `Zbroji: <b>${big(v)}</b>. Znamenke ${d.join(", ")} redom idu na mjesta tisućica, stotica, desetica i jedinica.`]};
+ },
+ P8(){ // jedinice
+  const U=pick([["1 km","m",3,"1 km = 1000 m"],["1 m","cm",2,"1 m = 100 cm"],["1 m","mm",3,"1 m = 1000 mm"],["1 km","cm",5,"1 km = 100 000 cm"],["1 kg","g",3,"1 kg = 1000 g"],["1 kg","dag",2,"1 kg = 100 dag"],["1 dm","mm",2,"1 dm = 100 mm"]]);
+  return{t:"Mjerne jedinice",q:`Dopuni potencijom s bazom 10:`,x:`${U[0]} = 10<sup>?</sup> ${U[1]}`,inputs:[{pre:`${U[0]} = 10`,exp:1,post:U[1],ans:U[2]}],steps:[
+   `Napiši koliko je to: <b>${U[3]}</b>`,`Prebroji nule: ${U[2]}. Dakle ${U[0]} = <b>${P(U[2])} ${U[1]}</b>`]};
+ }
+};
+
+/* ================= LEKCIJE ================= */
+function nlSVG(from,to,lo,hi){ // brojevni pravac sa skokom
+ const W=360,X=v=>20+(v-lo)*(W-40)/(hi-lo);
+ let s=`<svg viewBox="0 0 ${W} 90" width="${W}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brojevni pravac"><line x1="10" y1="60" x2="${W-10}" y2="60" style="stroke:var(--ink)" stroke-width="2"/>`;
+ for(let v=lo;v<=hi;v++){const big=v%5===0;s+=`<line x1="${X(v)}" y1="${big?52:56}" x2="${X(v)}" y2="${big?68:64}" style="stroke:var(--ink)" stroke-width="${big?2:1}"/>`;
+  if(big||v===from||v===to)s+=`<text x="${X(v)}" y="84" text-anchor="middle" font-size="12" font-weight="${v===from||v===to?800:400}" style="fill:${v===to?"var(--accent)":"var(--ink)"}">${m(v)}</text>`;}
+ const x1=X(from),x2=X(to),mid=(x1+x2)/2;
+ s+=`<path d="M${x1} 56 Q${mid} 6 ${x2} 56" fill="none" style="stroke:var(--v1)" stroke-width="3"/><polygon points="${x2},58 ${x2+(x2>x1?-9:9)},48 ${x2+(x2>x1?-2:2)},46" style="fill:var(--v1)"/>`;
+ s+=`<circle cx="${x1}" cy="60" r="5" style="fill:var(--v2)"/><circle cx="${x2}" cy="60" r="6" style="fill:var(--accent)"/>`;
+ s+=`<text x="${mid}" y="22" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--v1)">${to>from?"+":"−"}${Math.abs(to-from)}</text>`;
+ return s+`</svg>`;
+}
+function absSVG(){
+ const W=360,X=v=>20+(v+6)*(W-40)/12;
+ let s=`<svg viewBox="0 0 ${W} 100" width="${W}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Apsolutna vrijednost"><line x1="10" y1="64" x2="${W-10}" y2="64" style="stroke:var(--ink)" stroke-width="2"/>`;
+ for(let v=-6;v<=6;v++)s+=`<line x1="${X(v)}" y1="58" x2="${X(v)}" y2="70" style="stroke:var(--ink)" stroke-width="${v===0?3:1.2}"/><text x="${X(v)}" y="88" text-anchor="middle" font-size="12" style="fill:var(--ink)">${m(v)}</text>`;
+ s+=`<path d="M${X(-4)} 46 L${X(0)} 46" style="stroke:var(--v1)" stroke-width="4"/><text x="${(X(-4)+X(0))/2}" y="38" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--v1)">|−4| = 4</text>`;
+ s+=`<path d="M${X(0)} 46 L${X(4)} 46" style="stroke:var(--v2)" stroke-width="4"/><text x="${(X(0)+X(4))/2}" y="38" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--v2)">|4| = 4</text>`;
+ return s+`</svg>`;
+}
+function gridSVG(){ // 10² kvadrat i 10³ kocka
+ let s=`<svg viewBox="0 0 360 170" width="360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="10 na drugu i 10 na treću">`;
+ for(let i=0;i<10;i++)for(let j=0;j<10;j++)s+=`<rect x="${20+i*12}" y="${20+j*12}" width="11" height="11" style="fill:var(--v2)" opacity=".75"/>`;
+ s+=`<text x="80" y="162" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--ink)">10² = 10 · 10 = 100</text>`;
+ const ox=220,oy=40,a=80,d=34;
+ s+=`<polygon points="${ox},${oy} ${ox+a},${oy} ${ox+a+d},${oy-d*0.6} ${ox+d},${oy-d*0.6}" style="fill:var(--v1)" opacity=".55"/><polygon points="${ox+a},${oy} ${ox+a+d},${oy-d*0.6} ${ox+a+d},${oy+a-d*0.6} ${ox+a},${oy+a}" style="fill:var(--v1)" opacity=".8"/><rect x="${ox}" y="${oy}" width="${a}" height="${a}" style="fill:var(--v1)" opacity=".7"/>`;
+ for(let i=1;i<10;i++)s+=`<line x1="${ox+i*8}" y1="${oy}" x2="${ox+i*8}" y2="${oy+a}" stroke="#fff" stroke-width=".6"/><line x1="${ox}" y1="${oy+i*8}" x2="${ox+a}" y2="${oy+i*8}" stroke="#fff" stroke-width=".6"/>`;
+ s+=`<text x="${ox+55}" y="162" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--ink)">10³ = 10 · 10 · 10 = 1000</text>`;
+ return s+`</svg>`;
+}
+function powSVG(){
+ return `<svg viewBox="0 0 360 130" width="360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Baza i eksponent">
+ <text x="150" y="92" font-size="64" font-weight="800" style="fill:var(--v2)" text-anchor="middle">10</text><text x="196" y="52" font-size="36" font-weight="800" style="fill:var(--v1)" text-anchor="middle">4</text>
+ <text x="248" y="90" font-size="30" font-weight="800" style="fill:var(--ink)">= 10 000</text>
+ <path d="M120 100 Q100 118 70 118" fill="none" style="stroke:var(--v2)" stroke-width="2"/><text x="10" y="124" font-size="14" font-weight="700" style="fill:var(--v2)">baza (10)</text>
+ <path d="M205 34 Q230 14 262 16" fill="none" style="stroke:var(--v1)" stroke-width="2"/><text x="266" y="20" font-size="14" font-weight="700" style="fill:var(--v1)">eksponent = broj nula</text></svg>`;
+}
+const demo=(lines)=>`<div class="demo" data-demo>${lines.map(([l,w])=>`<div class="ln">${l}${w?` <span class="why">← ${w}</span>`:""}</div>`).join("")}<div class="row"><button class="btn small" data-next>Sljedeći korak ▶</button><button class="btn small ghost" data-reset>Ispočetka</button></div></div>`;
+const LESSONS=[
+{t:"Vrijednost izraza",d:"slovo zamijeni brojem",gens:["A1","A2"],html:()=>`
+ <div class="block"><p>Slovo u izrazu je <b>kutija</b> u koju stavljamo broj. Ako je <span class="var">a</span> = <span class="val">−2</span>, svako slovo a zamijenimo s <b>(−2)</b>.</p>
+ <p class="ex">7 + <span class="var">a</span> − 3 &nbsp;→&nbsp; 7 + <span class="val">(−2)</span> − 3</p>
+ <div class="rule">Negativan broj uvijek stavi u <b>zagradu</b> kad ga upisuješ umjesto slova.</div></div>
+ <div class="block"><h3>Pravila predznaka</h3><div class="signs">
+  <div class="sg"><span class="plus">+ (+)</span> → <span class="plus">+</span><span class="r">plus i plus = plus</span></div>
+  <div class="sg"><span class="minus">− (−)</span> → <span class="plus">+</span><span class="r">minus i minus = plus</span></div>
+  <div class="sg"><span class="plus">+</span> <span class="minus">(−)</span> → <span class="minus">−</span><span class="r">plus i minus = minus</span></div>
+  <div class="sg"><span class="minus">−</span> <span class="plus">(+)</span> → <span class="minus">−</span><span class="r">minus i plus = minus</span></div></div></div>
+ <div class="block"><h3>Primjer korak po korak: a = −2</h3>${demo([["7 + a − 3",""],["= 7 + (−2) − 3","upiši broj u zagradu"],["= 7 − 2 − 3","+ (−) = −"],["= 5 − 3","7 − 2 = 5"],["= 2",""]])}</div>
+ <div class="block"><h3>Primjer: −17 − a + 4, a = −2</h3>${demo([["−17 − a + 4",""],["= −17 − (−2) + 4","upiši broj"],["= −17 + 2 + 4","− (−) = +"],["= −15 + 4","−17 + 2 = −15"],["= −11",""]])}
+ <p class="sub">Na brojevnom pravcu: od −15 skoči 4 udesno.</p><div class="fig">${nlSVG(-15,-11,-17,-9)}</div></div>`},
+{t:"Apsolutna vrijednost",d:"|−4| = 4",gens:["A3"],html:()=>`
+ <div class="block"><p><b>Apsolutna vrijednost</b> broja je njegova <b>udaljenost od nule</b>. Udaljenost nikad nije negativna, pa je rezultat uvijek bez minusa.</p>
+ <div class="fig">${absSVG()}</div>
+ <div class="rule">|−4| = 4 · |3| = 3 · |0| = 0. Okomite crte „brišu“ minus.</div></div>
+ <div class="block"><h3>Primjer: a = −4, b = −3, c = 1</h3><p class="ex">|a| + |b| − |c|</p>${demo([["= |−4| + |−3| − |1|","upiši brojeve"],["= 4 + 3 − 1","crte brišu minus"],["= 7 − 1",""],["= 6",""]])}</div>
+ <div class="block"><h3>Pazi: minus izvan crta ostaje!</h3><p class="ex">−|a| − b + c</p>${demo([["= −|−4| − (−3) + 1","upiši brojeve"],["= −4 + 3 + 1","|−4| = 4, a minus ispred ostaje"],["= −1 + 1",""],["= 0",""]])}</div>
+ <div class="block"><h3>Ako je sve unutar crta</h3><p class="ex">|a − b − c|</p>${demo([["= |−4 − (−3) − 1|","upiši brojeve"],["= |−4 + 3 − 1|","− (−) = +"],["= |−2|","prvo izračunaj unutra"],["= 2","pa makni minus"]])}</div>`},
+{t:"Pojednostavnjivanje",d:"5z − 3z + 8z = 10z",gens:["A4","A5","A6"],html:()=>`
+ <div class="block"><p>Zamisli da je <b>z jedna jabuka 🍎</b>. Onda je 5z pet jabuka, a −3z znači da 3 jabuke maknemo.</p>
+ <p class="apples">5z: 🍎🍎🍎🍎🍎<br>− 3z: <span class="x">🍎🍎🍎</span><br>= 2z: 🍎🍎</p>
+ <div class="rule">Zbrajamo samo <b>iste</b> članove (iste jabuke). Brojeve ispred slova zbrojimo, a slovo prepišemo.</div></div>
+ <div class="block"><h3>Primjer iz udžbenika</h3><p class="ex">5z − 3z + 8z − 4z − 5z</p>${demo([["= (5 − 3 + 8 − 4 − 5) · z","izluči z"],["= 1 · z","5 − 3 = 2, + 8 = 10, − 4 = 6, − 5 = 1"],["= z","1 · z pišemo samo z"]])}</div>
+ <div class="block"><h3>Dva različita slova</h3><p>Jabuke 🍎 (a) i kruške 🍐 (b) ne zbrajamo zajedno!</p><p class="ex">3a + 5b − a − 2b</p>${demo([["= (3 − 1)a + (5 − 2)b","skupi a-ove i b-ove"],["= 2a + 3b",""]])}</div>
+ <div class="block"><h3>Množenje</h3><div class="rule">Brojeve pomnožimo, a slova prepišemo jedno do drugog. Pazi na predznak: minus · minus = plus.</div><p class="ex">−2x · 3y</p>${demo([["= (−2 · 3) · x · y","brojevi zajedno, slova zajedno"],["= −6xy","minus · plus = minus"]])}</div>`},
+{t:"Potencije s bazom 10",d:"10⁴ = 10 000",gens:["P1","P2","P8","P7"],html:()=>`
+ <div class="block"><p><b>Potencija</b> je kraći zapis množenja jednakih brojeva: 10 · 10 · 10 · 10 = 10<sup>4</sup> (čitaj: deset na četvrtu).</p><div class="fig">${powSVG()}</div>
+ <div class="rule">Eksponent kaže koliko <b>nula</b> ima broj. <b>10<sup>0</sup> = 1</b> (nula nula).</div></div>
+ <div class="block"><div class="fig">${gridSVG()}</div></div>
+ <div class="block"><h3>Tablica za pamćenje</h3><div class="tblwrap"><table class="tbl"><tr><th>potencija</th><th>broj</th><th>riječima</th></tr>
+ ${[[0,"jedan"],[1,"deset"],[2,"sto"],[3,"tisuću"],[4,"deset tisuća"],[5,"sto tisuća"],[6,"milijun"],[9,"milijarda"]].map(([n,w])=>`<tr><td>${P(n)}</td><td><b>${big(10**n)}</b></td><td>${w}</td></tr>`).join("")}</table></div></div>
+ <div class="block"><h3>Mjerne jedinice</h3><div class="rule">1 km = 1000 m = <b>10<sup>3</sup> m</b> · 1 m = 100 cm = <b>10<sup>2</sup> cm</b> · 1 kg = 1000 g = <b>10<sup>3</sup> g</b></div></div>
+ <div class="block"><h3>Dekadski zapis</h3><p class="ex">5 · 10<sup>3</sup> + 9 · 10<sup>2</sup> + 3 · 10</p>${demo([["= 5 · 1000 + 9 · 100 + 3 · 10","potencije u brojeve"],["= 5000 + 900 + 30",""],["= 5930","znamenke 5, 9, 3, 0"]])}</div>`},
+{t:"Negativna baza",d:"(−10)³ i −10³",gens:["P3"],html:()=>`
+ <div class="block"><p>Pazi gdje je minus!</p>
+ <div class="rule"><b>(−10)<sup>n</sup></b>: minus je <b>u zagradi</b> i množi se n puta.<br>Paran eksponent (2, 4, 6) → <span class="plus">pozitivan</span> rezultat. Neparan (1, 3, 5) → <span class="minus">negativan</span>.</div>
+ <div class="signs"><div class="sg">(−10)<sup>2</sup> = <span class="plus">100</span><span class="r">(−)(−) = +</span></div><div class="sg">(−10)<sup>3</sup> = <span class="minus">−1000</span><span class="r">(−)(−)(−) = −</span></div>
+ <div class="sg">(−10)<sup>4</sup> = <span class="plus">10 000</span><span class="r">paran → +</span></div><div class="sg">(−10)<sup>5</sup> = <span class="minus">−100 000</span><span class="r">neparan → −</span></div></div>
+ <div class="rule"><b>−10<sup>n</sup></b> (bez zagrade): minus je ispred cijele potencije, rezultat je <span class="minus">uvijek negativan</span>.<br>−10<sup>2</sup> = −(10 · 10) = −100</div></div>
+ <div class="block"><h3>Primjer</h3><p class="ex">(−10)<sup>3</sup></p>${demo([["= (−10) · (−10) · (−10)","tri puta"],["= 100 · (−10)","(−) · (−) = +"],["= −1000","+ · (−) = −"]])}</div>`},
+{t:"Zbrajanje potencija",d:"3 · 10⁶ + 2 · 10⁶",gens:["P4"],html:()=>`
+ <div class="block"><p>Zamisli da je <b>10<sup>6</sup> jedna vreća 🎒</b> s milijun bombona. 3 · 10<sup>6</sup> su 3 vreće.</p>
+ <p class="apples">3 · 10<sup>6</sup>: 🎒🎒🎒<br>+ 2 · 10<sup>6</sup>: 🎒🎒<br>= 5 · 10<sup>6</sup>: 🎒🎒🎒🎒🎒</p>
+ <div class="rule">Zbrajamo i oduzimamo samo potencije s <b>istim eksponentom</b>. Zbrojimo <b>koeficijente</b> (brojeve ispred), a potenciju prepišemo.</div></div>
+ <div class="block"><h3>Primjer iz udžbenika</h3><p class="ex">9 · 10<sup>3</sup> + 2 · 10<sup>3</sup> + 5 · 10<sup>3</sup> − 3 · 10<sup>3</sup></p>${demo([["= (9 + 2 + 5 − 3) · 10<sup>3</sup>","izluči 10³"],["= 13 · 10<sup>3</sup>","9 + 2 = 11, + 5 = 16, − 3 = 13"]])}</div>
+ <div class="block"><h3>Koeficijent 1</h3><p class="ex">10<sup>9</sup> + 10<sup>9</sup> − 10<sup>9</sup></p>${demo([["= 1 · 10<sup>9</sup> + 1 · 10<sup>9</sup> − 1 · 10<sup>9</sup>","ispred piše nevidljiva 1"],["= (1 + 1 − 1) · 10<sup>9</sup>",""],["= 1 · 10<sup>9</sup> = 10<sup>9</sup>",""]])}</div>`},
+{t:"Množenje i dijeljenje",d:"10² · 10³ = 10⁵",gens:["P5","P6"],html:()=>`
+ <div class="block"><p>Prebroji nule! 100 ima 2 nule, 1000 ima 3 nule.</p>
+ <p class="ex">1<span class="z1">00</span> · 1<span class="z2">000</span> = 1<span class="z1">00</span><span class="z2">000</span></p>
+ <div class="rule">Kod <b>množenja</b> bazu prepišemo, a eksponente <b>zbrojimo</b>: 10<sup><span class="z1">2</span></sup> · 10<sup><span class="z2">3</span></sup> = 10<sup>2 + 3</sup> = 10<sup>5</sup></div>
+ <div class="rule">Kod <b>dijeljenja</b> bazu prepišemo, a eksponente <b>oduzmemo</b>: 10<sup>5</sup> : 10<sup>2</sup> = 10<sup>5 − 2</sup> = 10<sup>3</sup></div>
+ <div class="rule">Isti broj podijeljen sam sa sobom: 10<sup>2</sup> : 10<sup>2</sup> = 10<sup>0</sup> = <b>1</b></div></div>
+ <div class="block"><h3>S koeficijentima</h3><p class="ex">3 · 10<sup>5</sup> · 4 · 10<sup>7</sup></p>${demo([["= (3 · 4) · (10<sup>5</sup> · 10<sup>7</sup>)","brojeve zajedno, potencije zajedno"],["= 12 · 10<sup>5 + 7</sup>","3 · 4 = 12"],["= 12 · 10<sup>12</sup>","5 + 7 = 12"]])}</div>`}
+];
+
+/* ================= PUTOVANJE ================= */
+const STOPS=[
+ {n:"Sesvete",lon:16.11,lat:45.83,dx:-22,dy:-10,f:"Kreće se od kuće!"},
+ {n:"Zagreb",lon:15.98,lat:45.81,dx:-30,dy:24,how:"🚆 vlak",km:12,f:"Glavni grad Hrvatske. Kupi kartu za Ljubljanu!"},
+ {n:"Ljubljana",lon:14.51,lat:46.06,dx:-74,dy:4,how:"🚆 vlak",km:140,f:"Glavni grad Slovenije. Na Zmajskom mostu čuvaju ga četiri zmaja."},
+ {n:"Salzburg",lon:13.04,lat:47.81,dx:8,dy:-6,how:"🚌 autobus kroz Alpe",km:280,f:"Ovdje je rođen skladatelj Mozart."},
+ {n:"München",lon:11.58,lat:48.14,dx:-30,dy:22,how:"🚆 vlak",km:145,f:"Najveći grad njemačke pokrajine Bavarske."},
+ {n:"Strasbourg",lon:7.75,lat:48.58,dx:-30,dy:22,how:"🚗 auto",km:360,f:"Ovdje zasjeda Europski parlament."},
+ {n:"Pariz",lon:2.35,lat:48.86,dx:-20,dy:22,how:"🚄 brzi vlak TGV",km:490,f:"Grad Eiffelova tornja."},
+ {n:"London",lon:-0.13,lat:51.51,dx:8,dy:16,how:"🚄 Eurostar kroz tunel ispod mora",km:460,f:"Prošao si tunelom ispod La Manchea! Pozdravi Big Ben."},
+ {n:"York",lon:-1.08,lat:53.96,dx:8,dy:6,how:"🚆 vlak",km:330,f:"Grad sa starim zidinama oko središta."},
+ {n:"Newcastle",lon:-1.61,lat:54.97,dx:8,dy:6,how:"🚆 vlak",km:130,f:"Grad mnogih mostova na rijeci Tyne."},
+ {n:"Edinburgh",lon:-3.19,lat:55.95,dx:-40,dy:-12,how:"🚆 vlak uz more",km:170,f:"CILJ! Glavni grad Škotske s dvorcem na stijeni. Bravo!"}
+];
+const MX=lon=>(lon+7)*19, MY=lat=>(57.8-lat)*29.5;
+const poly=pts=>pts.map(([a,b])=>`${MX(a).toFixed(1)},${MY(b).toFixed(1)}`).join(" ");
+const GB=[[-5.7,50.05],[-4.2,50.4],[-3.4,50.6],[-2.0,50.6],[-0.8,50.75],[0.3,50.8],[1.4,51.15],[1.0,51.8],[1.75,52.5],[1.7,52.9],[0.3,53.1],[0.1,53.6],[-0.4,54.1],[-1.2,54.6],[-1.6,55.3],[-2.0,55.8],[-2.6,56.0],[-3.0,56.25],[-2.6,56.55],[-2.0,57.1],[-1.8,57.6],[-2.2,57.8],[-5.0,57.8],[-5.7,57.3],[-5.8,56.5],[-5.5,56.0],[-5.0,55.7],[-5.1,55.0],[-4.4,54.7],[-3.4,54.9],[-3.0,54.2],[-3.0,53.4],[-4.5,53.3],[-4.2,52.8],[-4.1,52.3],[-5.1,51.85],[-4.2,51.6],[-3.2,51.45],[-4.0,51.2],[-4.6,51.0]];
+const IE=[[-7,52.0],[-6.3,52.2],[-6.0,53.0],[-6.2,53.9],[-5.6,54.6],[-6.0,55.2],[-7,55.3]];
+const EU=[[18.5,57.8],[18.5,43.8],[-1.4,43.8],[-1.2,44.6],[-1.2,45.8],[-2.2,47.1],[-2.8,47.5],[-4.4,47.8],[-4.8,48.4],[-3.5,48.8],[-2.0,48.6],[-1.5,48.7],[-1.9,49.7],[-1.2,49.4],[0.2,49.5],[1.0,49.9],[1.6,50.2],[1.6,50.9],[2.5,51.1],[3.6,51.4],[4.2,51.9],[4.6,52.5],[4.8,53.0],[5.5,53.4],[7.0,53.6],[8.3,53.6],[8.6,54.0],[8.6,54.9],[8.2,55.5],[8.1,56.5],[8.6,57.1],[9.6,57.5],[10.4,57.8]];
+const BALT=[[10.6,57.8],[10.5,57.2],[10.3,56.6],[10.9,56.3],[10.0,55.6],[9.9,55.0],[10.0,54.5],[10.9,54.1],[11.7,54.15],[12.5,54.4],[13.5,54.2],[14.3,53.9],[16.0,54.3],[18.0,54.8],[18.5,54.9],[18.5,57.8]];
+const SWE=[[12.5,57.8],[12.0,57.5],[12.9,56.5],[12.6,56.2],[13.0,55.4],[14.3,55.55],[14.4,56.0],[15.9,56.1],[16.5,56.7],[16.9,57.8]];
+const ADR=[[12.2,43.8],[12.3,45.3],[13.0,45.75],[13.7,45.75],[13.6,45.1],[14.3,45.3],[14.9,44.9],[15.5,43.8]];
+const LIG=[[7.5,43.8],[8.2,44.0],[8.9,44.4],[9.8,44.1],[10.3,43.8]];
+function mapSVG(done,mark){ // done = broj prijeđenih dionica; mark = [x,y] položaj putnika
+ const pts=STOPS.map(s=>[MX(s.lon),MY(s.lat)]);
+ let s=`<svg viewBox="0 0 488 414" width="488" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karta puta od Sesveta do Edinburgha">`;
+ s+=`<rect width="488" height="414" rx="14" style="fill:var(--sea)"/>`;
+ [EU,GB,IE].forEach(p=>s+=`<polygon points="${poly(p)}" style="fill:var(--land);stroke:var(--landline)" stroke-width="1.5" stroke-linejoin="round"/>`);
+ [BALT,ADR,LIG].forEach(p=>s+=`<polygon points="${poly(p)}" style="fill:var(--sea);stroke:var(--landline)" stroke-width="1.5" stroke-linejoin="round"/>`);
+ s+=`<polygon points="${poly(SWE)}" style="fill:var(--land);stroke:var(--landline)" stroke-width="1.5"/>`;
+ s+=`<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" style="stroke:var(--muted)" stroke-width="3" stroke-dasharray="6 6"/>`;
+ if(done>0)s+=`<polyline points="${pts.slice(0,done+1).map(p=>p.join(",")).join(" ")}" fill="none" style="stroke:var(--route)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+ STOPS.forEach((st,i)=>{const [x,y]=pts[i],vis=i<=done;
+  s+=`<circle cx="${x}" cy="${y}" r="${i===STOPS.length-1?8:5.5}" style="fill:${vis?"var(--route)":"var(--card)"};stroke:var(--route)" stroke-width="2.5"/>`;
+  if(i!==1||done>=1)s+=`<text x="${x+st.dx}" y="${y+st.dy}" font-size="13" font-weight="${vis?800:500}" style="fill:var(--ink);paint-order:stroke;stroke:var(--land);stroke-width:3px">${st.n}</text>`;});
+ const [mx,my]=mark||pts[done];
+ s+=`<g id="traveller" transform="translate(${mx},${my})"><circle r="15" style="fill:var(--accent)" opacity=".2"/><text y="-12" text-anchor="middle" font-size="22">🧳</text></g>`;
+ s+=`<text x="${MX(-6.3)}" y="${MY(55.9)}" font-size="20">🏰</text>`;
+ return s+`</svg>`;
+}
+let trip=0; try{trip=Math.min(10,parseInt(localStorage.getItem("put-edi")||"0",10)||0)}catch(e){}
+const saveTrip=()=>{try{localStorage.setItem("put-edi",String(trip))}catch(e){}};
+let tests=0; try{tests=parseInt(localStorage.getItem("put-edi-t")||"0",10)||0}catch(e){}
+
+/* ================= ZVUK ================= */
+let actx=null;
+function tone(fs,step=.09,len=.3,vol=.15){try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state==="suspended")actx.resume();const t=actx.currentTime;
+ fs.forEach((f,k)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="sine";o.frequency.value=f;const s=t+k*step;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(vol,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+len);o.connect(g).connect(actx.destination);o.start(s);o.stop(s+len+.02)})}catch(e){}}
+const ding=()=>tone([660,880]), bonk=()=>tone([220,165],.12,.25,.12), fanfare=()=>tone([523,659,784,1047,1319],.14,.5,.15);
+
+/* ================= EKRANI ================= */
+const app=document.getElementById("app");
+function home(){
+ const nx=STOPS[trip+1];
+ app.innerHTML=`<header><h1>Put do Edinburgha</h1><p class="sub">Matematika, 6. razred · Algebarski izrazi i potencije s bazom 10.</p></header>
+ <section class="card mapcard"><div class="head"><h2>${trip>=10?"Stigao si u Edinburgh! 🏰":`Sada si u: ${STOPS[trip].n}`}</h2>${nx?`<span class="next">Sljedeće: ${nx.n} · ${nx.how}</span>`:""}</div>
+  <div class="fig" id="map">${mapSVG(trip)}</div>
+  <p class="sub">${trip>=10?"Cijeli put je prijeđen. Možeš i dalje rješavati testove za vježbu.":"Svaki test riješen <b>10/10</b> vodi te do sljedećeg grada."}</p>
+  <div class="legs">${STOPS.slice(1).map((s,i)=>`<span class="leg ${i<trip?"done":i===trip?"cur":""}">${i<trip?"✓ ":""}${s.n}</span>`).join("")}</div>
+  <div class="actions"><button class="btn" id="test">Novi test (10 zadataka) ▶</button></div></section>
+ <h2>Lekcije</h2>
+ <div class="lessons">${LESSONS.map((L,i)=>`<div class="les"><span class="num">${i+1}</span><span class="txt"><span class="t">${L.t}</span><span class="d">${L.d}</span></span><span class="row"><button class="btn small ghost" data-l="${i}">Lekcija</button><button class="btn small" data-p="${i}">Vježbaj</button></span></div>`).join("")}</div>
+ <p class="foot">Riješenih testova: ${tests}. ${trip?`<button class="linkbtn" id="reset">Kreni ispočetka iz Sesveta</button>`:""}</p>`;
+ document.getElementById("test").onclick=startTest;
+ app.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>lesson(+b.dataset.l));
+ app.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>practice(+b.dataset.p));
+ const r=document.getElementById("reset"); if(r)r.onclick=()=>{if(r.dataset.sure){trip=0;saveTrip();home()}else{r.dataset.sure=1;r.textContent="Sigurno? Dodirni opet"}};
+ scrollTo(0,0);
+}
+function lesson(i){
+ const L=LESSONS[i];
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag">✕</button><span class="counter">Lekcija ${i+1} od ${LESSONS.length}</span></div>
+ <div class="card"><h2>${L.t}</h2><div style="display:grid;gap:18px;margin-top:12px">${L.html()}</div>
+ <div class="actions"><button class="btn" id="prac">Vježbaj ovu lekciju (5 zadataka)</button>${i<LESSONS.length-1?`<button class="btn ghost" id="nxt">Sljedeća lekcija</button>`:""}</div></div>`;
+ document.getElementById("back").onclick=home;
+ document.getElementById("prac").onclick=()=>practice(i);
+ const n=document.getElementById("nxt"); if(n)n.onclick=()=>lesson(i+1);
+ app.querySelectorAll("[data-demo]").forEach(d=>{const lines=[...d.querySelectorAll(".ln")]; let k=0; const nb=d.querySelector("[data-next]");
+  const show=()=>{lines.forEach((l,j)=>l.classList.toggle("on",j<=k)); nb.disabled=k>=lines.length-1};
+  nb.onclick=()=>{k++;show();if(k===lines.length-1)ding()}; d.querySelector("[data-reset]").onclick=()=>{k=0;show()}; show()});
+ scrollTo(0,0);
+}
+
+/* ---------- test i vježba ---------- */
+let T=null;
+const TEST_SLOTS=[["A1"],["A2"],["A3"],["A4","A5"],["A6"],["P1","P2"],["P3"],["P4"],["P5"],["P6","P7","P8"]];
+function startTest(){ T={mode:"test",queue:TEST_SLOTS.map(s=>({gen:pick(s),first:true})),total:10,done:0,firstRight:0}; T.queue.forEach(it=>it.q=GEN[it.gen]()); ask(); }
+function practice(i){ const g=LESSONS[i].gens; T={mode:"prac",les:i,queue:Array.from({length:5},(_,k)=>({gen:g[k%g.length],first:true})),total:5,done:0,firstRight:0}; T.queue=shuffle(T.queue); T.queue.forEach(it=>it.q=GEN[it.gen]()); ask(); }
+function parseInt2(s){s=String(s).replace(/[\s. ]/g,"").replace(/−/g,"-"); if(!/^-?\d+$/.test(s))return null; return parseInt(s,10)}
+function inputHTML(inp,k){
+ const pm=`<button class="pm${inp.exp?" exp":""}" data-pm="${k}" aria-label="Promijeni predznak">±</button>`;
+ if(inp.exp)return `${inp.pre?`<span>${inp.pre}</span>`:""}${pm}<input class="inp exp" id="in${k}" inputmode="numeric" autocomplete="off" aria-label="Eksponent">${inp.post?`<span>${inp.post}</span>`:""}`;
+ return `${inp.pre?`<span>${inp.pre}</span>`:""}${pm}<input class="inp" id="in${k}" inputmode="numeric" autocomplete="off" aria-label="Odgovor">${inp.post?`<span>${inp.post}</span>`:""}`;
+}
+function ask(){
+ if(!T.queue.length)return finish();
+ const it=T.queue[0], q=it.q; it.tries=0; let shown=0;
+ app.innerHTML=`<div class="top"><button class="btn ghost" id="back" aria-label="Natrag">✕</button><span class="counter">${T.mode==="test"?"Test":"Vježba"} · ${Math.min(T.done+1,T.total)} / ${T.total}</span></div>
+ <div class="progress" aria-hidden="true"><span style="width:${T.done/T.total*100}%"></span></div>
+ <div class="card"><p class="counter">${q.t}</p><p class="qtext">${q.q}</p><div class="qexpr">${q.x}</div>
+  <div class="ans">${q.inputs.map(inputHTML).join("")}</div>
+  <div class="actions"><button class="btn" id="chk">Provjeri</button><button class="btn ghost" id="how">💡 Kako se rješava?</button></div>
+  <div class="msg" id="msg"></div><div class="steps" id="steps"></div><div id="fb"></div></div>`;
+ document.getElementById("back").onclick=home;
+ const ins=q.inputs.map((_,k)=>document.getElementById("in"+k));
+ ins[0].focus({preventScroll:true});
+ app.querySelectorAll("[data-pm]").forEach(b=>b.onclick=()=>{const el=document.getElementById("in"+b.dataset.pm);const v=el.value.trim();el.value=v.startsWith("−")||v.startsWith("-")?v.slice(1):"−"+v;el.focus()});
+ const howB=document.getElementById("how"), stepsEl=document.getElementById("steps");
+ const showStep=()=>{if(shown<q.steps.length){stepsEl.insertAdjacentHTML("beforeend",`<div class="step">${shown+1}. ${q.steps[shown]}</div>`);shown++;it.helped=true}
+  howB.textContent=shown<q.steps.length?`💡 Sljedeći korak (${shown}/${q.steps.length})`:"💡 Svi koraci su prikazani"; howB.disabled=shown>=q.steps.length};
+ howB.onclick=showStep;
+ const chk=document.getElementById("chk"), msg=document.getElementById("msg");
+ const go=()=>{const vals=ins.map(e=>parseInt2(e.value)); if(vals.some(v=>v===null)){msg.textContent="Upiši cijeli broj u svako polje.";return}
+  const oks=vals.map((v,k)=>v===q.inputs[k].ans); ins.forEach((e,k)=>{e.classList.toggle("ok",oks[k]);e.classList.toggle("no",!oks[k])});
+  if(oks.every(Boolean)){ins.forEach(e=>e.disabled=true);done(true);return}
+  it.tries++; bonk();
+  if(it.tries<2){msg.textContent="Nije još točno. Pogledaj korak 💡 i pokušaj ponovo."; showStep(); return}
+  ins.forEach(e=>e.disabled=true); while(shown<q.steps.length)showStep(); done(false)};
+ chk.onclick=go; ins.forEach(e=>e.onkeydown=ev=>{if(ev.key==="Enter")go()});
+ function done(ok){
+  chk.remove(); howB.remove(); msg.textContent="";
+  const item=T.queue.shift();
+  if(ok){T.done++; if(item.first&&!item.tries&&!item.helped)T.firstRight++; ding()}
+  else {T.queue.push({gen:item.gen,first:false,q:GEN[item.gen]()})}
+  const correct=q.inputs.map(i=>i.exp?`eksponent ${m(i.ans)}`:big(i.ans)).join(" i ");
+  document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"no"}"><b>${ok?pick(["Bravo!","Točno!","Super!","Odlično!"]):`Točan odgovor: ${correct}`}</b>${ok?(item.helped||item.tries?"<br>Točno, ali uz pomoć. Takav zadatak ne broji se za 10/10.":""):"<br>Pogledaj korake iznad. Dobit ćeš sličan zadatak s novim brojevima na kraju."}</div>
+   <div class="actions"><button class="btn" id="nx">${T.queue.length?"Dalje →":"Rezultat"}</button></div>`;
+  const nx=document.getElementById("nx"); nx.focus({preventScroll:true}); nx.scrollIntoView({block:"nearest",behavior:"smooth"}); nx.onclick=ask;
+ }
+}
+function finish(){
+ const perfect=T.firstRight===T.total;
+ if(T.mode==="prac"){
+  app.innerHTML=`<div class="card" style="text-align:center"><p class="counter">Vježba: ${LESSONS[T.les].t}</p><div class="big">${T.firstRight} / ${T.total}</div>
+   <p>${perfect?"Savršeno! Spreman si za test.":"Dobro je! Ponovi lekciju i vježbaj još jednom."}</p>
+   <div class="actions" style="justify-content:center"><button class="btn" id="again">Vježbaj opet</button><button class="btn ghost" id="les">Lekcija</button><button class="btn ghost" id="home">Karta</button></div></div>`;
+  const i=T.les; document.getElementById("again").onclick=()=>practice(i); document.getElementById("les").onclick=()=>lesson(i); document.getElementById("home").onclick=home;
+  if(perfect)fanfare(); scrollTo(0,0); return;
+ }
+ tests++; try{localStorage.setItem("put-edi-t",String(tests))}catch(e){}
+ const moved=perfect&&trip<10, from=trip;
+ if(moved){trip++;saveTrip()}
+ const st=STOPS[trip];
+ app.innerHTML=`<div class="card" style="text-align:center"><p class="counter">Test gotov</p><div class="big">${T.firstRight} / ${T.total}</div>
+  ${moved?`<h2>Putuješ u ${st.n}! ${st.how}</h2><p class="sub">oko ${st.km} km · ${st.f}</p>`:perfect?`<h2>Savršeno! Već si u Edinburghu 🏰</h2>`:`<h2>Za sljedeći grad trebaš 10/10</h2><p class="sub">Zadaci koje si riješio iz prve: ${T.firstRight}. Pogledaj lekcije za zadatke koji su bili teški, pa probaj novi test.</p>`}
+  <div class="fig" id="map">${mapSVG(moved?from:trip)}</div>
+  <div class="actions" style="justify-content:center"><button class="btn" id="again">Novi test ▶</button><button class="btn ghost" id="home">Karta i lekcije</button></div></div>`;
+ document.getElementById("again").onclick=startTest; document.getElementById("home").onclick=home;
+ scrollTo(0,0);
+ if(moved){fanfare(); confetti(); travel(from,trip)}
+}
+function travel(a,b){
+ const pa=[MX(STOPS[a].lon),MY(STOPS[a].lat)], pb=[MX(STOPS[b].lon),MY(STOPS[b].lat)];
+ const box=document.getElementById("map"); const t0=performance.now(), dur=matchMedia("(prefers-reduced-motion: reduce)").matches?1:2200;
+ (function f(t){const k=Math.min(1,(t-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+  const x=pa[0]+(pb[0]-pa[0])*e, y=pa[1]+(pb[1]-pa[1])*e;
+  if(k<1){const g=box.querySelector("#traveller"); if(g)g.setAttribute("transform",`translate(${x},${y})`); requestAnimationFrame(f)} else box.innerHTML=mapSVG(b)})(t0);
+}
+function confetti(){
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const cv=document.getElementById("confetti"),x=cv.getContext("2d");cv.hidden=false;cv.width=innerWidth;cv.height=innerHeight;
+ const cols=["#C2185B","#2364C8","#E0700F","#1E8E4E","#F2B705"];
+ const Q=Array.from({length:120},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,r:Math.random()*6,c:cols[Math.random()*5|0],a:Math.random()*6}));
+ let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);Q.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-4,-2,8+p.r,5);x.restore()});if(++t<170)requestAnimationFrame(f);else cv.hidden=true})();
+}
+home();
+</script>
+
+</body></html>
