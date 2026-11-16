@@ -1,0 +1,261 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Vrste tvari i smjesa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: jedna kolona; svaki zadatak iz bilježnice = kartica s interaktivnim rješavanjem (razmisli → pomoć → provjeri → što upisati) */
+:root{
+  --bg:#F0EEF6; --card:#FFFFFF; --ink:#1F1B2E; --muted:#5F5A74; --line:#D9D4E6; --chip:#E9E5F2;
+  --accent:#5B3FB0; --accent-ink:#FFFFFF; --good:#1E8E4E; --good-bg:#E2F4E8; --bad:#C2412D; --bad-bg:#FBE6E2;
+  --hint-bg:#FFF5D1; --hint-line:#E3AE00; --red:#D7312E; --blk:#2A2A2A; --metal:#8C6A1C; --nonmetal:#2E7D9A;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif; --body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141220; --card:#1E1A2C; --ink:#ECE9F5; --muted:#A49FBA; --line:#38324C; --chip:#2A253B;
+  --accent:#A58CF0; --accent-ink:#140F24; --good:#5BCB8A; --good-bg:#163324; --bad:#F08A76; --bad-bg:#3D1F1A;
+  --hint-bg:#3A3215; --hint-line:#E3AE00; --red:#FF6B66; --blk:#D9D6E6; --metal:#E3BE5E; --nonmetal:#6CC4E3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141220; --card:#1E1A2C; --ink:#ECE9F5; --muted:#A49FBA; --line:#38324C; --chip:#2A253B;
+  --accent:#A58CF0; --accent-ink:#140F24; --good:#5BCB8A; --good-bg:#163324; --bad:#F08A76; --bad-bg:#3D1F1A;
+  --hint-bg:#3A3215; --hint-line:#E3AE00; --red:#FF6B66; --blk:#D9D6E6; --metal:#E3BE5E; --nonmetal:#6CC4E3; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:2rem;font-weight:800}h2{font-size:1.3rem;font-weight:800}h3{font-size:1.05rem}
+.sub{color:var(--muted);margin:4px 0 0}
+button,select{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:6px;display:grid;gap:2px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.prog{height:12px;background:var(--chip);border-radius:6px;overflow:hidden}.prog span{display:block;height:100%;background:var(--accent);transition:width .4s}
+.progt{font-size:.9rem;color:var(--muted)}
+.learn{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:10px}
+.learn ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.learn b{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:12px;min-width:0}
+.card.done{border:2px solid var(--good)}
+.tag{display:inline-block;font-size:.85rem;font-weight:800;color:var(--accent);background:var(--chip);border-radius:999px;padding:2px 10px}
+.qt{font-weight:700;font-size:1.08rem}
+.think{color:var(--muted);font-size:.98rem}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;padding:10px 16px;font-weight:700;font-size:1rem;min-height:46px}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hint{background:var(--hint-bg);border-left:6px solid var(--hint-line);border-radius:10px;padding:8px 12px;font-size:1rem}
+.ans{background:var(--good-bg);border-left:6px solid var(--good);border-radius:10px;padding:10px 14px}
+.ans b.h{display:block;font-size:.85rem;color:var(--good)}
+.msg{font-weight:700}
+.msg.ok{color:var(--good)}.msg.no{color:var(--bad)}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;background:var(--chip);border:2px solid transparent;border-radius:12px;padding:10px 14px;min-height:50px;font-size:1.02rem;width:100%}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--card)}
+.opt.right{background:var(--good-bg);border-color:var(--good)}.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}.opt.miss{border-color:var(--good);border-style:dashed}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+/* razvrstavanje */
+.sort{display:grid;gap:8px}
+.si{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;background:var(--chip);border-radius:12px;padding:8px 10px;border:2px solid transparent}
+.si .nm{font-weight:700;flex:1;min-width:150px}
+.si .ch{display:flex;gap:6px;flex-wrap:wrap}
+.si .ch button{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font-size:.92rem;min-height:40px}
+.si .ch button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700}
+.si.right{border-color:var(--good);background:var(--good-bg)}.si.wrong{border-color:var(--bad);background:var(--bad-bg)}
+/* T/N */
+.tn{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--chip);border-radius:12px;padding:8px 12px;border:2px solid transparent}
+.tn .s{flex:1;min-width:0}
+.tn .b{display:flex;gap:6px}
+.tn .b button{width:48px;height:44px;border-radius:10px;border:2px solid var(--line);background:var(--card);font-weight:800}
+.tn .b button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tn.right{border-color:var(--good);background:var(--good-bg)}.tn.wrong{border-color:var(--bad);background:var(--bad-bg)}
+/* shema */
+.scheme{display:grid;gap:10px;justify-items:center}
+.lvl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%}
+.slot{display:grid;gap:4px;justify-items:center;min-width:0}
+.slot select{min-height:44px;border:2px dashed var(--accent);border-radius:10px;background:var(--card);padding:6px 8px;font-size:.95rem;max-width:200px}
+.slot.right select{border:2px solid var(--good);background:var(--good-bg)}.slot.wrong select{border:2px solid var(--bad);background:var(--bad-bg)}
+.root{background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:6px 18px;font-weight:800}
+.arrow{color:var(--muted);font-size:1.2rem;line-height:1}
+.slab{font-size:.8rem;color:var(--muted)}
+.fig{overflow-x:auto}.fig svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.letters{display:flex;gap:6px;flex-wrap:wrap}
+.lt{width:46px;height:46px;border-radius:10px;border:2px solid var(--line);background:var(--card);font-weight:800;font-size:1.1rem}
+.lt[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.lt.right{background:var(--good-bg);border-color:var(--good);color:var(--ink)}.lt.wrong{background:var(--bad-bg);border-color:var(--bad);color:var(--ink)}.lt.miss{border-color:var(--good);border-style:dashed}
+.pq{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.92rem;color:var(--muted)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:4px}
+.nav{display:flex;gap:6px;flex-wrap:wrap}.nav a{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--ink);text-decoration:none;font-size:.88rem;font-weight:700}
+svg text{font-family:var(--body)}
+@media (prefers-reduced-motion: reduce){.prog span{transition:none}}
+</style>
+
+<div class="wrap">
+<header><h1>Vrste tvari i smjesa</h1><p class="sub">Kemija · radna bilježnica str. 24–27 i 30–31. Riješi zadatak ovdje, pa točan odgovor prepiši u bilježnicu.</p></header>
+<div class="top"><div class="prog" aria-hidden="true"><span id="pbar" style="width:0"></span></div><span class="progt" id="ptxt"></span></div><nav class="nav"><a href="#uci">Prvo nauči</a><a href="#t218">2.18–2.24</a><a href="#t225">2.25–2.29</a><a href="#t31">3.1–3.3</a></nav>
+
+<section class="learn" id="uci">
+ <h2>Prvo nauči: podjela tvari</h2>
+ <div class="fig" id="mapfig"></div>
+ <ul>
+  <li><b>Čiste tvari</b> imaju stalan sastav i svojstva. To su <b>elementarne tvari</b> i <b>kemijski spojevi</b>.</li>
+  <li><b>Elementarna tvar</b> je građena od jedne vrste atoma (kisik, sumpor, željezo, zlato). Ne može se kemijski rastaviti na jednostavnije tvari.</li>
+  <li><b>Kemijski spoj</b> je građen od dvije ili više vrsta atoma koji su kemijski povezani (voda, kuhinjska sol, modra galica, šećer).</li>
+  <li><b>Elementarne tvari</b> dijelimo na <b>metale</b>, <b>nemetale</b> i <b>polumetale</b>.</li>
+  <li><b>Metali</b> imaju sjaj, vode toplinu i struju, mogu se kovati i izvlačiti u žice (zlato, bakar, željezo, živa, aluminij). <b>Nemetali</b> ne vode struju, lomljivi su, mnogi su plinovi (sumpor, kisik, dušik, jod).</li>
+  <li><b>Smjesa</b> je mješavina čistih tvari koje međusobno <b>ne reagiraju</b>. <b>Homogena</b> smjesa: sastojke ne vidimo ni mikroskopom (morska voda, zrak). <b>Heterogena</b>: sastojke vidimo (pijesak i voda, granit).</li>
+  <li><b>Organske tvari</b> sadrže ugljik i potječu iz živih bića ili su sintetske (šećer, škrob, alkohol, plastika). <b>Anorganske</b> su sol, voda, minerali, kiseline (vapnenac, kvarc).</li>
+ </ul>
+</section>
+<div id="tasks" style="display:grid;gap:18px"></div>
+</div>
+
+<script>
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let ac=null;const tone=(fs,v=.14)=>{try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime;fs.forEach((f,k)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;const s=t+k*.09;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+.3);o.connect(g).connect(ac.destination);o.start(s);o.stop(s+.32)})}catch(e){}};
+const ding=()=>tone([660,880]), bonk=()=>tone([220,165],.1);
+
+/* ---------- shema podjele tvari (za učenje) ---------- */
+document.getElementById("mapfig").innerHTML=(()=>{const B=[["TVARI",200,22,1],["čiste tvari",110,82],["smjese tvari",300,82],["elementarne tvari",58,148],["kemijski spojevi",168,148],["homogene",256,148],["heterogene",350,148],["metali",58,218],["nemetali",160,218],["polumetali",262,218]];
+ const L=[[200,38,110,66],[200,38,300,66],[110,98,58,132],[110,98,168,132],[300,98,256,132],[300,98,350,132],[58,164,58,202],[58,164,160,202],[58,164,262,202]];
+ return `<svg viewBox="0 0 400 240" width="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Podjela tvari">${L.map(([a,b,c,d])=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" style="stroke:var(--muted)" stroke-width="1.5"/>`).join("")}${B.map(([t,x,y,r])=>{const two=t.length>12&&t.includes(" "),[w1,w2]=two?[t.slice(0,t.indexOf(" ")),t.slice(t.indexOf(" ")+1)]:[t,""];return `<rect x="${x-48}" y="${y-(two?21:16)}" width="96" height="${two?42:32}" rx="8" style="fill:${r?"var(--accent)":"var(--chip)"};stroke:var(--line)"/><text x="${x}" y="${two?y-3:y+5}" text-anchor="middle" font-size="14" font-weight="800" style="fill:${r?"var(--accent-ink)":"var(--ink)"}">${w1}${two?`<tspan x="${x}" dy="16">${w2}</tspan>`:""}</text>`}).join("")}</svg>`})();
+
+/* ---------- čestice za 2.27 ---------- */
+function mol(type,cx,cy,ang){const r=9,d=16,a=ang*Math.PI/180,n=type.length;return [...type].map((t,k)=>{const o=(k-(n-1)/2)*d;return `<circle cx="${(cx+o*Math.cos(a)).toFixed(1)}" cy="${(cy+o*Math.sin(a)).toFixed(1)}" r="${r}" style="fill:var(--${t==="R"?"red":"blk"})"/>`}).join("")}
+const PART={A:[["R",-14,-38],["R",-42,-10],["R",-12,-10],["R",32,-6],["R",22,30],["B",-32,-34],["B",18,-30],["B",6,4],["B",-28,24],["B",-4,40]].map(([t,x,y])=>mol(t,x,y,0)),
+ B:[[-20,-30],[18,-32],[-36,4],[0,30],[34,8]].map(([x,y])=>mol("R",x,y,0)),
+ C:[[-10,-32],[28,-22],[-34,2],[-6,32],[30,20]].map(([x,y])=>mol("B",x,y,0)),
+ D:[mol("RB",-36,-24,110),mol("RBR",10,-24,35),mol("RBR",-22,22,-35),mol("RB",26,30,-15)],
+ E:[mol("RBR",-30,-6,100),mol("RBR",22,-18,35),mol("RBR",2,30,-20)],
+ F:[mol("RBR",-26,-20,30),mol("RB",24,-26,-35),mol("RB",-26,26,0),mol("BR",26,26,115)],
+ G:[mol("RB",-12,-36,0),mol("RB",30,-8,30),mol("BR",-26,14,125),mol("RB",8,36,-40)]};
+function partSVG(){const L="ABCDEFG";return `<svg viewBox="0 0 560 300" width="560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Crteži čestica A do G">`+[...L].map((k,i)=>{const cx=i<3?150+i*130:85+(i-3)*130, cy=i<3?75:215;
+ return `<g transform="translate(${cx},${cy})"><circle r="60" style="fill:var(--card);stroke:var(--ink)" stroke-width="2"/>${PART[k].join("")}</g><text x="${cx}" y="${cy+82}" text-anchor="middle" font-size="16" font-weight="800" style="fill:var(--ink)">${k}</text>`}).join("")+`</svg>`}
+
+/* ---------- ZADACI ---------- */
+const T=[
+ {id:"t218",n:"2.18",p:24,type:"pick",q:"Koje od sljedećih tvrdnji opisuju elementarne tvari? Zaokruži slova uz točne tvrdnje.",
+  o:["a) Možemo ih kemijskim postupcima rastaviti na jednostavnije tvari.","b) Mogu se kemijskim postupcima pretvarati u druge elementarne tvari.","c) Dijelimo ih na metale, nemetale i polumetale.","d) Imaju stalan i točno određen kemijski sastav i svojstva."],a:[2,3],
+  think:"Elementarna tvar je najjednostavnija tvar. Može li se rastaviti na nešto još jednostavnije?",
+  hints:["Elementarne tvari se NE mogu rastaviti na jednostavnije tvari, pa a) nije točno.","Kemijskim postupkom željezo ne postaje zlato, pa b) nije točno."],
+  w:"Zaokruži <b>c)</b> i <b>d)</b>."},
+ {id:"t219",n:"2.19",p:24,type:"text",q:"Kako dijelimo elementarne tvari prema karakterističnim svojstvima? Dijelimo ih na ___, ___ i ___.",
+  think:"Sjeti se: zlato je…, kisik je…, a silicij je između.",hints:["Tri riječi, sve završavaju na „-metale“."],w:"Dijelimo ih na <b>metale</b>, <b>nemetale</b> i <b>polumetale</b>."},
+ {id:"t220",n:"2.20",p:24,type:"sort",cols:["metal","nemetal"],q:"Karakteristična svojstva razvrstaj u skupinu metala ili nemetala.",
+  items:[["ne provodi električnu struju",1],["lako se može kovati",0],["dobro vodi toplinu i električnu struju",0],["lomljiv je i krhak u čvrstom stanju",1],["može se izvlačiti u žice",0],["nije rastezljiv",1],["ima sjajnu površinu",0],["pri sobnoj temperaturi je u plinovitom stanju",1]],
+  think:"Zamisli bakrenu žicu i komadić sumpora. Što se može kovati i sjaji se?",hints:["Metali: sjaj, vode struju i toplinu, kuju se i izvlače u žice.","Nemetali: ne vode struju, lomljivi su, mnogi su plinovi."],
+  w:"<b>Metal:</b> 1) lako se može kovati 2) dobro vodi toplinu i električnu struju 3) može se izvlačiti u žice 4) ima sjajnu površinu.<br><b>Nemetal:</b> 1) ne provodi električnu struju 2) lomljiv je i krhak 3) nije rastezljiv 4) pri sobnoj temperaturi je u plinovitom stanju."},
+ {id:"t221",n:"2.21",p:25,type:"text",q:"a) Na slikama su zlatna poluga, bakrene cijevi (žice) i srebrnasta tekućina koja se prelijeva. Navedi njihova imena. b) U koju skupinu elementarnih tvari pripadaju?",
+  think:"Žuta sjajna poluga, crvenkasto-smeđe cijevi i jedini metal koji je tekuć na sobnoj temperaturi.",hints:["Treća slika: tekući metal iz starih toplomjera.","Sve tri sjaje i vode struju."],w:"a) <b>zlato, bakar, živa</b><br>b) To su <b>metali</b>."},
+ {id:"t222",n:"2.22",p:25,type:"pick1",q:"Izbaci uljeza među elementarnim tvarima i objasni izbor.",o:["bakar","srebro","magnezij","sumpor","olovo","cink","aluminij","platina"],a:[3],
+  think:"Koja od ovih tvari nije metal?",hints:["Sumpor je žut, lomljiv i ne vodi struju."],w:"Uljez je <b>sumpor</b> jer je nemetal, a sve ostale tvari su metali."},
+ {id:"t223",n:"2.23",p:25,type:"pick",q:"Među navedenim tvarima izdvoji kemijske spojeve.",o:["a) kisik","b) bakrov(II) sulfat","c) pitka voda","d) zrak","e) modra galica","f) željezov sulfid","g) sumpor","h) živa"],a:[1,4,5],
+  think:"Kemijski spoj ima dvije ili više vrsta atoma. Pazi: neke tvari su smjese!",hints:["Kisik, sumpor i živa su elementarne tvari.","Zrak i pitka voda (s otopljenim mineralima) su smjese.","Modra galica je drugi naziv za bakrov(II) sulfat (s vodom)."],w:"Zaokruži <b>b)</b>, <b>e)</b> i <b>f)</b>."},
+ {id:"t224",n:"2.24",p:25,type:"tn",q:"Potvrdi točnost tvrdnji (T = točno, N = netočno).",
+  items:[["Modra je galica elementarna tvar koja zagrijavanjem mijenja kemijska svojstva.",0],["Modra je galica kemijski spoj koji se zagrijavanjem kemijski mijenja.",1],["Zagrijavanjem modre galice nastaju elementarne tvari.",0],["Voda koja nastaje zagrijavanjem modre galice kemijski je spoj.",1]],
+  think:"Je li modra galica elementarna tvar ili spoj? Što nastaje kad je zagrijemo (bijeli prah i vodena para)?",hints:["Modra galica je kemijski spoj.","Nastaju bijeli bezvodni bakrov sulfat i voda. Oboje su kemijski spojevi, a ne elementarne tvari."],w:"<b>N, T, N, T</b>"},
+ {id:"t225",n:"2.25",p:26,type:"scheme",q:"Dopuni shemu pojmovima: kemijski spoj, metal, polumetal, elementarna tvar, nemetal, smjese tvari, čista tvar.",
+  think:"Tvari dijelimo na dvije velike skupine. Jedna od njih ima još podskupina.",hints:["Tvari → čiste tvari i smjese tvari.","Čista tvar → elementarna tvar i kemijski spoj.","Elementarna tvar → metal, nemetal, polumetal."],
+  w:"TVARI → <b>čista tvar</b> (lijevo) i <b>smjese tvari</b> (desno).<br>Čista tvar → <b>elementarna tvar</b> i <b>kemijski spoj</b>.<br>Elementarna tvar → <b>metal</b>, <b>nemetal</b>, <b>polumetal</b>."},
+ {id:"t226",n:"2.26",p:26,type:"pick1",q:"Samo jedna od navedenih tvari nije elementarna tvar. Zaokruži uljeza.",o:["bakar","srebro","željezo","sumpor","živa","kisik","aluminij","voda"],a:[7],
+  think:"Koja tvar je građena od dvije vrste atoma?",hints:["H₂O: vodik i kisik."],w:"Uljez je <b>voda</b> jer je kemijski spoj (vodik i kisik)."},
+ {id:"t227",n:"2.27",p:"26–27",type:"part",q:"Čestice dviju elementarnih tvari prikazane su crnim i crvenim kružićem. Koji crtež prikazuje…? (Isti crtež se može koristiti više puta.)",
+  sub:[["a) jednu vrstu kemijski čiste tvari","BCEG","U krugu je samo jedna vrsta čestica (sve iste)."],["b) kemijski spoj","EG","Crni i crveni kružići su spojeni, a sve molekule su iste."],["c) smjesu kemijskih spojeva","DF","Ima spojenih molekula, ali dvije različite vrste molekula."],["d) smjesu elementarnih tvari","A","Crni i crveni su odvojeni, nisu spojeni."],["e) smjesu kemijski čistih tvari","ADF","Svaka smjesa: više različitih vrsta čestica."]],
+  think:"Za svaki krug pitaj: jesu li kružići spojeni? Jesu li sve čestice jednake?",hints:["Samo crveni ili samo crni = elementarna tvar (čista tvar).","Spojeni crni+crveni, sve molekule iste = kemijski spoj.","Dvije ili više različitih vrsta čestica = smjesa."],
+  w:"a) <b>B, C, E, G</b> b) <b>E, G</b> c) <b>D, F</b> d) <b>A</b> e) <b>A, D, F</b>"},
+ {id:"t228",n:"2.28",p:27,type:"sort",cols:["organska","anorganska"],q:"Ove tvari razvrstaj na organske i anorganske.",
+  items:[["vapnenac",1],["sapun",0],["natrijev klorid",1],["modra galica",1],["šećer",0],["alkohol",0],["škrob",0],["kremen ili kvarc",1],["petrolej",0],["solna kiselina",1],["svinjska mast",0],["kaučuk",0]],
+  think:"Potječe li tvar od živih bića (biljke, životinje) ili iz nafte? Onda je organska.",hints:["Šećer, škrob i kaučuk su iz biljaka, a svinjska mast od životinja.","Petrolej je iz nafte, a nafta je od ostataka živih bića: organski.","Kamenje, sol, kiseline i modra galica su anorganski."],
+  w:"<b>Organske:</b> sapun, šećer, alkohol, škrob, petrolej, svinjska mast, kaučuk.<br><b>Anorganske:</b> vapnenac, natrijev klorid, modra galica, kremen ili kvarc, solna kiselina."},
+ {id:"t229",n:"2.29",p:27,type:"text",q:"Nabroji pet organskih tvari prirodnog podrijetla i pet organskih tvari sintetičkog podrijetla koje rabiš svakog dana.",
+  think:"Prirodne dolaze iz biljaka i životinja. Sintetičke su napravljene u tvornici (plastika i slično).",hints:["Prirodne: pogledaj u kuhinju i ormar (šećer, pamuk…).","Sintetičke: plastična boca, najlon, poliester, deterdžent…"],
+  w:"<b>Prirodno podrijetlo:</b> šećer, škrob (brašno), pamuk, vuna, drvo (papir), maslinovo ulje, med.<br><b>Sintetičko podrijetlo:</b> plastika (PET boca, vrećica), najlon, poliester (odjeća), deterdžent, lijekovi (npr. aspirin)."},
+ {id:"t31",n:"3.1",p:30,type:"pick1",q:"Koja je točna tvrdnja za smjese tvari?",o:["a) Smjese su čiste tvari.","b) Smjese su mješavine čistih tvari koje međusobno reagiraju.","c) Smjese su mješavine čistih tvari koje međusobno ne reagiraju.","d) Smjese nisu sastavljene od tvari.","e) Sastojci smjesa mogu biti samo tekućine i čvrste tvari."],a:[2],
+  think:"Kad promiješaš sol i papar, nastaje li nova tvar?",hints:["U smjesi sastojci ostaju isti, ne reagiraju.","Zrak je smjesa plinova, pa e) nije točno."],w:"Zaokruži <b>c)</b>."},
+ {id:"t32",n:"3.2",p:30,type:"pick1",q:"Zašto je čisti zrak homogena smjesa?",o:["a) njegove sastojke možemo razlikovati mikroskopom","b) sastojci zraka međusobno reagiraju","c) njegove sastojke ne možemo razlikovati mikroskopom","d) sastojci zraka međusobno ne reagiraju"],a:[2],
+  think:"Što znači „homogena“? Vidimo li sastojke?",hints:["Homogena = sastojke ne vidimo ni mikroskopom.","Tvrdnja d) je točna za svaku smjesu, ali ne objašnjava zašto je homogena."],w:"Zaokruži <b>c)</b>."},
+ {id:"t33a",n:"3.3. a)",p:30,type:"sort",cols:["homogena","heterogena"],q:"Smjese razvrstaj na homogene i heterogene. U bilježnicu upiši brojeve.",
+  items:[["1 – suspenzija pijeska i vode",1],["2 – zemlja",1],["3 – granit",1],["4 – ulje i voda",1],["5 – vodena otopina šećera",0],["6 – jestivo ulje i kuhinjska sol",1],["7 – čisti zrak",0],["8 – morska voda",0],["9 – Vegeta",1],["10 – hrana za ptice",1],["11 – cink i sumpor",1],["12 – modra galica i aluminij u prahu",1],["13 – zlatni nakit",0],["14 – tijesto",1],["15 – strugotine željeza i bakra",1],["16 – smjesa dušika i kisika",0],["17 – čaj",0],["18 – jod i strugotine srebra",1]],
+  think:"Vidiš li različite dijelove (zrnca, kapljice, mrvice)? Onda je heterogena.",hints:["Otopine (šećer u vodi, morska voda, čaj) i plinske smjese su homogene.","Zlatni nakit je legura: zlato pomiješano s drugim metalom, ali to ne vidimo. Homogena.","Prahovi i strugotine pomiješani zajedno: zrnca se vide. Heterogena."],
+  w:"<b>Homogene smjese:</b> 5, 7, 8, 13, 16, 17<br><b>Heterogene smjese:</b> 1, 2, 3, 4, 6, 9, 10, 11, 12, 14, 15, 18"},
+ {id:"t33b",n:"3.3. b)",p:31,type:"sort",cols:["elementarna tvar","kemijski spoj"],q:"Razvrstaj tvari koje se spominju u zadatku a).",
+  items:[["cink",0],["sumpor",0],["aluminij",0],["zlato",0],["željezo",0],["bakar",0],["dušik",0],["kisik",0],["jod",0],["srebro",0],["voda",1],["šećer",1],["kuhinjska sol",1],["modra galica",1]],
+  think:"Ima li tvar jednu vrstu atoma (elementarna) ili više vrsta (spoj)?",hints:["Svi metali i plinovi dušik i kisik su elementarne tvari.","Voda, šećer, sol i modra galica imaju više vrsta atoma."],
+  w:"<b>Elementarne tvari:</b> cink, sumpor, aluminij, zlato, željezo, bakar, dušik, kisik, jod, srebro.<br><b>Kemijski spojevi:</b> voda, šećer, kuhinjska sol (natrijev klorid), modra galica."},
+ {id:"t33c",n:"3.3. c)",p:31,type:"sort",cols:["metal","nemetal"],q:"Elementarne tvari iz zadatka a) razvrstaj na metale i nemetale.",
+  items:[["cink",0],["sumpor",1],["aluminij",0],["zlato",0],["željezo",0],["bakar",0],["dušik",1],["kisik",1],["jod",1],["srebro",0]],
+  think:"Sjaji li se i vodi li struju?",hints:["Sumpor, jod, dušik i kisik ne vode struju: nemetali."],
+  w:"<b>Metali:</b> cink, aluminij, zlato, željezo, bakar, srebro.<br><b>Nemetali:</b> sumpor, dušik, kisik, jod."}
+];
+
+/* ---------- prikaz ---------- */
+const tasksEl=document.getElementById("tasks");
+const solved=new Set();
+function updProg(){document.getElementById("pbar").style.width=(solved.size/T.length*100)+"%";document.getElementById("ptxt").textContent=`Riješeno: ${solved.size} / ${T.length}${solved.size===T.length?" 🏆 Sve riješeno!":""}`}
+const SCHEME_TERMS=["čista tvar","smjese tvari","elementarna tvar","kemijski spoj","metal","nemetal","polumetal"];
+function body(t){
+ switch(t.type){
+  case"pick":case"pick1":return `<div class="${t.o.length>5&&t.o[0].length<14?"grid2":"opts"}">${t.o.map((x,k)=>`<button class="opt" data-k="${k}" aria-pressed="false">${x}</button>`).join("")}</div>`;
+  case"sort":return `<div class="sort">${shuffle(t.items.map((it,k)=>k)).map(k=>`<div class="si" data-k="${k}"><span class="nm">${t.items[k][0]}</span><span class="ch">${t.cols.map((c,j)=>`<button data-c="${j}" aria-pressed="false">${c}</button>`).join("")}</span></div>`).join("")}</div>`;
+  case"tn":return t.items.map((it,k)=>`<div class="tn" data-k="${k}"><span class="s">${it[0]}</span><span class="b"><button data-v="1" aria-pressed="false">T</button><button data-v="0" aria-pressed="false">N</button></span></div>`).join("");
+  case"scheme":{const sel=(i,lab)=>`<div class="slot" data-s="${i}"><select aria-label="${lab}"><option value="">— odaberi —</option>${SCHEME_TERMS.map(x=>`<option>${x}</option>`).join("")}</select></div>`;
+   return `<div class="scheme"><div class="root">TVARI</div><div class="arrow">↙ ↘</div><div class="lvl">${sel(0,"lijevo ispod TVARI")}${sel(1,"desno ispod TVARI")}</div><div class="slab">↓ podjela lijeve skupine</div><div class="lvl">${sel(2,"lijevo ispod")}${sel(3,"desno ispod")}</div><div class="slab">↓ podjela lijeve skupine na tri</div><div class="lvl">${sel(4,"prva")}${sel(5,"druga")}${sel(6,"treća")}</div></div>`;}
+  case"part":return `<div class="legend"><span><span class="dot" style="background:var(--blk)"></span>čestica jedne elementarne tvari</span><span><span class="dot" style="background:var(--red)"></span>čestica druge elementarne tvari</span><span>dodirnuti kružići = spojeni u molekulu</span></div><div class="fig">${partSVG()}</div>`
+   +t.sub.map(([q],i)=>`<div class="pq" data-i="${i}"><span class="qt">${q}</span><span class="letters">${[..."ABCDEFG"].map(L=>`<button class="lt" data-l="${L}" aria-pressed="false">${L}</button>`).join("")}</span></div>`).join("");
+  default:return "";
+ }
+}
+tasksEl.innerHTML=T.map(t=>`<section class="card" id="${t.id}"><div><span class="tag">${t.n} · str. ${t.p}</span></div><span class="qt">${t.q}</span><div class="think">🤔 ${t.think}</div>
+ ${body(t)}<div class="hints"></div><div class="msg" aria-live="polite"></div>
+ <div class="row">${t.type!=="text"?`<button class="btn" data-check>Provjeri</button>`:""}<button class="btn ghost" data-hint>💡 Pomoć (0/${t.hints.length})</button><button class="btn ghost" data-show>${t.type==="text"?"Prikaži odgovor":"Pokaži rješenje"}</button></div>
+ <div class="ans" hidden><b class="h">Što upisati u bilježnicu:</b>${t.w}</div></section>`).join("");
+
+T.forEach(t=>{
+ const el=document.getElementById(t.id), msg=el.querySelector(".msg"); let hn=0;
+ const hb=el.querySelector("[data-hint]");
+ hb.onclick=()=>{if(hn<t.hints.length){el.querySelector(".hints").insertAdjacentHTML("beforeend",`<div class="hint">${t.hints[hn]}</div>`);hn++}hb.textContent=`💡 Pomoć (${hn}/${t.hints.length})`;if(hn>=t.hints.length)hb.disabled=true};
+ const showAns=()=>{el.querySelector(".ans").hidden=false};
+ const win=()=>{el.classList.add("done");msg.className="msg ok";msg.textContent="Bravo! Sve točno. Prepiši u bilježnicu.";showAns();ding();solved.add(t.id);updProg()};
+ const fail=(txt)=>{msg.className="msg no";msg.textContent=txt;bonk()};
+ el.querySelector("[data-show]").onclick=()=>{showAns(); if(t.type==="text"){el.classList.add("done");solved.add(t.id);updProg()}};
+ // odabir
+ if(t.type==="pick"||t.type==="pick1"){
+  const bs=[...el.querySelectorAll(".opt")];
+  bs.forEach(b=>b.onclick=()=>{if(t.type==="pick1")bs.forEach(x=>x!==b&&x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true");bs.forEach(x=>x.classList.remove("right","wrong","miss"))});
+  el.querySelector("[data-check]").onclick=()=>{const sel=bs.filter(b=>b.getAttribute("aria-pressed")==="true").map(b=>+b.dataset.k);
+   if(!sel.length)return fail("Prvo odaberi odgovor.");
+   bs.forEach(b=>{const k=+b.dataset.k,on=sel.includes(k),ok=t.a.includes(k);b.classList.toggle("right",on&&ok);b.classList.toggle("wrong",on&&!ok)});
+   if(sel.length===t.a.length&&sel.every(k=>t.a.includes(k)))win(); else fail(sel.some(k=>!t.a.includes(k))?"Nešto nije točno (crveno). Pogledaj 💡 pomoć i pokušaj ponovo.":`Točno, ali nisi odabrao/la sve. Treba ih ${t.a.length}.`)};
+ }
+ if(t.type==="sort"){
+  el.querySelectorAll(".si").forEach(r=>r.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{r.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));r.classList.remove("right","wrong")}));
+  el.querySelector("[data-check]").onclick=()=>{let wrong=0,empty=0;el.querySelectorAll(".si").forEach(r=>{const p=r.querySelector('[aria-pressed="true"]');if(!p){empty++;return}const ok=+p.dataset.c===t.items[+r.dataset.k][1];r.classList.toggle("right",ok);r.classList.toggle("wrong",!ok);if(!ok)wrong++});
+   if(empty)return fail(`Razvrstaj još ${empty}.`); if(!wrong)win(); else fail(`Netočno: ${wrong}. Crvene popravi i provjeri opet.`)};
+ }
+ if(t.type==="tn"){
+  el.querySelectorAll(".tn").forEach(r=>r.querySelectorAll("button").forEach(b=>b.onclick=()=>{r.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));r.classList.remove("right","wrong")}));
+  el.querySelector("[data-check]").onclick=()=>{let wrong=0,empty=0;el.querySelectorAll(".tn").forEach(r=>{const p=r.querySelector('[aria-pressed="true"]');if(!p){empty++;return}const ok=+p.dataset.v===t.items[+r.dataset.k][1];r.classList.toggle("right",ok);r.classList.toggle("wrong",!ok);if(!ok)wrong++});
+   if(empty)return fail(`Odgovori još na ${empty}.`); if(!wrong)win(); else fail(`Netočno: ${wrong}. Pogledaj 💡 pomoć.`)};
+ }
+ if(t.type==="scheme"){
+  const A=[["čista tvar"],["smjese tvari"],["elementarna tvar"],["kemijski spoj"],["metal","nemetal","polumetal"],["metal","nemetal","polumetal"],["metal","nemetal","polumetal"]];
+  el.querySelectorAll(".slot select").forEach(s=>s.onchange=()=>s.parentNode.classList.remove("right","wrong"));
+  el.querySelector("[data-check]").onclick=()=>{const v=[...el.querySelectorAll(".slot select")].map(s=>s.value);let wrong=0;
+   if(v.some(x=>!x))return fail("Popuni sve kućice.");
+   const last=v.slice(4); const dup=new Set(last).size!==3;
+   el.querySelectorAll(".slot").forEach((s,i)=>{const ok=A[i].includes(v[i])&&!(i>=4&&dup);s.classList.toggle("right",ok);s.classList.toggle("wrong",!ok);if(!ok)wrong++});
+   if(!wrong)win(); else fail(`Netočno: ${wrong}. Pogledaj 💡 pomoć.`)};
+ }
+ if(t.type==="part"){
+  el.querySelectorAll(".pq").forEach(r=>r.querySelectorAll(".lt").forEach(b=>b.onclick=()=>{b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true");r.querySelectorAll(".lt").forEach(x=>x.classList.remove("right","wrong","miss"))}));
+  el.querySelector("[data-check]").onclick=()=>{let bad=0;el.querySelectorAll(".pq").forEach(r=>{const ans=t.sub[+r.dataset.i][1];
+   r.querySelectorAll(".lt").forEach(b=>{const on=b.getAttribute("aria-pressed")==="true",ok=ans.includes(b.dataset.l);b.classList.toggle("right",on&&ok);b.classList.toggle("wrong",on&&!ok);if(on!==ok)bad++})});
+   if(!bad)win(); else fail("Nije još sve točno. Crveno je krivo, a neka slova još nedostaju. Pogledaj 💡 pomoć.")};
+  const exp=t.sub.map(([q,a,why])=>`<br><b>${q.slice(0,2)}</b> ${why}`).join("");
+  t.w+=`<br><span style="color:var(--muted);font-size:.95rem">Zašto?${exp}</span>`; el.querySelector(".ans").innerHTML=`<b class="h">Što upisati u bilježnicu:</b>${t.w}`;
+ }
+});
+updProg();
+</script>
+
+</body></html>
